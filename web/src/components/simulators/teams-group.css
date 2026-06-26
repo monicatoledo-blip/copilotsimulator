@@ -260,6 +260,7 @@
 .tg-col {
   min-width: 0;
   max-width: 80%;
+  position: relative;
 }
 .tg-meta {
   display: flex;
@@ -409,8 +410,8 @@
 /* Teams-style hover reaction toolbar (top-right of every message) */
 .tg-react-tool {
   position: absolute;
-  top: -18px;
-  right: 8px;
+  top: -16px;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 1px;
@@ -431,8 +432,8 @@
   pointer-events: auto;
 }
 .tg-row.is-you .tg-react-tool {
-  right: auto;
-  left: 8px;
+  right: 0;
+  left: auto;
 }
 .tg-react-tool button {
   width: 30px;

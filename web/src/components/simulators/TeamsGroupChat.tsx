@@ -33,9 +33,28 @@ function initials(name) {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
 }
 
-function PersonAvatar({ name }) {
+function useHoverCard() {
+  const ref = useRef(null)
+  const [pos, setPos] = useState(null)
+  const show = () => {
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    const cardW = 280
+    let x = rect.left
+    if (x + cardW > window.innerWidth - 12) x = window.innerWidth - cardW - 12
+    if (x < 12) x = 12
+    let y = rect.bottom + 6
+    if (y + 170 > window.innerHeight) y = rect.top - 176
+    setPos({ x, y })
+  }
+  const hide = () => setPos(null)
+  return { ref, pos, show, hide }
+}
+
+function PersonAvatar({ name, persona }) {
+  const { ref, pos, show, hide } = useHoverCard()
   return (
-    <span className="tg-avatarwrap">
+    <span className="tg-avatarwrap" ref={ref} onMouseEnter={show} onMouseLeave={hide}>
       <span className="tg-avatar" style={{ background: colorFor(name) }}>
         {initials(name)}
       </span>
@@ -44,14 +63,19 @@ function PersonAvatar({ name }) {
           <path d="M5 13l4 4L19 7" />
         </svg>
       </span>
+      {pos && <ProfileCard name={name} persona={persona} pos={pos} />}
     </span>
   )
 }
 
-function CopilotAvatar() {
+function CopilotAvatar({ persona } = {}) {
+  const { ref, pos, show, hide } = useHoverCard()
   return (
-    <span className="tg-avatar is-copilot">
-      <CopilotMark size={28} />
+    <span className="tg-avatarwrap" ref={ref} onMouseEnter={show} onMouseLeave={hide}>
+      <span className="tg-avatar is-copilot">
+        <CopilotMark size={28} />
+      </span>
+      {pos && <ProfileCard name="Copilot" persona={persona} pos={pos} />}
     </span>
   )
 }
@@ -107,28 +131,14 @@ function ProfileCard({ name, persona, pos }) {
 }
 
 function PersonName({ name, persona, className }) {
-  const ref = useRef(null)
-  const [pos, setPos] = useState(null)
-
-  const show = () => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    const cardW = 280
-    let x = rect.left
-    if (x + cardW > window.innerWidth - 12) x = window.innerWidth - cardW - 12
-    if (x < 12) x = 12
-    let y = rect.bottom + 6
-    if (y + 170 > window.innerHeight) y = rect.top - 176
-    setPos({ x, y })
-  }
-
+  const { ref, pos, show, hide } = useHoverCard()
   return (
     <>
       <span
         ref={ref}
         className={`tg-personname ${className || ''}`}
         onMouseEnter={show}
-        onMouseLeave={() => setPos(null)}
+        onMouseLeave={hide}
       >
         {name}
       </span>
@@ -166,7 +176,7 @@ function ReactionToolbar({ onPick }) {
 function CopilotTurn({ step, quote, personaOf, reactions, onReact, onUnreact }) {
   return (
     <div className="tg-row is-copilot">
-      <CopilotAvatar />
+      <CopilotAvatar persona={personaOf('Copilot')} />
       <div className="tg-col">
         <div className="tg-cop-head">
           <PersonName className="tg-cop-name" name="Copilot" persona={personaOf('Copilot')} />
@@ -207,8 +217,8 @@ function CopilotTurn({ step, quote, personaOf, reactions, onReact, onUnreact }) 
         </div>
 
         <Reactions reactions={reactions} onReact={onReact} onUnreact={onUnreact} />
+        <ReactionToolbar onPick={onReact} />
       </div>
-      <ReactionToolbar onPick={onReact} />
     </div>
   )
 }
@@ -247,22 +257,22 @@ function PersonTurn({ step, viewer, personaOf, reactions, onReact, onUnreact }) 
               <path d="M8 12l2.5 2.5L16 9" />
             </svg>
           </div>
+          <ReactionToolbar onPick={onReact} />
         </div>
-        <ReactionToolbar onPick={onReact} />
       </div>
     )
   }
   return (
     <div className="tg-row">
-      <PersonAvatar name={step.author} />
+      <PersonAvatar name={step.author} persona={personaOf(step.author)} />
       <div className="tg-col">
         <div className="tg-meta">
           <PersonName className="tg-name" name={step.author} persona={personaOf(step.author)} />
         </div>
         <div className="tg-bubble">{renderInline(step.text, 'p' + step.id)}</div>
         <Reactions reactions={reactions} onReact={onReact} onUnreact={onUnreact} />
+        <ReactionToolbar onPick={onReact} />
       </div>
-      <ReactionToolbar onPick={onReact} />
     </div>
   )
 }
@@ -404,7 +414,7 @@ export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTi
 
         {showTyping && (
           <div className="tg-typing-row">
-            <CopilotAvatar />
+            <CopilotAvatar persona={personaOf('Copilot')} />
             <span className="tg-typing-text">Copilot is typing</span>
             <span className="tg-dots">
               <span />

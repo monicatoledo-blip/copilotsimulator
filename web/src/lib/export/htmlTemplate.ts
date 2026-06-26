@@ -103,10 +103,23 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-avatarwrap { position:relative; flex-shrink:0; width:32px; height:32px; }
     .tg-presence { position:absolute; right:-2px; bottom:-2px; width:13px; height:13px; border-radius:50%; background:#6bb700; border:2px solid #fff; display:flex; align-items:center; justify-content:center; }
     .tg-row { display:flex; gap:10px; align-items:flex-start; position:relative; }
-    .tg-col { min-width:0; max-width:80%; }
+    .tg-col { min-width:0; max-width:80%; position:relative; }
     .tg-meta { display:flex; align-items:baseline; gap:8px; margin-bottom:3px; }
     .tg-name { font-size:13px; font-weight:600; }
     .tg-time { font-size:11px; color:var(--tg-fg-3); }
+    .tg-name, .tg-cop-name, .tg-avatarwrap, .tg-avatar.is-copilot { cursor:pointer; }
+    .tg-name:hover, .tg-cop-name:hover { text-decoration:underline; }
+    .tg-personcard { position:fixed; width:280px; background:#fff; border:1px solid #e3e3e3; border-radius:10px; box-shadow:0 10px 32px rgba(0,0,0,.2); padding:16px; z-index:1000; }
+    .tg-pc-head { display:flex; gap:12px; align-items:center; }
+    .tg-pc-avatar { width:48px; height:48px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; font-weight:600; overflow:hidden; }
+    .tg-pc-avatar img { width:100%; height:100%; object-fit:cover; }
+    .tg-pc-avatar.is-copilot { background:transparent; border-radius:0; overflow:visible; }
+    .tg-pc-name { display:flex; align-items:center; gap:7px; font-size:16px; font-weight:700; color:var(--tg-fg-1); }
+    .tg-pc-presence { width:9px; height:9px; border-radius:50%; background:#6bb700; display:inline-block; flex-shrink:0; }
+    .tg-pc-title { font-size:13px; color:var(--tg-fg-3); margin-top:2px; line-height:1.35; }
+    .tg-pc-actions { display:flex; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid #eee; }
+    .tg-pc-actions button { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid #d6d6d6; background:#fff; border-radius:6px; padding:7px 8px; font-size:12px; font-weight:600; color:var(--tg-fg-1); cursor:pointer; font-family:inherit; }
+    .tg-pc-actions button:hover { background:#f5f5f5; }
     .tg-bubble { background:var(--tg-other); border-radius:4px 8px 8px 8px; padding:9px 13px; font-size:14px; line-height:20px; color:var(--tg-fg-1); word-wrap:break-word; }
     .tg-row.is-you { flex-direction:row-reverse; }
     .tg-row.is-you .tg-col { display:flex; flex-direction:column; align-items:flex-end; }
@@ -139,9 +152,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-react.is-mine:hover { background:#dfe3f7; }
     .tg-react.is-mine .c { color:#5b5fc7; }
     /* Teams-style hover reaction toolbar */
-    .tg-react-tool { position:absolute; top:-18px; right:8px; display:flex; align-items:center; gap:1px; background:#fff; border:1px solid #e6e6e6; border-radius:22px; padding:3px 5px; box-shadow:0 2px 10px rgba(0,0,0,.14); opacity:0; transform:translateY(4px); transition:opacity .12s, transform .12s; pointer-events:none; z-index:6; }
+    .tg-react-tool { position:absolute; top:-16px; right:0; display:flex; align-items:center; gap:1px; background:#fff; border:1px solid #e6e6e6; border-radius:22px; padding:3px 5px; box-shadow:0 2px 10px rgba(0,0,0,.14); opacity:0; transform:translateY(4px); transition:opacity .12s, transform .12s; pointer-events:none; z-index:6; }
     .tg-row:hover .tg-react-tool { opacity:1; transform:translateY(0); pointer-events:auto; }
-    .tg-row.is-you .tg-react-tool { right:auto; left:8px; }
+    .tg-row.is-you .tg-react-tool { right:0; left:auto; }
     .tg-react-tool button { width:30px; height:30px; border:none; background:transparent; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; transition:transform .08s, background .08s; }
     .tg-react-tool button:hover { background:#f3f3f3; transform:scale(1.14); }
     .tg-react-tool .tg-tool-sep { width:1px; height:18px; background:#e6e6e6; margin:0 3px; }
@@ -339,6 +352,34 @@ export function buildHtmlTemplate(serializedManifest: string) {
     function colorFor(name){ var h=0; name=name||''; for(var i=0;i<name.length;i++){ h=(h*31+name.charCodeAt(i))>>>0; } return AV_COLORS[h%AV_COLORS.length]; }
     function initials(name){ var p=(name||'?').trim().split(/\\s+/); return (p.length===1?p[0][0]:(p[0][0]+p[p.length-1][0])).toUpperCase(); }
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    var personaMap = {};
+    members.forEach(function(m){ if(m && m.name) personaMap[m.name] = { title:m.title, avatarUrl:m.avatarUrl }; });
+    if(!personaMap.Copilot) personaMap.Copilot = { title:'AI assistant' };
+    function personaOf(name){ return personaMap[name]; }
+    var CARD_ACTIONS = '<div class="tg-pc-actions">'
+      + '<button type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>'
+      + '<button type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 7l-7 5 7 5z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Meet</button>'
+      + '<button type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Call</button>'
+      + '</div>';
+    function cardAvatar(name, persona){
+      if(name==='Copilot') return '<span class="tg-pc-avatar is-copilot"><img src="'+ICON+'" width="40" height="40" style="object-fit:contain"></span>';
+      if(persona && persona.avatarUrl) return '<span class="tg-pc-avatar" style="background:'+colorFor(name)+'"><img src="'+esc(persona.avatarUrl)+'" alt="'+esc(name)+'"></span>';
+      return '<span class="tg-pc-avatar" style="background:'+colorFor(name)+'">'+initials(name)+'</span>';
+    }
+    function attachCard(el, name){
+      if(!el) return; var persona=personaOf(name); var card=null;
+      el.addEventListener('mouseenter', function(){
+        if(card) return;
+        var rect=el.getBoundingClientRect(); var cardW=280; var x=rect.left;
+        if(x+cardW > window.innerWidth-12) x=window.innerWidth-cardW-12; if(x<12) x=12;
+        var y=rect.bottom+6; if(y+170>window.innerHeight) y=rect.top-176;
+        card=document.createElement('div'); card.className='tg-personcard'; card.style.left=x+'px'; card.style.top=y+'px';
+        var titleHtml = (persona&&persona.title) ? '<div class="tg-pc-title">'+esc(persona.title)+'</div>' : '';
+        card.innerHTML='<div class="tg-pc-head">'+cardAvatar(name,persona)+'<div style="min-width:0"><div class="tg-pc-name">'+esc(name)+'<span class="tg-pc-presence" title="Available"></span></div>'+titleHtml+'</div></div>'+CARD_ACTIONS;
+        document.body.appendChild(card);
+      });
+      el.addEventListener('mouseleave', function(){ if(card){ card.remove(); card=null; } });
+    }
     function inlineHtml(text){
       var s = esc(text);
       s = s.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');
@@ -411,7 +452,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
       });
     }
     function reactionArea(step){ var d=document.createElement('div'); d.className='tg-reacts'; renderPills(d, step); return d; }
-    function reactToolbar(row, step, pillsEl){
+    function reactToolbar(host, step, pillsEl){
       var bar=document.createElement('div'); bar.className='tg-react-tool';
       QUICK.forEach(function(emoji){
         var b=document.createElement('button'); b.type='button'; b.title='React'; b.innerHTML=emojiHtml(emoji, 20);
@@ -423,7 +464,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
       var more=document.createElement('button'); more.type='button'; more.className='tg-tool-more'; more.title='More options';
       more.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
       bar.appendChild(more);
-      row.appendChild(bar);
+      host.appendChild(bar);
     }
 
     function personRow(step){
@@ -434,13 +475,14 @@ export function buildHtmlTemplate(serializedManifest: string) {
         col.innerHTML='<div class="tg-bubble">'+inlineHtml(step.text)+'</div>';
         var pillsY=reactionArea(step); col.appendChild(pillsY);
         var sent=document.createElement('div'); sent.className='tg-sent'; sent.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>'; col.appendChild(sent);
-        row.appendChild(col); reactToolbar(row, step, pillsY);
+        row.appendChild(col); reactToolbar(col, step, pillsY);
       } else {
         var av=document.createElement('span'); av.className='tg-avatarwrap';
         av.innerHTML='<span class="tg-avatar" style="background:'+colorFor(step.author)+'">'+initials(step.author)+'</span><span class="tg-presence" title="Available"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>';
         col.innerHTML='<div class="tg-meta"><span class="tg-name">'+esc(step.author)+'</span></div><div class="tg-bubble">'+inlineHtml(step.text)+'</div>';
         var pillsP=reactionArea(step); col.appendChild(pillsP);
-        row.appendChild(av); row.appendChild(col); reactToolbar(row, step, pillsP);
+        row.appendChild(av); row.appendChild(col); reactToolbar(col, step, pillsP);
+        attachCard(av, step.author); attachCard(col.querySelector('.tg-name'), step.author);
       }
       return row;
     }
@@ -456,7 +498,8 @@ export function buildHtmlTemplate(serializedManifest: string) {
         : '<div class="tg-cop-body">'+richHtml(step.text)+'</div>';
       col.innerHTML=head+quoteHtml+body;
       var pills=reactionArea(step); col.appendChild(pills);
-      row.appendChild(av); row.appendChild(col); reactToolbar(row, step, pills);
+      row.appendChild(av); row.appendChild(col); reactToolbar(col, step, pills);
+      attachCard(av, 'Copilot'); attachCard(col.querySelector('.tg-cop-name'), 'Copilot');
       return row;
     }
 
