@@ -159,21 +159,21 @@ function ConversationRow({ conv, selectedConversation, setSelectedConversation }
       )}
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="font-semibold text-[13px] text-[#242424] truncate">
+      <div className="flex-1 min-w-0 overflow-hidden">
+        <div className="flex items-baseline justify-between">
+          <div className="flex items-baseline gap-1.5 min-w-0 overflow-hidden mr-2">
+            <span className="font-semibold text-[13px] text-[#242424] truncate whitespace-nowrap">
               {conv.name}
             </span>
             {conv.isChannel && (
-              <span className="text-[10px] text-[#616161] shrink-0">
+              <span className="text-[10px] text-[#616161] shrink-0 whitespace-nowrap">
                 Channel
               </span>
             )}
           </div>
           <span className="text-[11px] text-[#616161] shrink-0 whitespace-nowrap">{conv.time}</span>
         </div>
-        <p className="text-[12px] text-[#616161] truncate leading-snug">{conv.preview}</p>
+        <p className="text-[12px] text-[#616161] truncate leading-snug mt-[1px]">{conv.preview}</p>
       </div>
     </button>
   )
