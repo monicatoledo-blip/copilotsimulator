@@ -15,10 +15,9 @@ export default function ChatList({ selectedConversation, setSelectedConversation
   return (
     <div className="w-[clamp(320px,25vw,460px)] min-w-[320px] border-r border-[#e0e0e0] bg-white flex flex-col">
       {/* Header row: Chat + action icons */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-1">
+      <div className="flex items-center justify-between px-[clamp(16px,1.2vw,24px)] pt-5 pb-1">
         <h2 className="text-[clamp(18px,1.4vw,24px)] font-semibold text-[#242424]">Chat</h2>
         <div className="flex items-center gap-1.5">
-          {/* Three dot menu */}
           <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <circle cx="3" cy="8" r="1.2"/>
@@ -26,19 +25,16 @@ export default function ChatList({ selectedConversation, setSelectedConversation
               <circle cx="13" cy="8" r="1.2"/>
             </svg>
           </button>
-          {/* Search */}
           <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6.5 1a5.5 5.5 0 014.383 8.823l3.896 3.9a.75.75 0 01-1.06 1.06l-3.9-3.896A5.5 5.5 0 116.5 1zm0 1.5a4 4 0 100 8 4 4 0 000-8z" fill="currentColor"/>
             </svg>
           </button>
-          {/* Compose */}
           <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M13.5 2.5l-1-1L4 10l-1 3 3-1 8.5-8.5zM11 3l2 2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          {/* Chevron down */}
           <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -47,17 +43,17 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         </div>
       </div>
 
-      {/* Filter pills — clear gap below header, clear gap above nav items */}
-      <div className="flex items-center gap-2 px-5 pt-2 pb-3">
+      {/* Filter pills */}
+      <div className="flex items-center gap-[clamp(6px,0.5vw,10px)] px-[clamp(16px,1.2vw,24px)] pt-2 pb-3 overflow-x-auto">
         {filterPills.map((pill) => (
           <button
             key={pill}
-            className="px-4 py-[6px] text-[12px] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap"
+            className="px-[clamp(10px,0.8vw,16px)] py-[clamp(4px,0.35vw,8px)] text-[clamp(11px,0.85vw,14px)] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0"
           >
             {pill}
           </button>
         ))}
-        <button className="ml-1 text-[#616161] hover:text-[#242424]">
+        <button className="ml-0.5 text-[#616161] hover:text-[#242424] shrink-0">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -66,33 +62,33 @@ export default function ChatList({ selectedConversation, setSelectedConversation
 
       {/* Scrollable conversation list */}
       <div className="flex-1 overflow-y-auto">
-        {/* Quick nav items — separated from pills above with its own padding */}
-        <div className="px-3 pb-2">
+        {/* Quick nav items */}
+        <div className="px-[clamp(12px,1vw,20px)] pb-2">
           <NavItem icon="sparkle" label="Copilot" />
           <NavItem icon="discover" label="Discover" />
           <NavItem icon="mention" label="Mentions" />
           <NavItem icon="threads" label="Followed threads" />
         </div>
 
-        {/* Favorites section — generous top spacing to separate from nav */}
-        <div className="px-5 pt-3 pb-2">
-          <span className="text-[12px] font-semibold text-[#616161]">Favorites</span>
+        {/* Favorites section */}
+        <div className="px-[clamp(16px,1.2vw,24px)] pt-3 pb-2">
+          <span className="text-[clamp(11px,0.85vw,14px)] font-semibold text-[#616161]">Favorites</span>
         </div>
         {conversations.slice(0, 2).map((conv) => (
           <ConversationRow key={conv.id} conv={conv} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />
         ))}
 
         {/* Chats section */}
-        <div className="px-5 pt-5 pb-2">
-          <span className="text-[12px] font-semibold text-[#616161]">Chats</span>
+        <div className="px-[clamp(16px,1.2vw,24px)] pt-5 pb-2">
+          <span className="text-[clamp(11px,0.85vw,14px)] font-semibold text-[#616161]">Chats</span>
         </div>
         {conversations.slice(2).map((conv) => (
           <ConversationRow key={conv.id} conv={conv} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />
         ))}
 
         {/* Teams and channels section */}
-        <div className="px-5 pt-5 pb-2">
-          <span className="text-[12px] font-semibold text-[#616161]">Teams and channels</span>
+        <div className="px-[clamp(16px,1.2vw,24px)] pt-5 pb-2">
+          <span className="text-[clamp(11px,0.85vw,14px)] font-semibold text-[#616161]">Teams and channels</span>
         </div>
       </div>
     </div>
@@ -129,9 +125,9 @@ function NavItem({ icon, label }) {
     ),
   }
   return (
-    <button className="w-full flex items-center gap-3 px-3 py-[7px] rounded-md hover:bg-[#f5f5f5] text-left transition-colors">
+    <button className="w-full flex items-center gap-3 px-3 py-[clamp(6px,0.5vw,10px)] rounded-md hover:bg-[#f5f5f5] text-left transition-colors">
       <span className="w-5 h-5 flex items-center justify-center shrink-0">{icons[icon]}</span>
-      <span className="text-[13px] text-[#424242]">{label}</span>
+      <span className="text-[clamp(12px,0.9vw,15px)] text-[#424242]">{label}</span>
     </button>
   )
 }
@@ -141,7 +137,7 @@ function ConversationRow({ conv, selectedConversation, setSelectedConversation }
     <button
       onClick={() => setSelectedConversation(conv.id)}
       className={`
-        w-full flex items-center gap-3.5 px-4 py-[11px] text-left transition-colors
+        w-full flex items-center gap-[clamp(10px,0.8vw,16px)] px-[clamp(12px,1vw,20px)] py-[clamp(8px,0.7vw,14px)] text-left transition-colors
         ${selectedConversation === conv.id
           ? 'bg-[#E8EBFA]'
           : 'hover:bg-[#f5f5f5]'
@@ -153,31 +149,31 @@ function ConversationRow({ conv, selectedConversation, setSelectedConversation }
         <SalesforceIcon />
       ) : (
         <div
-          className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-white text-[11px] font-semibold shrink-0"
+          className="w-[clamp(30px,2.2vw,40px)] h-[clamp(30px,2.2vw,40px)] rounded-full flex items-center justify-center text-white text-[clamp(10px,0.75vw,13px)] font-semibold shrink-0"
           style={{ backgroundColor: conv.avatarColor }}
         >
           {conv.avatar}
         </div>
       )}
 
-      {/* Content — name row and preview each on their own clear line */}
+      {/* Content */}
       <div className="flex-1 min-w-0">
         {/* Top line: name + channel badge ... time */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className="font-semibold text-[13px] text-[#242424] truncate">
+            <span className="font-semibold text-[clamp(12px,0.9vw,15px)] text-[#242424] truncate">
               {conv.name}
             </span>
             {conv.isChannel && (
-              <span className="text-[11px] text-[#616161] shrink-0">
+              <span className="text-[clamp(10px,0.75vw,13px)] text-[#616161] shrink-0">
                 Channel
               </span>
             )}
           </div>
-          <span className="text-[11px] text-[#616161] shrink-0 ml-2">{conv.time}</span>
+          <span className="text-[clamp(10px,0.75vw,13px)] text-[#616161] shrink-0 ml-2">{conv.time}</span>
         </div>
-        {/* Preview line — sits clearly below the name */}
-        <p className="text-[12px] text-[#616161] truncate leading-normal mt-[3px]">{conv.preview}</p>
+        {/* Preview line */}
+        <p className="text-[clamp(11px,0.8vw,14px)] text-[#616161] truncate leading-normal mt-[3px]">{conv.preview}</p>
       </div>
     </button>
   )
