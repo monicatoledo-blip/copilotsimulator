@@ -1,4 +1,8 @@
-const TYPES = ['userPrompt', 'assistantResponse', 'toolAction']
+const TYPES = [
+  { value: 'userPrompt', label: 'Customer message' },
+  { value: 'assistantResponse', label: 'Agent response' },
+  { value: 'toolAction', label: 'Tool action' },
+]
 
 export default function ScriptTimelineEditor({ script, onChange }) {
   const updateStep = (index, key, value) => {
@@ -31,49 +35,99 @@ export default function ScriptTimelineEditor({ script, onChange }) {
   }
 
   return (
-    <section>
-      <div className="mb-1 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-900">Script timeline</h3>
-        <button className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-sm" style={{ background: '#0B3D72' }} onClick={addStep}>+ Add step</button>
-      </div>
-      <p className="mb-3 text-xs text-slate-500">Ordered prompts, responses, and tool actions. Plays back exactly as authored.</p>
-      <div className="space-y-3">
-        {script.map((step, index) => (
-          <div key={step.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-500">#{index + 1}</span>
-              <select
-                className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900 outline-none focus:border-slate-500"
-                value={step.type}
-                onChange={(e) => updateStep(index, 'type', e.target.value)}
-              >
-                {TYPES.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-              <button className="rounded-lg border border-slate-300 bg-white px-2 py-0.5 text-xs text-slate-700" onClick={() => moveStep(index, -1)}>Up</button>
-              <button className="rounded-lg border border-slate-300 bg-white px-2 py-0.5 text-xs text-slate-700" onClick={() => moveStep(index, 1)}>Down</button>
-              <button className="rounded-lg border border-rose-300 bg-rose-50 px-2 py-0.5 text-xs text-rose-700" onClick={() => removeStep(index)}>Remove</button>
+    <div className="form-section">
+      <h3>Customer &amp; Agent Messages</h3>
+      <p className="download-note" style={{ textAlign: 'left', margin: '0 0 16px' }}>
+        Ordered prompts, responses, and tool actions. Plays back exactly as authored for a reliable demo.
+      </p>
+
+      {script.map((step, index) => (
+        <div key={step.id} className="msg-builder-row-inner" style={{ flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', flexWrap: 'wrap' }}>
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 24,
+                height: 24,
+                borderRadius: '50%',
+                background: '#e8f4fc',
+                color: '#032d60',
+                fontSize: 12,
+                fontWeight: 700,
+                flexShrink: 0,
+              }}
+            >
+              {index + 1}
+            </span>
+            <select
+              value={step.type}
+              onChange={(e) => updateStep(index, 'type', e.target.value)}
+              style={{
+                padding: '8px 10px',
+                border: '1px solid #dddbda',
+                borderRadius: 4,
+                fontSize: 14,
+                background: '#fff',
+              }}
+            >
+              {TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+              <button type="button" className="msg-move-btn" onClick={() => moveStep(index, -1)}>
+                Up
+              </button>
+              <button type="button" className="msg-move-btn" onClick={() => moveStep(index, 1)}>
+                Down
+              </button>
+              <button type="button" className="msg-delete-btn" onClick={() => removeStep(index)}>
+                Delete
+              </button>
             </div>
-
-            {step.type === 'toolAction' && (
-              <input
-                className="mb-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-slate-500"
-                placeholder="Tool action title"
-                value={step.title || ''}
-                onChange={(e) => updateStep(index, 'title', e.target.value)}
-              />
-            )}
-
-            <textarea
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-slate-500"
-              rows={3}
-              value={step.text}
-              onChange={(e) => updateStep(index, 'text', e.target.value)}
-            />
           </div>
-        ))}
-      </div>
-    </section>
+
+          {step.type === 'toolAction' && (
+            <input
+              type="text"
+              placeholder="Tool action title"
+              value={step.title || ''}
+              onChange={(e) => updateStep(index, 'title', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px 10px',
+                border: '1px solid #dddbda',
+                borderRadius: 4,
+                fontSize: 14,
+              }}
+            />
+          )}
+
+          <textarea
+            rows={3}
+            value={step.text}
+            onChange={(e) => updateStep(index, 'text', e.target.value)}
+            style={{
+              width: '100%',
+              padding: '8px 10px',
+              border: '1px solid #dddbda',
+              borderRadius: 4,
+              fontSize: 14,
+              fontFamily: 'inherit',
+              resize: 'vertical',
+              minHeight: 64,
+            }}
+          />
+        </div>
+      ))}
+
+      <button type="button" className="add-message-btn" onClick={addStep}>
+        + Add Message
+      </button>
+    </div>
   )
 }

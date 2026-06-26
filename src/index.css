@@ -1,11 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap");
 @import "tailwindcss";
-
-@font-face {
-  font-family: 'Segoe UI';
-  src: local('Segoe UI'), local('SegoeUI');
-  font-weight: 100 900;
-  font-style: normal;
-}
 
 * {
   margin: 0;
@@ -16,14 +10,18 @@
 html, body, #root {
   height: 100%;
   width: 100%;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: "Salesforce Sans", Arial, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: #eef2f7;
-  color: #0f172a;
+  background: #f5f7fa;
+  color: #4f4f4f;
+}
+
+.font-display {
+  font-family: "Open Sans", sans-serif;
 }
 
 /* Typing indicator animation */

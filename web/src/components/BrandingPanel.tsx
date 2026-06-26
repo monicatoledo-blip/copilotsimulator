@@ -1,54 +1,67 @@
-function ColorField({ label, value, onChange }) {
+function ColorField({ id, label, value, onChange, hint }) {
   return (
-    <label className="text-sm text-slate-600">
-      {label}
-      <div className="mt-1 flex items-center gap-2">
+    <div className="form-group">
+      <label htmlFor={id}>{label}</label>
+      <div className="color-input-group">
+        <input type="color" className="color-picker" value={value} onChange={(e) => onChange(e.target.value)} />
         <input
-          type="color"
-          className="h-9 w-10 cursor-pointer rounded-md border border-slate-300 bg-white p-0.5"
+          type="text"
+          id={id}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-        />
-        <input
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#1F7AE0]"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
+          pattern="^#[0-9A-Fa-f]{6}$"
         />
       </div>
-    </label>
+      {hint && <small>{hint}</small>}
+    </div>
   )
 }
 
 export default function BrandingPanel({ brand, assistant, onBrandChange, onAssistantChange }) {
   return (
-    <section>
-      <h3 className="text-sm font-semibold text-slate-900">Brand &amp; assistant</h3>
-      <p className="mb-3 mt-0.5 text-xs text-slate-500">Identity and colors used across the simulated experience.</p>
+    <div className="form-section">
+      <h3>Branding</h3>
 
-      <div className="grid grid-cols-2 gap-3">
-        <label className="text-sm text-slate-600">
-          Brand name
-          <input
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#1F7AE0]"
-            value={brand.name}
-            onChange={(e) => onBrandChange('name', e.target.value)}
-          />
-        </label>
-        <label className="text-sm text-slate-600">
-          Assistant name
-          <input
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#1F7AE0]"
-            value={assistant.name}
-            onChange={(e) => onAssistantChange('name', e.target.value)}
-          />
-        </label>
+      <div className="form-group">
+        <label htmlFor="brandName">Brand Name</label>
+        <input
+          type="text"
+          id="brandName"
+          value={brand.name}
+          onChange={(e) => onBrandChange('name', e.target.value)}
+        />
       </div>
 
-      <div className="mt-3 grid grid-cols-1 gap-3">
-        <ColorField label="Primary color" value={brand.primaryColor} onChange={(v) => onBrandChange('primaryColor', v)} />
-        <ColorField label="Accent color" value={brand.accentColor} onChange={(v) => onBrandChange('accentColor', v)} />
-        <ColorField label="Headline color" value={brand.headlineColor} onChange={(v) => onBrandChange('headlineColor', v)} />
+      <div className="form-group">
+        <label htmlFor="assistantName">AI Agent Name</label>
+        <input
+          type="text"
+          id="assistantName"
+          value={assistant.name}
+          onChange={(e) => onAssistantChange('name', e.target.value)}
+        />
+        <small>Shown in the simulated chat header</small>
       </div>
-    </section>
+
+      <ColorField
+        id="primaryColor"
+        label="Primary Hex Color"
+        value={brand.primaryColor}
+        onChange={(v) => onBrandChange('primaryColor', v)}
+        hint="Used for buttons and branded elements"
+      />
+      <ColorField
+        id="accentColor"
+        label="Accent Color"
+        value={brand.accentColor}
+        onChange={(v) => onBrandChange('accentColor', v)}
+      />
+      <ColorField
+        id="headlineColor"
+        label="Headline Text Color"
+        value={brand.headlineColor}
+        onChange={(v) => onBrandChange('headlineColor', v)}
+      />
+    </div>
   )
 }

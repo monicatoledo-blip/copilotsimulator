@@ -1,0 +1,756 @@
+/* ==========================================================================
+   Microsoft 365 Copilot in Teams - high-fidelity simulated surface
+   Fluent 2 design language: Segoe UI, neutral surfaces, Copilot gradient.
+   All classes are prefixed .tc- to avoid colliding with generator chrome.
+   ========================================================================== */
+
+/* Inline Fluent emoji within Copilot copy */
+.tc-surface .tg-inline-emoji,
+.tw-window .tg-inline-emoji {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.22em;
+  margin: 0 0.02em;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   Full Microsoft Teams window shell (title bar + left app rail + content)
+   ========================================================================== */
+.tw-window {
+  --tw-rail: #f0f0f3;
+  --tw-titlebar: #ebebef;
+  --tw-brand: #5b5fc7;
+  --tw-fg: #242424;
+  --tw-fg-3: #616161;
+
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  height: 82vh;
+  min-height: 600px;
+  max-height: 900px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #d6d6dd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 18px 50px rgba(0, 0, 0, 0.16);
+  font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* ---- Title bar ---- */
+.tw-titlebar {
+  height: 44px;
+  flex-shrink: 0;
+  background: var(--tw-titlebar);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 14px;
+  border-bottom: 1px solid #deded6;
+}
+
+.tw-traffic {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.tw-traffic span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+}
+.tw-traffic .r { background: #ff5f57; }
+.tw-traffic .y { background: #febc2e; }
+.tw-traffic .g { background: #28c840; }
+
+.tw-nav {
+  display: flex;
+  gap: 2px;
+  color: #8a8a8a;
+}
+.tw-nav svg { display: block; }
+
+.tw-search {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 30px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  color: var(--tw-fg-3);
+  font-size: 13px;
+}
+
+.tw-titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.tw-profile {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--tw-brand);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Body: rail + content ---- */
+.tw-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.tw-rail {
+  width: 72px;
+  flex-shrink: 0;
+  background: var(--tw-rail);
+  border-right: 1px solid #e2e2e8;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 6px 0;
+  gap: 2px;
+}
+
+.tw-rail-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 2px 6px;
+  color: #444;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+.tw-rail-item:hover { background: #e6e6ec; }
+.tw-rail-item span {
+  font-size: 10.5px;
+  line-height: 1.1;
+  text-align: center;
+}
+.tw-rail-item.is-active { color: var(--tw-brand); font-weight: 600; }
+.tw-rail-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--tw-brand);
+}
+
+.tw-rail-spacer { flex: 1; }
+
+.tw-rail-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #c4314b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px auto;
+}
+
+.tw-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  background: #fff;
+}
+
+/* When the Copilot surface lives inside the Teams window, drop its own
+   frame chrome so it fills the content pane seamlessly. */
+.tw-content .tc-app {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .tw-rail-item span { display: none; }
+  .tw-rail { width: 56px; }
+}
+
+.tc-app {
+  --tc-fg-1: #242424;
+  --tc-fg-2: #424242;
+  --tc-fg-3: #616161;
+  --tc-stroke: #e0e0e0;
+  --tc-stroke-strong: #d1d1d1;
+  --tc-bubble: #f5f5f5;
+  --tc-surface: #ffffff;
+  --tc-radius: 8px;
+  --tc-gradient: linear-gradient(
+    120deg,
+    #2ec5a0 0%,
+    #2aa5f4 32%,
+    #5a6af0 58%,
+    #b14be0 80%,
+    #e5447c 100%
+  );
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 540px;
+  background: var(--tc-surface);
+  border: 1px solid var(--tc-stroke);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+  color: var(--tc-fg-1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- Header ---------- */
+.tc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 48px;
+  padding: 0 12px 0 16px;
+  border-bottom: 1px solid var(--tc-stroke);
+  background: var(--tc-surface);
+  flex-shrink: 0;
+}
+
+.tc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.tc-header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tc-fg-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tc-header-sub {
+  font-size: 12px;
+  color: var(--tc-fg-3);
+  font-weight: 400;
+}
+
+.tc-chevron {
+  color: var(--tc-fg-3);
+  display: flex;
+}
+
+.tc-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tc-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--tc-fg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.tc-icon-btn:hover {
+  background: #f0f0f0;
+}
+
+/* ---------- Thread ---------- */
+.tc-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 18px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--tc-surface);
+}
+
+.tc-thread::-webkit-scrollbar {
+  width: 8px;
+}
+.tc-thread::-webkit-scrollbar-thumb {
+  background: #c8c8c8;
+  border-radius: 4px;
+}
+
+/* ---------- User turn (right aligned neutral bubble) ---------- */
+.tc-row-user {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tc-user-bubble {
+  max-width: 78%;
+  background: var(--tc-bubble);
+  color: var(--tc-fg-1);
+  font-size: 14px;
+  line-height: 20px;
+  padding: 10px 14px;
+  border-radius: 18px 18px 4px 18px;
+  word-wrap: break-word;
+}
+
+/* ---------- Copilot turn (full width, avatar + content) ---------- */
+.tc-row-assistant {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.tc-avatar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.tc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tc-avatar.is-copilot {
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+.tc-avatar.is-copilot img {
+  object-fit: contain;
+}
+
+.tc-assistant-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.tc-assistant-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tc-fg-1);
+  margin-bottom: 4px;
+}
+
+.tc-assistant-text {
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--tc-fg-1);
+  word-wrap: break-word;
+}
+
+.tc-assistant-text .tg-p {
+  margin: 0 0 8px;
+}
+.tc-assistant-text .tg-p:last-child {
+  margin-bottom: 0;
+}
+.tc-assistant-text .tg-ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+.tc-assistant-text .tg-ul li {
+  margin: 2px 0;
+}
+.tc-assistant-text .tg-hr {
+  border: none;
+  border-top: 1px solid #ececec;
+  margin: 10px 0;
+}
+.tc-assistant-text .tg-mention {
+  color: #5b5fc7;
+  font-weight: 600;
+}
+
+/* response action bar */
+.tc-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 10px;
+}
+
+.tc-action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--tc-fg-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.tc-action-btn:hover {
+  background: #f0f0f0;
+  color: var(--tc-fg-1);
+}
+
+/* ---------- Tool / adaptive card ---------- */
+.tc-card {
+  margin-top: 10px;
+  border: 1px solid var(--tc-stroke);
+  border-radius: var(--tc-radius);
+  background: #fbfbfb;
+  overflow: hidden;
+}
+
+.tc-card-accent {
+  height: 3px;
+  background: var(--tc-gradient);
+}
+
+.tc-card-body {
+  padding: 12px 14px;
+}
+
+.tc-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tc-card-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #107c41;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tc-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tc-fg-1);
+}
+
+.tc-card-text {
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--tc-fg-2);
+}
+
+/* ---------- Typing indicator ---------- */
+.tc-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 2px;
+}
+
+.tc-typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8a8aff;
+  background-image: var(--tc-gradient);
+  opacity: 0.5;
+  animation: tc-bounce 1.2s infinite ease-in-out;
+}
+
+.tc-typing span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.tc-typing span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes tc-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* ---------- Composer ---------- */
+.tc-composer {
+  flex-shrink: 0;
+  padding: 8px 16px 12px;
+  background: var(--tc-surface);
+}
+
+.tc-input {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  border: 1px solid var(--tc-stroke-strong);
+  border-radius: 12px;
+  padding: 8px 8px 8px 12px;
+  background: var(--tc-surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tc-input:focus-within {
+  border-color: transparent;
+  box-shadow: 0 0 0 1.5px transparent;
+  background: linear-gradient(var(--tc-surface), var(--tc-surface)) padding-box,
+    var(--tc-gradient) border-box;
+  border: 1.5px solid transparent;
+}
+
+.tc-input-left {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 4px;
+}
+
+.tc-placeholder {
+  flex: 1;
+  font-size: 14px;
+  color: var(--tc-fg-3);
+  padding: 6px 4px;
+  user-select: none;
+}
+
+.tc-send {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: var(--tc-gradient);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tc-disclaimer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--tc-fg-3);
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   Secondary chat-list pane (between app rail and content)
+   ========================================================================== */
+.tl-pane {
+  --tl-grad: linear-gradient(120deg, #2ec5a0 0%, #2aa5f4 32%, #5a6af0 58%, #b14be0 80%, #e5447c 100%);
+  width: 280px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #ededed;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+  color: #242424;
+}
+.tl-head {
+  display: flex;
+  align-items: center;
+  padding: 14px 12px 8px 16px;
+}
+.tl-head h2 {
+  margin: 0;
+  flex: 1;
+  font-size: 20px;
+  font-weight: 700;
+}
+.tl-head-actions {
+  display: flex;
+  gap: 2px;
+  color: #424242;
+}
+.tl-head-actions button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+}
+.tl-head-actions button:hover {
+  background: #f0f0f0;
+}
+.tl-filters {
+  display: flex;
+  gap: 6px;
+  padding: 2px 14px 10px;
+}
+.tl-pill {
+  font-size: 12px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 14px;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: #424242;
+  font-family: inherit;
+}
+.tl-pill.is-active {
+  background: #f0f0f5;
+  border-color: #e3e3ee;
+}
+.tl-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 12px;
+}
+.tl-list::-webkit-scrollbar {
+  width: 8px;
+}
+.tl-list::-webkit-scrollbar-thumb {
+  background: #c8c8c8;
+  border-radius: 4px;
+}
+.tl-nav-item,
+.tl-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #242424;
+}
+.tl-nav-item:hover,
+.tl-item:hover {
+  background: #f5f5f5;
+}
+.tl-item.is-active,
+.tl-nav-item.is-active {
+  background: #eaeaf5;
+  font-weight: 600;
+}
+.tl-ico {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #616161;
+  flex-shrink: 0;
+}
+.tl-sec {
+  font-size: 12px;
+  color: #616161;
+  font-weight: 600;
+  padding: 12px 10px 4px;
+}
+.tl-avatar {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tl-avatar.is-channel {
+  background-image: var(--tl-grad);
+}
+.tl-presence-sm {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6bb700;
+  border: 2px solid #fff;
+}
+.tl-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: transparent;
+}
+.tl-dot.on {
+  background: #5b5fc7;
+}
+.tl-item.is-unread .tl-name {
+  font-weight: 700;
+}
+.tl-mention {
+  margin-left: auto;
+  color: #c4314b;
+  font-weight: 700;
+  font-size: 15px;
+  padding-left: 6px;
+}
+
+@media (max-width: 900px) {
+  .tl-pane {
+    display: none;
+  }
+}

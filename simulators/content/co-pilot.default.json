@@ -9,28 +9,128 @@
     "logoUrl": ""
   },
   "assistant": {
-    "name": "Penny",
+    "name": "Copilot",
     "avatarUrl": "",
     "greeting": "Hi Morgan, I can audit your environment and draft your next campaign setup."
   },
+  "chatTitle": "cap1-campaign-ops",
+  "viewer": "Jennifer",
+  "members": [
+    { "name": "Ava", "title": "VP, Cards Marketing" },
+    { "name": "Anna", "title": "Campaign Manager" },
+    { "name": "Sue", "title": "Lifecycle Marketing Lead" }
+  ],
+  "sidebar": [
+    { "id": "sb1", "name": "Ava Chen", "type": "person", "section": "Favorites" },
+    { "id": "sb2", "name": "Cards Marketing", "type": "channel", "section": "Favorites" },
+    { "id": "sb3", "name": "cap1-campaign-ops", "type": "channel", "section": "Campaign Ops" },
+    { "id": "sb4", "name": "Summer Promos 2026", "type": "channel", "section": "Campaign Ops", "unread": true },
+    { "id": "sb5", "name": "Lifecycle Journeys", "type": "channel", "section": "Campaign Ops", "mention": true },
+    { "id": "sb6", "name": "Anna Reyes", "type": "person", "section": "Chats" },
+    { "id": "sb7", "name": "Sue Park", "type": "person", "section": "Chats", "unread": true },
+    { "id": "sb8", "name": "data-team", "type": "channel", "section": "Chats" }
+  ],
+  "groupChat": [
+    {
+      "id": "g1",
+      "type": "userPrompt",
+      "author": "Ava",
+      "text": "hey team — Q3 rewards activation review just wrapped. exec summary: Venture X high-value segment is underperforming on rewards redemption. 284K cardholders with unactivated rewards, 90+ days dormant. that's a real revenue exposure going into summer",
+      "reactions": [{ "emoji": "👍", "count": 1 }]
+    },
+    {
+      "id": "g2",
+      "type": "userPrompt",
+      "author": "Anna",
+      "text": "hi Ava! 👋 yeah we flagged this in the QBR. the problem is we don't have a clean segment for it yet. data team said 2 weeks minimum to pull the SQL"
+    },
+    {
+      "id": "g3",
+      "type": "userPrompt",
+      "author": "Ava",
+      "text": "2 weeks 😟 by then we're competing with like 3 other card issuers running summer promos",
+      "reactions": [{ "emoji": "❤️", "count": 1 }]
+    },
+    {
+      "id": "g4",
+      "type": "userPrompt",
+      "author": "Sue",
+      "text": "for context, we ran something similar for Quicksilver last month (Summer Cashback). Strong engagement. The urgency framing in the subject line was the key I remember…",
+      "reactions": [{ "emoji": "❤️", "count": 1 }]
+    },
+    {
+      "id": "g5",
+      "type": "userPrompt",
+      "author": "Anna",
+      "text": "that's exactly the playbook we need for Venture X. personalized, multi-channel, einstein-timed. but we'd need the segment, two emails, and a branching journey. campaign ops said 3 weeks after data delivers",
+      "reactions": [{ "emoji": "❗", "count": 1 }]
+    },
+    {
+      "id": "g6",
+      "type": "userPrompt",
+      "author": "Ava",
+      "text": "so we're looking at 5 weeks minimum before anything goes out 😬"
+    },
+    {
+      "id": "g7",
+      "type": "userPrompt",
+      "author": "Jennifer",
+      "text": "someone mentioned the connected agent can do this stuff directly in here now… Should we test that in a BU?",
+      "reactions": [{ "emoji": "👀", "count": 2 }]
+    },
+    {
+      "id": "g8",
+      "type": "userPrompt",
+      "author": "Ava",
+      "text": "wait like build the segment AND journey from copilot?"
+    },
+    {
+      "id": "g9",
+      "type": "userPrompt",
+      "author": "Jennifer",
+      "text": "supposedly yeah. let's find out",
+      "reactions": [{ "emoji": "🎉", "count": 2 }]
+    }
+  ],
   "script": [
     {
       "id": "s1",
       "type": "userPrompt",
-      "text": "Audit our current environment and explain what headless unlocks for our team."
+      "text": "@Copilot we need to re-engage the Venture X high-value segment before summer. Can you audit the gap and build the segment + journey for us?"
     },
     {
       "id": "s2",
       "type": "assistantResponse",
       "typingState": true,
-      "delayMs": 700,
-      "text": "I found disconnected journeys, duplicate segment logic, and channel silos. A headless model lets us orchestrate audiences and experiences from one composable layer."
+      "delayMs": 1100,
+      "text": "On it. Here's the gap I'm seeing for **Venture X**:\n\n---\n- **284K** cardholders with unactivated rewards\n- Dormant **90+ days** on redemption\n- No clean, reusable segment in place yet\n---\nThis is exactly the **Summer Cashback** playbook Sue ran for Quicksilver — personalized, multi-channel, Einstein-timed. I can build it now without waiting on the data team."
     },
     {
       "id": "s3",
       "type": "toolAction",
-      "title": "Environment Audit Complete",
-      "text": "17 audience definitions consolidated, 6 overlapping journeys flagged."
+      "title": "Segment Built — Venture X High-Value",
+      "text": "284K cardholders · unactivated rewards · 90+ days dormant. Ready to use across channels.",
+      "delayMs": 1000
+    },
+    {
+      "id": "s4",
+      "type": "assistantResponse",
+      "typingState": true,
+      "delayMs": 1000,
+      "text": "Segment's live. Now drafting the **branching reactivation journey** — two emails with urgency framing, branching on redemption behavior, Einstein send-time optimization."
+    },
+    {
+      "id": "s5",
+      "type": "toolAction",
+      "title": "Journey Created — Summer Rewards Reactivation",
+      "text": "2 emails · Einstein send-time · branch on redeem vs. no-redeem at 72h.",
+      "delayMs": 1100
+    },
+    {
+      "id": "s6",
+      "type": "assistantResponse",
+      "delayMs": 900,
+      "text": "Done — segment **and** journey are ready in the Venture X BU. That's ~5 weeks of work compressed into one chat. Want me to schedule the first send for Monday?"
     }
   ]
 }

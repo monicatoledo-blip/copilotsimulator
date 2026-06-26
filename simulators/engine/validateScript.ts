@@ -1,5 +1,10 @@
 export type ScriptStepType = 'userPrompt' | 'assistantResponse' | 'toolAction'
 
+export interface Reaction {
+  emoji: string
+  count: number
+}
+
 export interface ScriptStep {
   id: string
   type: ScriptStepType
@@ -7,6 +12,8 @@ export interface ScriptStep {
   title?: string
   delayMs?: number
   typingState?: boolean
+  author?: string
+  reactions?: Reaction[]
 }
 
 export interface SimulatorManifest {
@@ -24,7 +31,17 @@ export interface SimulatorManifest {
     avatarUrl: string
     greeting: string
   }
+  chatTitle?: string
+  viewer?: string
+  members?: Member[]
+  groupChat?: ScriptStep[]
   script: ScriptStep[]
+}
+
+export interface Member {
+  name: string
+  title?: string
+  avatarUrl?: string
 }
 
 const HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6})$/
