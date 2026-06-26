@@ -44,17 +44,17 @@ export default function ChatList({ selectedConversation, setSelectedConversation
       </div>
 
       {/* Filter pills — generous padding inside each pill */}
-      <div className="flex items-center gap-2.5 px-6 pt-2 pb-4 overflow-x-auto">
+      <div className="flex items-center gap-3 px-6 pt-2 pb-4 overflow-x-auto">
         {filterPills.map((pill) => (
           <button
             key={pill}
-            className="px-4 py-1.5 text-[clamp(11px,0.85vw,14px)] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0"
+            className="px-[clamp(12px,1vw,20px)] py-[clamp(5px,0.4vw,10px)] text-[clamp(12px,0.85vw,15px)] text-[#424242] border border-[#b8b8b8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0"
           >
             {pill}
           </button>
         ))}
-        <button className="ml-0.5 text-[#616161] hover:text-[#242424] shrink-0">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <button className="ml-1 text-[#616161] hover:text-[#242424] shrink-0">
+          <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
