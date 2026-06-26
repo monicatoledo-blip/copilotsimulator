@@ -13,7 +13,7 @@ const filterPills = ['Unread', 'Unmuted', 'Chats', 'Channels']
 
 export default function ChatList({ selectedConversation, setSelectedConversation }) {
   return (
-    <div className="w-[clamp(280px,22vw,420px)] min-w-[280px] border-r border-[#e0e0e0] bg-white flex flex-col">
+    <div className="w-[clamp(320px,25vw,460px)] min-w-[320px] border-r border-[#e0e0e0] bg-white flex flex-col">
       {/* Header row: Chat + action icons */}
       <div className="flex items-center justify-between px-5 pt-5 pb-1">
         <h2 className="text-[clamp(18px,1.4vw,24px)] font-semibold text-[#242424]">Chat</h2>
@@ -52,7 +52,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         {filterPills.map((pill) => (
           <button
             key={pill}
-            className="px-3 py-[5px] text-[12px] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap"
+            className="px-4 py-[6px] text-[12px] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap"
           >
             {pill}
           </button>

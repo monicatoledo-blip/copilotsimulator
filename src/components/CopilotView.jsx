@@ -8,7 +8,7 @@ export default function CopilotView() {
   return (
     <div className="flex h-full">
       {/* Left: header + agents list */}
-      <div className="w-[clamp(280px,22vw,420px)] min-w-[280px] border-r border-[#e0e0e0] bg-white flex flex-col">
+      <div className="w-[clamp(320px,25vw,460px)] min-w-[320px] border-r border-[#e0e0e0] bg-white flex flex-col">
         <div className="flex items-center justify-between px-5 pt-4 pb-1">
           <h2 className="text-[clamp(18px,1.4vw,24px)] font-semibold text-[#242424]">Copilot</h2>
           <div className="flex items-center gap-1">
