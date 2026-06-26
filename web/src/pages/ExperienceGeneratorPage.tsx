@@ -13,6 +13,15 @@ import { buildStandaloneHtml } from '../lib/export/buildStandaloneHtml'
 
 const PRESETS = [presetAudit, presetJourney]
 
+const TABS = [
+  { id: 'demo', label: 'Your demo' },
+  { id: 'talk', label: 'Talk track' },
+  { id: 'copilot', label: 'AI Copilot' },
+]
+
+const BRAND_NAVY = '#0B3D72'
+const BRAND_BLUE = '#1F7AE0'
+
 function clone(value) {
   return JSON.parse(JSON.stringify(value))
 }
@@ -23,6 +32,7 @@ export default function ExperienceGeneratorPage() {
   const [renderedSteps, setRenderedSteps] = useState([])
   const [errors, setErrors] = useState([])
   const [isRunning, setIsRunning] = useState(false)
+  const [activeTab, setActiveTab] = useState('demo')
 
   const validationErrors = useMemo(() => validateScript(manifest), [manifest])
 
@@ -73,113 +83,165 @@ export default function ExperienceGeneratorPage() {
   const Frame = selectedExperience === 'teams-copilot' ? TeamsCopilotFrame : ClaudeFrame
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-100 p-4 text-slate-900">
-      <div className="mx-auto h-full max-w-[1480px]">
-        <header className="mb-4 rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Cumulus Financial</p>
-          <h1 className="mt-1 text-3xl font-semibold text-slate-900">Experience Generator</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Customize and download interactive simulated experiences for your demos.
-          </p>
-        </header>
-
-        <div className="mb-4 grid grid-cols-3 gap-3">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <div className="text-xs uppercase tracking-wide text-slate-500">Your demo</div>
-            <div className="mt-0.5 text-sm font-semibold text-slate-900">Adaptive walkthrough</div>
+    <div className="flex h-screen flex-col bg-[#eef2f7] text-slate-900">
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-base font-bold text-white"
+            style={{ background: `linear-gradient(135deg, ${BRAND_NAVY}, ${BRAND_BLUE})` }}
+          >
+            C
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <div className="text-xs uppercase tracking-wide text-slate-500">Talk track</div>
-            <div className="mt-0.5 text-sm font-semibold text-slate-900">Guided narrative copy</div>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <div className="text-xs uppercase tracking-wide text-slate-500">AI Copilot</div>
-            <div className="mt-0.5 text-sm font-semibold text-slate-900">Prompt + response scripting</div>
+          <div>
+            <div className="text-sm font-semibold leading-tight text-slate-900">Cumulus Financial</div>
+            <div className="text-xs leading-tight text-slate-500">Experience Generator</div>
           </div>
         </div>
-
-        <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Configure your demo journey</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            {['Brand & Customer', 'Homepage', 'Category Page', 'AI Chat', 'Offer', 'Return Visit'].map((label, idx) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 bg-slate-50 text-xs font-semibold text-slate-700">{idx + 1}</div>
-                <span className="text-xs text-slate-600">{label}</span>
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-medium text-slate-500">Select Experience</label>
+          <select
+            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-[#1F7AE0]"
+            value={selectedExperience}
+            onChange={(e) => switchExperience(e.target.value)}
+          >
+            <option value="teams-copilot">Co-Pilot in MS Teams</option>
+            <option value="claude">Claude</option>
+          </select>
         </div>
+      </header>
 
-        <div className="grid h-[calc(100%-300px)] grid-cols-[minmax(600px,1fr)_minmax(440px,1fr)] gap-4">
-          <section className="space-y-3 overflow-y-auto pr-1">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Experience setup</p>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Select Experience
-                <select
-                  className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-                  value={selectedExperience}
-                  onChange={(e) => switchExperience(e.target.value)}
-                >
-                  <option value="teams-copilot">Co-Pilot in MS Teams</option>
-                  <option value="claude">Claude</option>
-                </select>
-              </label>
-              <label className="mt-4 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Apply Scenario Preset
-                <select
-                  className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-                  defaultValue=""
-                  onChange={(e) => applyPreset(e.target.value)}
-                >
-                  <option value="" disabled>Select a preset...</option>
-                  {PRESETS.map((preset) => (
-                    <option key={preset.id} value={preset.id}>{preset.name}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
+      <div className="flex min-h-0 flex-1">
+        <aside className="flex w-[440px] min-w-[380px] flex-col border-r border-slate-200 bg-white">
+          <div className="border-b border-slate-100 px-6 py-5">
+            <h1 className="text-2xl font-semibold text-slate-900">Configuration</h1>
+            <h2 className="mt-2 text-sm font-semibold text-slate-700">Let's set up your demo</h2>
+            <p className="mt-1 text-sm leading-relaxed text-slate-500">
+              Customize your experience below. The preview updates in real time as you go, and you can
+              change anything later.
+            </p>
+          </div>
 
-            <BrandingPanel brand={manifest.brand} assistant={manifest.assistant} onBrandChange={updateBrand} onAssistantChange={updateAssistant} />
-            <ScriptTimelineEditor script={manifest.script} onChange={updateScript} />
-          </section>
-
-          <section className="flex flex-col">
-            <div className="mb-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Live preview</p>
-              <p className="mt-0.5 text-xs text-slate-600">See your changes in real-time.</p>
-              <div className="mt-3 flex items-center gap-2">
+          <div className="flex gap-1 border-b border-slate-200 px-4 pt-3">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.id
+              return (
                 <button
-                  disabled={isRunning}
-                  className="rounded-lg bg-[#0F4C81] px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-50"
-                  onClick={runPreview}
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative rounded-t-lg px-4 py-2 text-sm font-medium transition ${
+                    isActive ? 'text-[#0B3D72]' : 'text-slate-500 hover:text-slate-700'
+                  }`}
                 >
-                  {isRunning ? 'Running...' : 'Run Preview'}
+                  {tab.label}
+                  {isActive && (
+                    <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full" style={{ background: BRAND_BLUE }} />
+                  )}
                 </button>
-                <button
-                  disabled={validationErrors.length > 0}
-                  className="rounded-lg bg-[#1D9BF0] px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-50"
-                  onClick={downloadHtml}
-                >
-                  Download Custom Experience
-                </button>
-              </div>
-            </div>
+              )
+            })}
+          </div>
 
+          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
+            {activeTab === 'demo' && (
+              <>
+                <Section title="Scenario preset" subtitle="Start from a proven FINs headless narrative.">
+                  <select
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#1F7AE0]"
+                    defaultValue=""
+                    onChange={(e) => applyPreset(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Select a preset...
+                    </option>
+                    {PRESETS.map((preset) => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.name}
+                      </option>
+                    ))}
+                  </select>
+                </Section>
+
+                <BrandingPanel
+                  brand={manifest.brand}
+                  assistant={manifest.assistant}
+                  onBrandChange={updateBrand}
+                  onAssistantChange={updateAssistant}
+                />
+              </>
+            )}
+
+            {activeTab === 'talk' && (
+              <Section title="Assistant greeting" subtitle="The opening message your assistant shows.">
+                <textarea
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#1F7AE0]"
+                  rows={4}
+                  value={manifest.assistant.greeting}
+                  onChange={(e) => updateAssistant('greeting', e.target.value)}
+                />
+              </Section>
+            )}
+
+            {activeTab === 'copilot' && (
+              <ScriptTimelineEditor script={manifest.script} onChange={updateScript} />
+            )}
+          </div>
+        </aside>
+
+        <main className="flex min-h-0 flex-1 flex-col bg-[#eef2f7]">
+          <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Live Preview</h2>
+              <p className="text-sm text-slate-500">See your changes in real-time</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={isRunning}
+                onClick={runPreview}
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition disabled:opacity-50"
+                style={{ background: BRAND_NAVY }}
+              >
+                {isRunning ? 'Running...' : 'Restart Demo'}
+              </button>
+              <button
+                disabled={validationErrors.length > 0}
+                onClick={downloadHtml}
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition disabled:opacity-50"
+                style={{ background: BRAND_BLUE }}
+              >
+                Download Custom Experience
+              </button>
+            </div>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto p-6">
             {(errors.length > 0 || validationErrors.length > 0) && (
-              <div className="mb-3 rounded-lg border border-amber-300 bg-amber-50 p-2 text-xs text-amber-900">
+              <div className="mx-auto mb-4 max-w-3xl rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
                 {(errors.length > 0 ? errors : validationErrors).map((error) => (
                   <div key={error}>{error}</div>
                 ))}
               </div>
             )}
 
-            <div className="min-h-0 flex-1">
+            <div className="mx-auto h-full max-w-3xl">
               <Frame brand={manifest.brand} assistant={manifest.assistant} renderedSteps={renderedSteps} />
             </div>
-          </section>
-        </div>
+          </div>
+
+          <footer className="border-t border-slate-200 bg-white px-6 py-2 text-center text-xs text-slate-400">
+            © Cumulus Financial · Built for Salesforce Solution Engineers
+          </footer>
+        </main>
       </div>
     </div>
+  )
+}
+
+function Section({ title, subtitle, children }) {
+  return (
+    <section>
+      <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+      {subtitle && <p className="mb-2 mt-0.5 text-xs text-slate-500">{subtitle}</p>}
+      <div className="mt-2">{children}</div>
+    </section>
   )
 }

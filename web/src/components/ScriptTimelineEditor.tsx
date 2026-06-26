@@ -31,11 +31,12 @@ export default function ScriptTimelineEditor({ script, onChange }) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700">Script Timeline</h3>
-        <button className="rounded-lg bg-[#0F4C81] px-3 py-1.5 text-xs font-semibold text-white shadow" onClick={addStep}>+ Add step</button>
+    <section>
+      <div className="mb-1 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-slate-900">Script timeline</h3>
+        <button className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-sm" style={{ background: '#0B3D72' }} onClick={addStep}>+ Add step</button>
       </div>
+      <p className="mb-3 text-xs text-slate-500">Ordered prompts, responses, and tool actions. Plays back exactly as authored.</p>
       <div className="space-y-3">
         {script.map((step, index) => (
           <div key={step.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
