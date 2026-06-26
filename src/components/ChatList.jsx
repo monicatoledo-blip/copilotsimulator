@@ -48,7 +48,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         {filterPills.map((pill) => (
           <button
             key={pill}
-            className="px-[clamp(12px,1vw,20px)] py-[clamp(5px,0.4vw,10px)] text-[clamp(12px,0.85vw,15px)] text-[#424242] border border-[#b8b8b8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0"
+            className="px-4 py-2 text-[13px] text-[#424242] border border-[#b8b8b8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0 leading-none"
           >
             {pill}
           </button>
