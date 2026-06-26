@@ -66,7 +66,7 @@ export default function AgentChat({ selectedAgent }) {
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Agent header */}
-      <div className="bg-white border-b border-[#e0e0e0] px-6 h-[52px] flex items-center">
+      <div className="bg-white border-b border-[#e0e0e0] px-[clamp(16px,2vw,32px)] h-[clamp(48px,3.5vw,60px)] flex items-center">
         <div className="flex items-center gap-3">
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-semibold"
@@ -74,7 +74,7 @@ export default function AgentChat({ selectedAgent }) {
           >
             {agent.abbr}
           </div>
-          <h3 className="font-semibold text-[15px] text-[#242424]">{agent.name}</h3>
+          <h3 className="font-semibold text-[clamp(14px,1vw,17px)] text-[#242424]">{agent.name}</h3>
           <span className="text-[12px] text-[#2D9F4F] flex items-center gap-1.5 ml-2">
             <span className="w-1.5 h-1.5 bg-[#2D9F4F] rounded-full" />
             {agent.status}
@@ -83,7 +83,7 @@ export default function AgentChat({ selectedAgent }) {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 bg-[#fafafa]">
+      <div className="flex-1 overflow-y-auto px-[clamp(16px,3vw,48px)] py-[clamp(16px,2vw,32px)] bg-[#fafafa]">
         {messages.length === 0 && !isTyping && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div
@@ -107,7 +107,7 @@ export default function AgentChat({ selectedAgent }) {
                   </div>
                 </div>
                 <div className="bg-[#E8EBFA] rounded-xl rounded-tr-sm px-4 py-2.5">
-                  <p className="text-[14px] text-[#242424] leading-[1.6]">{msg.text}</p>
+                  <p className="text-[clamp(13px,1vw,16px)] text-[#242424] leading-[1.6]">{msg.text}</p>
                 </div>
               </div>
             ) : (
@@ -125,7 +125,7 @@ export default function AgentChat({ selectedAgent }) {
                 </div>
                 <div className="ml-[38px]">
                   <div className="bg-white rounded-xl rounded-tl-sm px-4 py-2.5 border border-[#e0e0e0] shadow-sm">
-                    <p className="text-[14px] text-[#242424] leading-[1.6]"
+                    <p className="text-[clamp(13px,1vw,16px)] text-[#242424] leading-[1.6]"
                        dangerouslySetInnerHTML={{ __html: msg.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}
                     />
                   </div>
@@ -141,7 +141,7 @@ export default function AgentChat({ selectedAgent }) {
       </div>
 
       {/* Input area */}
-      <div className="px-6 pb-4 pt-2 bg-[#fafafa]">
+      <div className="px-[clamp(16px,3vw,48px)] pb-4 pt-2 bg-[#fafafa]">
         <div className="bg-white border border-[#c8c8c8] rounded-lg overflow-hidden focus-within:border-[#6264A7] shadow-sm">
           <div className="px-4 py-3">
             <input
@@ -150,7 +150,7 @@ export default function AgentChat({ selectedAgent }) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={`Ask ${agent.name} a question`}
-              className="w-full text-[14px] text-[#242424] placeholder-[#999] outline-none message-input"
+              className="w-full text-[clamp(13px,1vw,16px)] text-[#242424] placeholder-[#999] outline-none message-input"
               disabled={isTyping}
             />
           </div>

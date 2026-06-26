@@ -82,7 +82,7 @@ const bottomItems = [
 
 export default function Sidebar({ activeView, setActiveView }) {
   return (
-    <nav className="flex flex-col items-center w-[68px] min-w-[68px] bg-[#f3f2f1] border-r border-[#e0e0e0] pt-2 pb-2 select-none">
+    <nav className="flex flex-col items-center w-[clamp(60px,4.5vw,80px)] min-w-[60px] bg-[#f3f2f1] border-r border-[#e0e0e0] pt-2 pb-2 select-none">
       {/* Top items */}
       <div className="flex flex-col items-center gap-1 flex-1">
         {sidebarItems.map((item) => {
@@ -93,7 +93,7 @@ export default function Sidebar({ activeView, setActiveView }) {
               key={item.id}
               onClick={() => isClickable && setActiveView(item.id)}
               className={`
-                relative flex flex-col items-center justify-center w-[56px] h-[52px] rounded-md
+                relative flex flex-col items-center justify-center w-[clamp(48px,3.5vw,64px)] h-[clamp(44px,3.5vw,60px)] rounded-md
                 transition-colors duration-100
                 ${isActive
                   ? 'text-[#6264A7] font-semibold'
@@ -124,7 +124,7 @@ export default function Sidebar({ activeView, setActiveView }) {
         {bottomItems.map((item) => (
           <button
             key={item.id}
-            className="relative flex flex-col items-center justify-center w-[56px] h-[52px] rounded-md text-[#616161] hover:text-[#242424] hover:bg-[#e8e8e8] transition-colors duration-100 cursor-default"
+            className="relative flex flex-col items-center justify-center w-[clamp(48px,3.5vw,64px)] h-[clamp(44px,3.5vw,60px)] rounded-md text-[#616161] hover:text-[#242424] hover:bg-[#e8e8e8] transition-colors duration-100 cursor-default"
           >
             <span className="w-6 h-6 flex items-center justify-center">
               {item.icon}

@@ -13,10 +13,10 @@ const filterPills = ['Unread', 'Unmuted', 'Chats', 'Channels']
 
 export default function ChatList({ selectedConversation, setSelectedConversation }) {
   return (
-    <div className="w-[300px] min-w-[300px] border-r border-[#e0e0e0] bg-white flex flex-col">
+    <div className="w-[clamp(280px,22vw,420px)] min-w-[280px] border-r border-[#e0e0e0] bg-white flex flex-col">
       {/* Header row: Chat + action icons */}
       <div className="flex items-center justify-between px-5 pt-4 pb-2">
-        <h2 className="text-[20px] font-semibold text-[#242424]">Chat</h2>
+        <h2 className="text-[clamp(18px,1.4vw,24px)] font-semibold text-[#242424]">Chat</h2>
         <div className="flex items-center gap-1">
           {/* Three dot menu */}
           <button className="w-7 h-7 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">

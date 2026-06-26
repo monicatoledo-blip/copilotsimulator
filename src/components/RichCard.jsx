@@ -14,7 +14,7 @@ function AnalyticsInsightCard() {
   ]
 
   return (
-    <div className="mt-3 bg-white rounded-lg border border-[#e0e0e0] max-w-[560px] overflow-hidden shadow-sm">
+    <div className="mt-3 bg-white rounded-lg border border-[#e0e0e0] max-w-[clamp(400px,40vw,640px)] overflow-hidden shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-[#f0f0f0]">
         <div>

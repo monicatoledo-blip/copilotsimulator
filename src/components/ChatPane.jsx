@@ -17,7 +17,7 @@ export default function ChatPane({ selectedConversation }) {
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Chat header bar */}
-      <div className="flex items-center justify-between px-6 bg-white border-b border-[#e0e0e0] h-[52px]">
+      <div className="flex items-center justify-between px-[clamp(16px,2vw,32px)] bg-white border-b border-[#e0e0e0] h-[clamp(48px,3.5vw,60px)]">
         <div className="flex items-center gap-3">
           {conv.avatarImg ? (
             <SalesforceIcon size={28} />
@@ -29,10 +29,10 @@ export default function ChatPane({ selectedConversation }) {
               {conv.avatar}
             </div>
           )}
-          <span className="font-semibold text-[15px] text-[#242424]">{conv.name}</span>
+          <span className="font-semibold text-[clamp(14px,1vw,17px)] text-[#242424]">{conv.name}</span>
 
           {/* Tabs */}
-          <div className="flex items-center ml-4 gap-0 h-[52px]">
+          <div className="flex items-center ml-4 gap-0 h-full">
             <button className="h-full px-4 text-[13px] text-[#6264A7] font-medium border-b-2 border-[#6264A7] -mb-[1px]">Chat</button>
             <button className="h-full px-4 text-[13px] text-[#616161] hover:text-[#242424] border-b-2 border-transparent -mb-[1px]">Shared</button>
             <button className="h-full px-3 text-[#616161] hover:text-[#242424] border-b-2 border-transparent -mb-[1px] flex items-center">
@@ -80,7 +80,7 @@ export default function ChatPane({ selectedConversation }) {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 bg-[#fafafa]">
+      <div className="flex-1 overflow-y-auto px-[clamp(16px,3vw,48px)] py-[clamp(16px,2vw,32px)] bg-[#fafafa]">
         {conv.messages.map((msg, idx) => (
           <div key={idx} className="mb-5">
             <div className="flex items-start gap-3">
@@ -88,7 +88,7 @@ export default function ChatPane({ selectedConversation }) {
                 <SalesforceIcon size={36} />
               ) : (
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-[11px] font-semibold shrink-0 ${msg.sender === 'You' ? 'bg-[#7B83EB]' : ''}`}
+                  className={`w-[clamp(32px,2.5vw,44px)] h-[clamp(32px,2.5vw,44px)] rounded-full flex items-center justify-center text-white text-[clamp(10px,0.8vw,13px)] font-semibold shrink-0 ${msg.sender === 'You' ? 'bg-[#7B83EB]' : ''}`}
                   style={msg.sender !== 'You' ? { backgroundColor: conv.avatarColor } : {}}
                 >
                   {msg.sender === 'You' ? 'MB' : conv.avatar}
@@ -96,10 +96,10 @@ export default function ChatPane({ selectedConversation }) {
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2.5 mb-1">
-                  <span className="font-semibold text-[14px] text-[#242424]">{msg.sender}</span>
-                  <span className="text-[12px] text-[#616161]">{msg.time}</span>
+                  <span className="font-semibold text-[clamp(13px,1vw,16px)] text-[#242424]">{msg.sender}</span>
+                  <span className="text-[clamp(11px,0.8vw,14px)] text-[#616161]">{msg.time}</span>
                 </div>
-                <p className="text-[14px] text-[#242424] leading-[1.6]">{msg.text}</p>
+                <p className="text-[clamp(13px,1vw,16px)] text-[#242424] leading-[1.6]">{msg.text}</p>
                 {msg.richCard && <RichCard type={msg.richCard} />}
               </div>
             </div>
@@ -108,13 +108,13 @@ export default function ChatPane({ selectedConversation }) {
       </div>
 
       {/* Message input bar */}
-      <div className="px-6 pb-4 pt-2 bg-[#fafafa]">
+      <div className="px-[clamp(16px,3vw,48px)] pb-4 pt-2 bg-[#fafafa]">
         <div className="bg-white border border-[#c8c8c8] rounded-lg overflow-hidden focus-within:border-[#6264A7] shadow-sm">
           <div className="px-4 py-3">
             <input
               type="text"
               placeholder="Type a message"
-              className="w-full text-[14px] text-[#242424] placeholder-[#999] outline-none message-input"
+              className="w-full text-[clamp(13px,1vw,16px)] text-[#242424] placeholder-[#999] outline-none message-input"
               readOnly
             />
           </div>
