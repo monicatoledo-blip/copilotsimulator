@@ -1,0 +1,29 @@
+{
+  "id": "fins-headless-journey-build",
+  "name": "Journey Build Narrative",
+  "description": "Create DEs, journeys, and visualization outputs with deterministic replay.",
+  "script": [
+    {
+      "id": "j1",
+      "type": "userPrompt",
+      "text": "Create DEs and a journey for high-intent checking prospects."
+    },
+    {
+      "id": "j2",
+      "type": "toolAction",
+      "title": "Data Extensions Created",
+      "text": "DE_Prospects_Intent and DE_OfferEligibility generated with mapped field sets."
+    },
+    {
+      "id": "j3",
+      "type": "assistantResponse",
+      "text": "I built a three-step journey: qualification, personalized offer, and follow-up optimization."
+    },
+    {
+      "id": "j4",
+      "type": "toolAction",
+      "title": "Visualization Generated",
+      "text": "Projected conversion lift: 18%. Time-to-launch reduced from 14 days to 4 days."
+    }
+  ]
+}

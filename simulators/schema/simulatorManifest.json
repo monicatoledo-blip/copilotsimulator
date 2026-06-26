@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Simulator Manifest",
+  "type": "object",
+  "required": ["id", "experienceType", "brand", "assistant", "script"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "experienceType": { "enum": ["teams-copilot", "claude"] },
+    "brand": {
+      "type": "object",
+      "required": ["name", "primaryColor", "accentColor", "headlineColor"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "primaryColor": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6})$" },
+        "accentColor": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6})$" },
+        "headlineColor": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6})$" },
+        "logoUrl": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "assistant": {
+      "type": "object",
+      "required": ["name", "avatarUrl", "greeting"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "avatarUrl": { "type": "string" },
+        "greeting": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "script": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "text"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["userPrompt", "assistantResponse", "toolAction"] },
+          "text": { "type": "string", "minLength": 1 },
+          "title": { "type": "string" },
+          "delayMs": { "type": "number", "minimum": 0 },
+          "typingState": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

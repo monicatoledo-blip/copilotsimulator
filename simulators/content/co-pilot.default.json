@@ -1,0 +1,36 @@
+{
+  "id": "fins-headless-teams-default",
+  "experienceType": "teams-copilot",
+  "brand": {
+    "name": "Cumulus Financial",
+    "primaryColor": "#1E4ED8",
+    "accentColor": "#60A5FA",
+    "headlineColor": "#0F172A",
+    "logoUrl": ""
+  },
+  "assistant": {
+    "name": "Penny",
+    "avatarUrl": "",
+    "greeting": "Hi Morgan, I can audit your environment and draft your next campaign setup."
+  },
+  "script": [
+    {
+      "id": "s1",
+      "type": "userPrompt",
+      "text": "Audit our current environment and explain what headless unlocks for our team."
+    },
+    {
+      "id": "s2",
+      "type": "assistantResponse",
+      "typingState": true,
+      "delayMs": 700,
+      "text": "I found disconnected journeys, duplicate segment logic, and channel silos. A headless model lets us orchestrate audiences and experiences from one composable layer."
+    },
+    {
+      "id": "s3",
+      "type": "toolAction",
+      "title": "Environment Audit Complete",
+      "text": "17 audience definitions consolidated, 6 overlapping journeys flagged."
+    }
+  ]
+}

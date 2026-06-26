@@ -1,0 +1,28 @@
+{
+  "id": "fins-headless-audit",
+  "name": "Headless Audit Narrative",
+  "description": "Audit current marketing ops and recommend headless architecture wins.",
+  "script": [
+    {
+      "id": "a1",
+      "type": "userPrompt",
+      "text": "Give me a fast audit of our current campaign stack."
+    },
+    {
+      "id": "a2",
+      "type": "assistantResponse",
+      "text": "You have duplicated audiences across email and paid media, disconnected DE audiences, and no shared journey orchestration layer."
+    },
+    {
+      "id": "a3",
+      "type": "toolAction",
+      "title": "Audit Findings",
+      "text": "Opportunity: unify audience graph, orchestration logic, and analytics dashboards in one headless layer."
+    },
+    {
+      "id": "a4",
+      "type": "assistantResponse",
+      "text": "With this approach, your team can launch tailored experiences in days instead of weeks."
+    }
+  ]
+}

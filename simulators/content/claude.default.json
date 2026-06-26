@@ -1,0 +1,36 @@
+{
+  "id": "fins-headless-claude-default",
+  "experienceType": "claude",
+  "brand": {
+    "name": "Cumulus Financial",
+    "primaryColor": "#0F766E",
+    "accentColor": "#5EEAD4",
+    "headlineColor": "#0F172A",
+    "logoUrl": ""
+  },
+  "assistant": {
+    "name": "Claude",
+    "avatarUrl": "",
+    "greeting": "Hello Morgan, ready to map your data to campaigns?"
+  },
+  "script": [
+    {
+      "id": "c1",
+      "type": "userPrompt",
+      "text": "Build a decisioning plan for high-value checking customers."
+    },
+    {
+      "id": "c2",
+      "type": "assistantResponse",
+      "typingState": true,
+      "delayMs": 650,
+      "text": "I can create a segment strategy, generate two DE journeys, and produce an executive summary visualization."
+    },
+    {
+      "id": "c3",
+      "type": "toolAction",
+      "title": "Journey Blueprint Generated",
+      "text": "Journey A: onboarding nurture. Journey B: savings uplift with cross-channel triggers."
+    }
+  ]
+}
