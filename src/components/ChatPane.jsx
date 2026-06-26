@@ -1,7 +1,7 @@
 import { conversations } from '../data/conversations'
 import RichCard from './RichCard'
 
-function SalesforceIcon({ size = 28 }) {
+function SalesforceIcon({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 36 36" className="shrink-0">
       <circle cx="18" cy="18" r="18" fill="#00A1E0"/>
@@ -17,8 +17,8 @@ export default function ChatPane({ selectedConversation }) {
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Chat header bar */}
-      <div className="flex items-center justify-between px-4 py-0 bg-white border-b border-[#e5e5e5] h-[48px]">
-        <div className="flex items-center gap-2.5">
+      <div className="flex items-center justify-between px-6 bg-white border-b border-[#e0e0e0] h-[52px]">
+        <div className="flex items-center gap-3">
           {conv.avatarImg ? (
             <SalesforceIcon size={28} />
           ) : (
@@ -29,13 +29,13 @@ export default function ChatPane({ selectedConversation }) {
               {conv.avatar}
             </div>
           )}
-          <span className="font-semibold text-[14px] text-[#242424]">{conv.name}</span>
+          <span className="font-semibold text-[15px] text-[#242424]">{conv.name}</span>
 
           {/* Tabs */}
-          <div className="flex items-center ml-3 gap-0">
-            <button className="px-3 py-3 text-[13px] text-[#6264A7] font-medium border-b-2 border-[#6264A7]">Chat</button>
-            <button className="px-3 py-3 text-[13px] text-[#616161] hover:text-[#242424] border-b-2 border-transparent">Shared</button>
-            <button className="px-2 py-3 text-[13px] text-[#616161] hover:text-[#242424] border-b-2 border-transparent flex items-center">
+          <div className="flex items-center ml-4 gap-0 h-[52px]">
+            <button className="h-full px-4 text-[13px] text-[#6264A7] font-medium border-b-2 border-[#6264A7] -mb-[1px]">Chat</button>
+            <button className="h-full px-4 text-[13px] text-[#616161] hover:text-[#242424] border-b-2 border-transparent -mb-[1px]">Shared</button>
+            <button className="h-full px-3 text-[#616161] hover:text-[#242424] border-b-2 border-transparent -mb-[1px] flex items-center">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
                 <path d="M7 3v8M3 7h8"/>
               </svg>
@@ -44,38 +44,33 @@ export default function ChatPane({ selectedConversation }) {
         </div>
 
         {/* Right action buttons */}
-        <div className="flex items-center gap-0">
-          {/* Grid/Tile view */}
+        <div className="flex items-center gap-0.5">
           <ActionButton>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" opacity="0.7">
               <rect x="1" y="1" width="6" height="6" rx="1"/>
               <rect x="9" y="1" width="6" height="6" rx="1"/>
               <rect x="1" y="9" width="6" height="6" rx="1"/>
               <rect x="9" y="9" width="6" height="6" rx="1"/>
             </svg>
           </ActionButton>
-          {/* Video */}
           <ActionButton>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" opacity="0.7">
               <path d="M2 4a1.5 1.5 0 011.5-1.5h6A1.5 1.5 0 0111 4v6a1.5 1.5 0 01-1.5 1.5h-6A1.5 1.5 0 012 10V4zm10.5.8l2-1.3v7l-2-1.3V4.8z"/>
             </svg>
           </ActionButton>
-          {/* Search */}
           <ActionButton>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6.5 1a5.5 5.5 0 014.383 8.823l3.896 3.9a.75.75 0 01-1.06 1.06l-3.9-3.896A5.5 5.5 0 116.5 1zm0 1.5a4 4 0 100 8 4 4 0 000-8z" fill="currentColor"/>
+              <path d="M6.5 1a5.5 5.5 0 014.383 8.823l3.896 3.9a.75.75 0 01-1.06 1.06l-3.9-3.896A5.5 5.5 0 116.5 1zm0 1.5a4 4 0 100 8 4 4 0 000-8z" fill="currentColor" opacity="0.7"/>
             </svg>
           </ActionButton>
-          {/* Panel */}
           <ActionButton>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="1.5" y="2" width="13" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-              <line x1="10" y1="2" x2="10" y2="14" stroke="currentColor" strokeWidth="1.2"/>
+              <rect x="1.5" y="2" width="13" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.2" opacity="0.7"/>
+              <line x1="10" y1="2" x2="10" y2="14" stroke="currentColor" strokeWidth="1.2" opacity="0.7"/>
             </svg>
           </ActionButton>
-          {/* More */}
           <ActionButton>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" opacity="0.7">
               <circle cx="3" cy="8" r="1"/>
               <circle cx="8" cy="8" r="1"/>
               <circle cx="13" cy="8" r="1"/>
@@ -85,26 +80,26 @@ export default function ChatPane({ selectedConversation }) {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 bg-[#f5f5f5]">
+      <div className="flex-1 overflow-y-auto px-6 py-5 bg-[#fafafa]">
         {conv.messages.map((msg, idx) => (
-          <div key={idx} className="mb-4">
-            <div className="flex items-start gap-2.5">
+          <div key={idx} className="mb-5">
+            <div className="flex items-start gap-3">
               {msg.isBot ? (
-                <SalesforceIcon size={32} />
+                <SalesforceIcon size={36} />
               ) : (
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-semibold shrink-0 mt-0.5 ${msg.sender === 'You' ? 'bg-[#7B83EB]' : ''}`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-[11px] font-semibold shrink-0 ${msg.sender === 'You' ? 'bg-[#7B83EB]' : ''}`}
                   style={msg.sender !== 'You' ? { backgroundColor: conv.avatarColor } : {}}
                 >
                   {msg.sender === 'You' ? 'MB' : conv.avatar}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2 mb-0.5">
-                  <span className="font-semibold text-[13px] text-[#242424]">{msg.sender}</span>
+                <div className="flex items-baseline gap-2.5 mb-1">
+                  <span className="font-semibold text-[14px] text-[#242424]">{msg.sender}</span>
                   <span className="text-[12px] text-[#616161]">{msg.time}</span>
                 </div>
-                <p className="text-[13px] text-[#242424] leading-[1.5]">{msg.text}</p>
+                <p className="text-[14px] text-[#242424] leading-[1.6]">{msg.text}</p>
                 {msg.richCard && <RichCard type={msg.richCard} />}
               </div>
             </div>
@@ -113,47 +108,47 @@ export default function ChatPane({ selectedConversation }) {
       </div>
 
       {/* Message input bar */}
-      <div className="px-4 pb-3 pt-1 bg-[#f5f5f5]">
-        <div className="bg-white border border-[#d1d1d1] rounded-lg overflow-hidden focus-within:border-[#6264A7]">
-          <div className="px-3 py-2.5">
+      <div className="px-6 pb-4 pt-2 bg-[#fafafa]">
+        <div className="bg-white border border-[#c8c8c8] rounded-lg overflow-hidden focus-within:border-[#6264A7] shadow-sm">
+          <div className="px-4 py-3">
             <input
               type="text"
               placeholder="Type a message"
-              className="w-full text-[13px] text-[#242424] placeholder-[#999] outline-none message-input"
+              className="w-full text-[14px] text-[#242424] placeholder-[#999] outline-none message-input"
               readOnly
             />
           </div>
-          <div className="flex items-center justify-between px-2 pb-2">
-            <div className="flex items-center gap-0">
+          <div className="flex items-center justify-between px-3 pb-2.5">
+            <div className="flex items-center gap-0.5">
               <InputButton>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8.5l5-5a2.83 2.83 0 114 4l-5 5a1.41 1.41 0 01-2-2l5-5"/>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9.5l5.5-5.5a3 3 0 114.2 4.2l-5.5 5.5a1.5 1.5 0 01-2.1-2.1l5.5-5.5"/>
                 </svg>
               </InputButton>
               <InputButton>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
-                  <circle cx="6" cy="7" r="0.8" fill="currentColor"/>
-                  <circle cx="10" cy="7" r="0.8" fill="currentColor"/>
-                  <path d="M5.5 10a2.5 2.5 0 005 0" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.2"/>
+                  <circle cx="7" cy="8" r="0.8" fill="currentColor"/>
+                  <circle cx="11" cy="8" r="0.8" fill="currentColor"/>
+                  <path d="M6 11a3 3 0 006 0" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
                 </svg>
               </InputButton>
               <InputButton>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-                  <path d="M6 3h4a5 5 0 010 10H6a5 5 0 010-10z"/>
-                  <path d="M6 6v4M10 6v4"/>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+                  <path d="M6.5 3h5a5.5 5.5 0 010 11h-5a5.5 5.5 0 010-11z"/>
+                  <path d="M6.5 6.5v4M11.5 6.5v4"/>
                 </svg>
               </InputButton>
               <InputButton>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 3v12M3 9h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               </InputButton>
             </div>
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-0.5">
               <InputButton>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M2.5 2l12 6-12 6V9.5L9 8 2.5 6.5V2z"/>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                  <path d="M3 3l13 6.5-13 6.5V10.5L10 9.5 3 8.5V3z"/>
                 </svg>
               </InputButton>
             </div>
@@ -166,7 +161,7 @@ export default function ChatPane({ selectedConversation }) {
 
 function ActionButton({ children }) {
   return (
-    <button className="p-2 text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded transition-colors">
+    <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f0f0f0] rounded transition-colors">
       {children}
     </button>
   )
@@ -174,7 +169,7 @@ function ActionButton({ children }) {
 
 function InputButton({ children }) {
   return (
-    <button className="p-1.5 text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded transition-colors">
+    <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded transition-colors">
       {children}
     </button>
   )

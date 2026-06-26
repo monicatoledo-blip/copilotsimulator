@@ -19,7 +19,6 @@ export default function AgentChat({ selectedAgent }) {
     scrollToBottom()
   }, [messages, isTyping])
 
-  // Reset messages when agent changes
   useEffect(() => {
     setMessages([])
     setInputValue('')
@@ -32,19 +31,16 @@ export default function AgentChat({ selectedAgent }) {
 
     const beat = matchBeat(messageText)
 
-    // Handle reset
     if (beat.id === 'reset') {
       setMessages([])
       setInputValue('')
       return
     }
 
-    // Add user message
     const userMsg = { sender: 'user', text: messageText, time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }
     setMessages(prev => [...prev, userMsg])
     setInputValue('')
 
-    // Show typing indicator then response
     setIsTyping(true)
     setTimeout(() => {
       setIsTyping(false)
@@ -65,23 +61,21 @@ export default function AgentChat({ selectedAgent }) {
     }
   }
 
-  if (!agent) return <div className="flex-1 bg-[#f5f5f5]" />
+  if (!agent) return <div className="flex-1 bg-[#fafafa]" />
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f5f5f5]">
+    <div className="flex-1 flex flex-col bg-white">
       {/* Agent header */}
-      <div className="bg-white border-b border-[#e5e5e5] px-5 py-3 h-[48px] flex items-center">
-        <div className="flex items-center gap-2.5">
+      <div className="bg-white border-b border-[#e0e0e0] px-6 h-[52px] flex items-center">
+        <div className="flex items-center gap-3">
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-semibold"
             style={{ backgroundColor: agent.color }}
           >
             {agent.abbr}
           </div>
-          <div>
-            <h3 className="font-semibold text-[14px] text-[#242424] leading-tight">{agent.name}</h3>
-          </div>
-          <span className="text-[11px] text-[#2D9F4F] flex items-center gap-1 ml-2">
+          <h3 className="font-semibold text-[15px] text-[#242424]">{agent.name}</h3>
+          <span className="text-[12px] text-[#2D9F4F] flex items-center gap-1.5 ml-2">
             <span className="w-1.5 h-1.5 bg-[#2D9F4F] rounded-full" />
             {agent.status}
           </span>
@@ -89,38 +83,38 @@ export default function AgentChat({ selectedAgent }) {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-5 py-4">
+      <div className="flex-1 overflow-y-auto px-6 py-5 bg-[#fafafa]">
         {messages.length === 0 && !isTyping && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg font-semibold mb-3"
+              className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-semibold mb-4"
               style={{ backgroundColor: agent.color }}
             >
               {agent.abbr}
             </div>
-            <p className="text-[13px] text-[#616161] mb-4">Ask {agent.name} a question</p>
+            <p className="text-[14px] text-[#616161]">Ask {agent.name} a question</p>
           </div>
         )}
 
         {messages.map((msg, idx) => (
-          <div key={idx} className={`mb-4 ${msg.sender === 'user' ? 'flex justify-end' : ''}`}>
+          <div key={idx} className={`mb-5 ${msg.sender === 'user' ? 'flex justify-end' : ''}`}>
             {msg.sender === 'user' ? (
-              <div className="max-w-[80%]">
-                <div className="flex items-center justify-end gap-2 mb-0.5">
+              <div className="max-w-[75%]">
+                <div className="flex items-center justify-end gap-2.5 mb-1">
                   <span className="text-[12px] text-[#616161]">You · {msg.time}</span>
-                  <div className="w-6 h-6 rounded-full bg-[#7B83EB] flex items-center justify-center text-white text-[9px] font-semibold">
+                  <div className="w-7 h-7 rounded-full bg-[#7B83EB] flex items-center justify-center text-white text-[9px] font-semibold">
                     MB
                   </div>
                 </div>
-                <div className="bg-[#E8EBFA] rounded-lg rounded-tr-sm px-3.5 py-2">
-                  <p className="text-[13px] text-[#242424] leading-[1.5]">{msg.text}</p>
+                <div className="bg-[#E8EBFA] rounded-xl rounded-tr-sm px-4 py-2.5">
+                  <p className="text-[14px] text-[#242424] leading-[1.6]">{msg.text}</p>
                 </div>
               </div>
             ) : (
               <div className="max-w-[85%]">
-                <div className="flex items-center gap-2 mb-0.5">
+                <div className="flex items-center gap-2.5 mb-1">
                   <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[9px] font-semibold"
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[9px] font-semibold"
                     style={{ backgroundColor: agent.color }}
                   >
                     {agent.abbr}
@@ -129,9 +123,9 @@ export default function AgentChat({ selectedAgent }) {
                     <span className="font-semibold text-[#242424]">{agent.name}</span> · {msg.time}
                   </span>
                 </div>
-                <div className="ml-8">
-                  <div className="bg-white rounded-lg rounded-tl-sm px-3.5 py-2 border border-[#e5e5e5]">
-                    <p className="text-[13px] text-[#242424] leading-[1.5]"
+                <div className="ml-[38px]">
+                  <div className="bg-white rounded-xl rounded-tl-sm px-4 py-2.5 border border-[#e0e0e0] shadow-sm">
+                    <p className="text-[14px] text-[#242424] leading-[1.6]"
                        dangerouslySetInnerHTML={{ __html: msg.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}
                     />
                   </div>
@@ -147,47 +141,47 @@ export default function AgentChat({ selectedAgent }) {
       </div>
 
       {/* Input area */}
-      <div className="px-4 pb-3 pt-1">
-        <div className="bg-white border border-[#d1d1d1] rounded-lg overflow-hidden focus-within:border-[#6264A7]">
-          <div className="px-3 py-2.5">
+      <div className="px-6 pb-4 pt-2 bg-[#fafafa]">
+        <div className="bg-white border border-[#c8c8c8] rounded-lg overflow-hidden focus-within:border-[#6264A7] shadow-sm">
+          <div className="px-4 py-3">
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={`Ask ${agent.name} a question`}
-              className="w-full text-[13px] text-[#242424] placeholder-[#999] outline-none message-input"
+              className="w-full text-[14px] text-[#242424] placeholder-[#999] outline-none message-input"
               disabled={isTyping}
             />
           </div>
-          <div className="flex items-center justify-between px-2 pb-2">
-            <div className="flex items-center gap-0">
-              <button className="p-1.5 text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8.5l5-5a2.83 2.83 0 114 4l-5 5a1.41 1.41 0 01-2-2l5-5"/>
+          <div className="flex items-center justify-between px-3 pb-2.5">
+            <div className="flex items-center gap-0.5">
+              <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded transition-colors">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9.5l5.5-5.5a3 3 0 114.2 4.2l-5.5 5.5a1.5 1.5 0 01-2.1-2.1l5.5-5.5"/>
                 </svg>
               </button>
-              <button className="p-1.5 text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
-                  <circle cx="6" cy="7" r="0.8" fill="currentColor"/>
-                  <circle cx="10" cy="7" r="0.8" fill="currentColor"/>
-                  <path d="M5.5 10a2.5 2.5 0 005 0" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+              <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded transition-colors">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.2"/>
+                  <circle cx="7" cy="8" r="0.8" fill="currentColor"/>
+                  <circle cx="11" cy="8" r="0.8" fill="currentColor"/>
+                  <path d="M6 11a3 3 0 006 0" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
                 </svg>
               </button>
-              <button className="p-1.5 text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded transition-colors">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 3v12M3 9h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               </button>
             </div>
             <button
               onClick={() => handleSend()}
               disabled={!inputValue.trim() || isTyping}
-              className="p-1.5 text-[#6264A7] hover:bg-[#E8EBFA] rounded disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+              className="w-8 h-8 flex items-center justify-center text-[#6264A7] hover:bg-[#E8EBFA] rounded disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M2.5 2l12 6-12 6V9.5L9 8 2.5 6.5V2z"/>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                <path d="M3 3l13 6.5-13 6.5V10.5L10 9.5 3 8.5V3z"/>
               </svg>
             </button>
           </div>
@@ -195,12 +189,12 @@ export default function AgentChat({ selectedAgent }) {
 
         {/* Suggested prompts */}
         {messages.length === 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-2.5">
+          <div className="flex flex-wrap gap-2 mt-3">
             {agent.prompts.map((prompt, i) => (
               <button
                 key={i}
                 onClick={() => handleSend(prompt)}
-                className="text-[12px] text-[#6264A7] bg-[#E8EBFA] hover:bg-[#D5D9F5] px-3 py-1.5 rounded-lg transition-colors text-left"
+                className="text-[13px] text-[#6264A7] bg-[#E8EBFA] hover:bg-[#D5D9F5] px-4 py-2 rounded-lg transition-colors text-left"
               >
                 {prompt}
               </button>
