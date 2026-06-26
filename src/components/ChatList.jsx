@@ -15,7 +15,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
   return (
     <div className="w-[clamp(320px,25vw,460px)] min-w-[320px] border-r border-[#e0e0e0] bg-white flex flex-col">
       {/* Header row: Chat + action icons */}
-      <div className="flex items-center justify-between px-[clamp(16px,1.2vw,24px)] pt-5 pb-1">
+      <div className="flex items-center justify-between px-6 pt-5 pb-1">
         <h2 className="text-[clamp(18px,1.4vw,24px)] font-semibold text-[#242424]">Chat</h2>
         <div className="flex items-center gap-1.5">
           <button className="w-8 h-8 flex items-center justify-center text-[#616161] hover:text-[#242424] hover:bg-[#f5f5f5] rounded">
@@ -43,12 +43,12 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         </div>
       </div>
 
-      {/* Filter pills */}
-      <div className="flex items-center gap-[clamp(6px,0.5vw,10px)] px-[clamp(16px,1.2vw,24px)] pt-2 pb-3 overflow-x-auto">
+      {/* Filter pills — generous padding inside each pill */}
+      <div className="flex items-center gap-2.5 px-6 pt-2 pb-4 overflow-x-auto">
         {filterPills.map((pill) => (
           <button
             key={pill}
-            className="px-[clamp(10px,0.8vw,16px)] py-[clamp(4px,0.35vw,8px)] text-[clamp(11px,0.85vw,14px)] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0"
+            className="px-4 py-1.5 text-[clamp(11px,0.85vw,14px)] text-[#424242] border border-[#c8c8c8] rounded-full hover:bg-[#f5f5f5] transition-colors whitespace-nowrap shrink-0"
           >
             {pill}
           </button>
@@ -63,7 +63,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
       {/* Scrollable conversation list */}
       <div className="flex-1 overflow-y-auto">
         {/* Quick nav items */}
-        <div className="px-[clamp(12px,1vw,20px)] pb-2">
+        <div className="px-5 pb-2">
           <NavItem icon="sparkle" label="Copilot" />
           <NavItem icon="discover" label="Discover" />
           <NavItem icon="mention" label="Mentions" />
@@ -71,7 +71,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         </div>
 
         {/* Favorites section */}
-        <div className="px-[clamp(16px,1.2vw,24px)] pt-3 pb-2">
+        <div className="px-6 pt-4 pb-2">
           <span className="text-[clamp(11px,0.85vw,14px)] font-semibold text-[#616161]">Favorites</span>
         </div>
         {conversations.slice(0, 2).map((conv) => (
@@ -79,7 +79,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         ))}
 
         {/* Chats section */}
-        <div className="px-[clamp(16px,1.2vw,24px)] pt-5 pb-2">
+        <div className="px-6 pt-5 pb-2">
           <span className="text-[clamp(11px,0.85vw,14px)] font-semibold text-[#616161]">Chats</span>
         </div>
         {conversations.slice(2).map((conv) => (
@@ -87,7 +87,7 @@ export default function ChatList({ selectedConversation, setSelectedConversation
         ))}
 
         {/* Teams and channels section */}
-        <div className="px-[clamp(16px,1.2vw,24px)] pt-5 pb-2">
+        <div className="px-6 pt-5 pb-2">
           <span className="text-[clamp(11px,0.85vw,14px)] font-semibold text-[#616161]">Teams and channels</span>
         </div>
       </div>
@@ -125,7 +125,7 @@ function NavItem({ icon, label }) {
     ),
   }
   return (
-    <button className="w-full flex items-center gap-3 px-3 py-[clamp(6px,0.5vw,10px)] rounded-md hover:bg-[#f5f5f5] text-left transition-colors">
+    <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#f5f5f5] text-left transition-colors">
       <span className="w-5 h-5 flex items-center justify-center shrink-0">{icons[icon]}</span>
       <span className="text-[clamp(12px,0.9vw,15px)] text-[#424242]">{label}</span>
     </button>
@@ -137,7 +137,7 @@ function ConversationRow({ conv, selectedConversation, setSelectedConversation }
     <button
       onClick={() => setSelectedConversation(conv.id)}
       className={`
-        w-full flex items-center gap-[clamp(10px,0.8vw,16px)] px-[clamp(12px,1vw,20px)] py-[clamp(8px,0.7vw,14px)] text-left transition-colors
+        w-full flex items-center gap-4 px-6 py-3.5 text-left transition-colors
         ${selectedConversation === conv.id
           ? 'bg-[#E8EBFA]'
           : 'hover:bg-[#f5f5f5]'
@@ -149,7 +149,7 @@ function ConversationRow({ conv, selectedConversation, setSelectedConversation }
         <SalesforceIcon />
       ) : (
         <div
-          className="w-[clamp(30px,2.2vw,40px)] h-[clamp(30px,2.2vw,40px)] rounded-full flex items-center justify-center text-white text-[clamp(10px,0.75vw,13px)] font-semibold shrink-0"
+          className="w-[clamp(32px,2.2vw,40px)] h-[clamp(32px,2.2vw,40px)] rounded-full flex items-center justify-center text-white text-[clamp(10px,0.75vw,13px)] font-semibold shrink-0"
           style={{ backgroundColor: conv.avatarColor }}
         >
           {conv.avatar}
@@ -170,10 +170,10 @@ function ConversationRow({ conv, selectedConversation, setSelectedConversation }
               </span>
             )}
           </div>
-          <span className="text-[clamp(10px,0.75vw,13px)] text-[#616161] shrink-0 ml-2">{conv.time}</span>
+          <span className="text-[clamp(10px,0.75vw,13px)] text-[#616161] shrink-0">{conv.time}</span>
         </div>
         {/* Preview line */}
-        <p className="text-[clamp(11px,0.8vw,14px)] text-[#616161] truncate leading-normal mt-[3px]">{conv.preview}</p>
+        <p className="text-[clamp(11px,0.8vw,14px)] text-[#616161] truncate leading-normal mt-1">{conv.preview}</p>
       </div>
     </button>
   )
