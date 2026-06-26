@@ -1,8 +1,9 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import './teams-copilot.css'
 import CopilotMark from './CopilotMark'
 import TeamsGroupChat from './TeamsGroupChat'
 import { renderRich } from './richText'
+import { CUMULUS_LOGO } from './cumulusLogoData'
 
 function Avatar({ assistant, brand }) {
   if (assistant.avatarUrl) {
@@ -333,8 +334,14 @@ function railIcon(path, opts = {}) {
 }
 
 export default function TeamsCopilotFrame({ brand, assistant, renderedSteps, isRunning, chatTitle, viewer, groupChat, members, sidebar }) {
-  const profileInitial = (brand.name || 'U').trim().charAt(0).toUpperCase()
+  const brandLogo = (brand.logoUrl || '').trim() || CUMULUS_LOGO
   const [view, setView] = useState('teams')
+
+  // When the demo script runs, surface it on the Copilot app (it never plays
+  // inside the group chat — Copilot is a separate surface you click into).
+  useEffect(() => {
+    if (isRunning || renderedSteps.length > 0) setView('copilot')
+  }, [isRunning, renderedSteps.length])
 
   return (
     <div className="tw-window">
@@ -356,7 +363,9 @@ export default function TeamsCopilotFrame({ brand, assistant, renderedSteps, isR
           <span>Search</span>
         </div>
         <div className="tw-titlebar-right">
-          <div className="tw-profile">{profileInitial}</div>
+          <div className="tw-profile has-logo">
+            <img src={brandLogo} alt={brand.name || 'Brand'} />
+          </div>
         </div>
       </div>
 
@@ -381,7 +390,9 @@ export default function TeamsCopilotFrame({ brand, assistant, renderedSteps, isR
             {railIcon(<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>)}
           </RailItem>
           <div className="tw-rail-spacer" />
-          <div className="tw-rail-avatar">{profileInitial}</div>
+          <div className="tw-rail-avatar has-logo">
+            <img src={brandLogo} alt={brand.name || 'Brand'} />
+          </div>
         </nav>
 
         <ChatListPane
@@ -398,8 +409,8 @@ export default function TeamsCopilotFrame({ brand, assistant, renderedSteps, isR
           {view === 'teams' ? (
             <TeamsGroupChat
               brand={brand}
-              renderedSteps={renderedSteps}
-              isRunning={isRunning}
+              renderedSteps={[]}
+              isRunning={false}
               chatTitle={chatTitle}
               viewer={viewer}
               messages={groupChat}

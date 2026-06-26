@@ -128,7 +128,7 @@ export default function ExperienceGeneratorPage() {
         <div className="header-content">
           <img src={CUMULUS_LOGO} alt="Cumulus Financial" className="header-logo" />
           <div className="header-text">
-            <h1>Experience Generator</h1>
+            <h1>AI Assistant Simulator</h1>
             <p>Customize and download interactive simulated experiences for your demos</p>
           </div>
         </div>
@@ -182,6 +182,7 @@ export default function ExperienceGeneratorPage() {
               <BrandingPanel
                 brand={manifest.brand}
                 assistant={manifest.assistant}
+                experienceType={selectedExperience}
                 onBrandChange={updateBrand}
                 onAssistantChange={updateAssistant}
               />

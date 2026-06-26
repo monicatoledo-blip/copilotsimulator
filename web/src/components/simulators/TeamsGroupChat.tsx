@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './teams-group.css'
 import CopilotMark from './CopilotMark'
 import { renderInline, renderRich } from './richText'
 import { FLUENT_EMOJI } from './fluentEmojiData'
+import { COMPOSER_ICONS } from './composerIconData'
 
 const AVATAR_COLORS = ['#c4314b', '#0f6cbd', '#107c41', '#8764b8', '#c19c00', '#005b70', '#a4262c']
 
@@ -205,24 +206,24 @@ function CopilotTurn({ step, quote, personaOf, reactions, onReact, onUnreact }) 
           </button>
         </div>
 
-        <Reactions reactions={reactions} onPill={onUnreact} />
+        <Reactions reactions={reactions} onReact={onReact} onUnreact={onUnreact} />
       </div>
       <ReactionToolbar onPick={onReact} />
     </div>
   )
 }
 
-function Reactions({ reactions, onPill }) {
+function Reactions({ reactions, onReact, onUnreact }) {
   if (!reactions || reactions.length === 0) return null
   return (
     <div className="tg-reacts">
       {reactions.map((r, i) => (
         <button
           type="button"
-          className="tg-react"
+          className={`tg-react${r.mine ? ' is-mine' : ''}`}
           key={r.emoji + i}
-          title="Remove reaction"
-          onClick={() => onPill && onPill(r.emoji)}
+          title={r.mine ? 'Remove your reaction' : 'React'}
+          onClick={() => (r.mine ? onUnreact : onReact)(r.emoji)}
         >
           <Emoji ch={r.emoji} size={16} />
           <span className="c">{r.count}</span>
@@ -239,7 +240,7 @@ function PersonTurn({ step, viewer, personaOf, reactions, onReact, onUnreact }) 
       <div className="tg-row is-you">
         <div className="tg-col">
           <div className="tg-bubble">{renderInline(step.text, 'you' + step.id)}</div>
-          <Reactions reactions={reactions} onPill={onUnreact} />
+          <Reactions reactions={reactions} onReact={onReact} onUnreact={onUnreact} />
           <div className="tg-sent">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="9" />
@@ -259,7 +260,7 @@ function PersonTurn({ step, viewer, personaOf, reactions, onReact, onUnreact }) 
           <PersonName className="tg-name" name={step.author} persona={personaOf(step.author)} />
         </div>
         <div className="tg-bubble">{renderInline(step.text, 'p' + step.id)}</div>
-        <Reactions reactions={reactions} onPill={onUnreact} />
+        <Reactions reactions={reactions} onReact={onReact} onUnreact={onUnreact} />
       </div>
       <ReactionToolbar onPick={onReact} />
     </div>
@@ -268,7 +269,28 @@ function PersonTurn({ step, viewer, personaOf, reactions, onReact, onUnreact }) 
 
 export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTitle, viewer = 'You', messages = [], members }) {
   const history = messages || []
-  const combined = [...history, ...renderedSteps]
+
+  // Messages the viewer types into the composer during playback (ephemeral).
+  const [draft, setDraft] = useState('')
+  const [sent, setSent] = useState([])
+  const threadRef = useRef(null)
+
+  const send = () => {
+    const text = draft.trim()
+    if (!text) return
+    setSent((prev) => [
+      ...prev,
+      { id: `usr-${Date.now()}-${prev.length}`, type: 'userPrompt', author: viewer, text },
+    ])
+    setDraft('')
+  }
+
+  const combined = [...history, ...renderedSteps, ...sent]
+
+  useEffect(() => {
+    const el = threadRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [sent.length, renderedSteps.length])
 
   // Ephemeral reactions added live by the viewer, merged on top of authored ones.
   const [extra, setExtra] = useState({})
@@ -281,7 +303,7 @@ export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTi
     if (add) Object.keys(add).forEach((e) => (map[e] = (map[e] || 0) + add[e]))
     return Object.keys(map)
       .filter((e) => map[e] > 0)
-      .map((e) => ({ emoji: e, count: map[e] }))
+      .map((e) => ({ emoji: e, count: map[e], mine: !!(add && add[e] > 0) }))
   }
   const bump = (stepId, emoji, delta) =>
     setExtra((prev) => {
@@ -346,7 +368,7 @@ export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTi
         </div>
       </div>
 
-      <div className="tg-thread">
+      <div className="tg-thread" ref={threadRef}>
         <div className="tg-divider"><span>Today</span></div>
         {combined.map((step, idx) => {
           if (isCopilotStep(step)) {
@@ -395,50 +417,48 @@ export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTi
 
       <div className="tg-composer">
         <div className="tg-composer-box">
-          <div className="tg-composer-input">Type a message</div>
-          <div className="tg-composer-tools">
-            <button type="button" title="Format">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-                <path d="M4 7V5h12v2M9 5v12M7 17h4" />
-                <path d="M15 13l3-3 3 3-3 6-3 0z" />
-              </svg>
-            </button>
-            <button type="button" title="Emoji">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                <path d="M9 9h.01M15 9h.01" />
-              </svg>
-            </button>
-            <button type="button" title="GIF">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <rect x="3" y="6" width="18" height="12" rx="2" />
-                <path d="M9 10H7v4h2M9 12H8" />
-                <path d="M12 10v4" />
-                <path d="M15 14v-4h2M15 12h1.5" />
-              </svg>
-            </button>
-            <button type="button" title="Apps">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                <rect x="14" y="14" width="7" height="7" rx="1.5" />
-              </svg>
-            </button>
-            <button type="button" title="Attach">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </button>
-            <div className="tg-spacer" />
-            <button type="button" className="tg-send" title="Send">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-                <path d="M22 2 11 13" />
-                <path d="M22 2 15 22l-4-9-9-4z" />
-              </svg>
-            </button>
-          </div>
+          <input
+            className="tg-composer-input"
+            placeholder="Type a new message"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                send()
+              }
+            }}
+          />
+        </div>
+        <div className="tg-composer-tools">
+          <button type="button" title="Format">
+            <img src={COMPOSER_ICONS.format} alt="" />
+          </button>
+          <button type="button" title="Attach file">
+            <img src={COMPOSER_ICONS.attach} alt="" />
+          </button>
+          <button type="button" title="Emoji">
+            <img src={COMPOSER_ICONS.emoji} alt="" />
+          </button>
+          <button type="button" title="GIF">
+            <img src={COMPOSER_ICONS.gif} alt="" />
+          </button>
+          <button type="button" title="Sticker">
+            <img src={COMPOSER_ICONS.sticker} alt="" />
+          </button>
+          <button type="button" title="Schedule">
+            <img src={COMPOSER_ICONS.schedule} alt="" />
+          </button>
+          <div className="tg-spacer" />
+          <button
+            type="button"
+            className="tg-send"
+            title="Send"
+            disabled={!draft.trim()}
+            onClick={send}
+          >
+            <img src={COMPOSER_ICONS.send} alt="Send" />
+          </button>
         </div>
       </div>
     </section>

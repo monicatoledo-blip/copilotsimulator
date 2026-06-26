@@ -501,6 +501,17 @@
   font-weight: 600;
   color: #424242;
 }
+/* a reaction you added — Teams tints it with the brand purple */
+.tg-react.is-mine {
+  background: #e8ebfa;
+  border-color: #b6bdef;
+}
+.tg-react.is-mine:hover {
+  background: #dfe3f7;
+}
+.tg-react.is-mine .c {
+  color: var(--tg-purple, #5b5fc7);
+}
 
 /* mentions */
 .tg-mention {
@@ -648,36 +659,48 @@
 /* ---- Composer ---- */
 .tg-composer {
   flex-shrink: 0;
-  padding: 10px 16px 14px;
+  padding: 8px 16px 12px;
 }
 .tg-composer-box {
-  border: 1px solid #d1d1d1;
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  border: 1px solid #e0e0e0;
+  border-bottom: 2px solid var(--tg-purple);
+  border-radius: 4px;
+  background: #fff;
+}
+.tg-composer-box:focus-within {
+  border-color: #d0d0d0;
+  border-bottom-color: var(--tg-purple);
 }
 .tg-composer-input {
   font-size: 14px;
+  color: var(--tg-fg-1);
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 13px 14px;
+}
+.tg-composer-input::placeholder {
   color: var(--tg-fg-3);
-  user-select: none;
 }
 .tg-composer-tools {
   display: flex;
   align-items: center;
-  gap: 2px;
-  color: var(--tg-fg-2);
+  gap: 1px;
+  color: #616161;
+  margin-top: 4px;
+  padding: 0 2px;
 }
 .tg-composer-tools .tg-spacer {
   flex: 1;
 }
 .tg-composer-tools button {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: none;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -687,6 +710,21 @@
 .tg-composer-tools button:hover {
   background: #f0f0f0;
 }
+.tg-composer-tools button img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
 .tg-composer-tools .tg-send {
   color: var(--tg-purple);
+}
+.tg-composer-tools .tg-send:disabled {
+  color: var(--tg-fg-3);
+  cursor: default;
+  opacity: 0.55;
+}
+.tg-composer-tools .tg-send:disabled:hover {
+  background: transparent;
 }

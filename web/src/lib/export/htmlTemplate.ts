@@ -1,5 +1,7 @@
 import { COPILOT_ICON } from '../../components/simulators/copilotIconData'
 import { FLUENT_EMOJI } from '../../components/simulators/fluentEmojiData'
+import { CUMULUS_LOGO } from '../../components/simulators/cumulusLogoData'
+import { COMPOSER_ICONS } from '../../components/simulators/composerIconData'
 
 export function buildHtmlTemplate(serializedManifest: string) {
   return `<!doctype html>
@@ -20,10 +22,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     body {
       font-family:"Segoe UI","Segoe UI Web (West European)",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
       background:#f3f3f3; color:var(--tg-fg-1);
-      display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    .tc-stage { width:100%; max-width:1200px; }
-    .tw-window { width:100%; max-width:1180px; margin:0 auto; height:82vh; min-height:600px; max-height:900px; display:flex; flex-direction:column; background:#fff; border:1px solid #d6d6dd; border-radius:12px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,.08),0 18px 50px rgba(0,0,0,.16); }
+    .tc-stage { width:100%; height:100vh; }
+    .tw-window { width:100%; height:100vh; display:flex; flex-direction:column; background:#fff; overflow:hidden; }
     .tw-titlebar { height:44px; flex-shrink:0; background:var(--tw-titlebar); display:flex; align-items:center; gap:14px; padding:0 14px; border-bottom:1px solid #deded6; }
     .tw-traffic { display:flex; gap:8px; }
     .tw-traffic span { width:12px; height:12px; border-radius:50%; display:block; }
@@ -31,7 +32,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tw-nav { display:flex; gap:2px; color:#8a8a8a; }
     .tw-search { flex:1; max-width:600px; margin:0 auto; height:30px; background:#fff; border:1px solid #e0e0e0; border-radius:6px; display:flex; align-items:center; gap:8px; padding:0 10px; color:#616161; font-size:13px; }
     .tw-titlebar-right { display:flex; align-items:center; gap:10px; margin-left:auto; }
-    .tw-profile { width:28px; height:28px; border-radius:50%; background:var(--tw-brand); color:#fff; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+    .tw-profile { width:28px; height:28px; border-radius:50%; background:var(--tw-brand); color:#fff; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .tw-profile.has-logo, .tw-rail-avatar.has-logo { background:#fff; border:1px solid #e2e2e8; }
+    .tw-profile img, .tw-rail-avatar img { width:100%; height:100%; object-fit:contain; padding:2px; box-sizing:border-box; border-radius:50%; }
     .tw-body { flex:1; display:flex; min-height:0; }
     .tw-rail { width:72px; flex-shrink:0; background:var(--tw-rail); border-right:1px solid #e2e2e8; display:flex; flex-direction:column; padding:6px 0; gap:2px; }
     .tw-rail-item { position:relative; display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 2px 6px; color:#444; cursor:pointer; border:none; background:transparent; font-family:inherit; }
@@ -132,6 +135,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-react { display:inline-flex; align-items:center; gap:5px; background:#fff; border:1px solid #e1e1e1; border-radius:14px; padding:2px 9px 2px 7px; line-height:18px; cursor:pointer; font-family:inherit; box-shadow:0 1px 2px rgba(0,0,0,.06); }
     .tg-react .c { font-size:12px; font-weight:600; color:#424242; }
     .tg-react:hover { background:#f5f5f5; }
+    .tg-react.is-mine { background:#e8ebfa; border-color:#b6bdef; }
+    .tg-react.is-mine:hover { background:#dfe3f7; }
+    .tg-react.is-mine .c { color:#5b5fc7; }
     /* Teams-style hover reaction toolbar */
     .tg-react-tool { position:absolute; top:-18px; right:8px; display:flex; align-items:center; gap:1px; background:#fff; border:1px solid #e6e6e6; border-radius:22px; padding:3px 5px; box-shadow:0 2px 10px rgba(0,0,0,.14); opacity:0; transform:translateY(4px); transition:opacity .12s, transform .12s; pointer-events:none; z-index:6; }
     .tg-row:hover .tg-react-tool { opacity:1; transform:translateY(0); pointer-events:auto; }
@@ -148,16 +154,62 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-dots span:nth-child(2){ animation-delay:.18s; } .tg-dots span:nth-child(3){ animation-delay:.36s; }
     @keyframes tg-bounce { 0%,60%,100%{ transform:translateY(0); opacity:.4; } 30%{ transform:translateY(-3px); opacity:1; } }
     /* composer */
-    .tg-composer { flex-shrink:0; padding:10px 16px 14px; }
-    .tg-composer-box { border:1px solid #d1d1d1; border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
-    .tg-composer-input { font-size:14px; color:var(--tg-fg-3); }
-    .tg-composer-tools { display:flex; align-items:center; gap:2px; color:var(--tg-fg-2); }
+    .tg-composer { flex-shrink:0; padding:8px 16px 12px; }
+    .tg-composer-box { border:1px solid #e0e0e0; border-bottom:2px solid var(--tg-purple); border-radius:4px; background:#fff; }
+    .tg-composer-input { font-size:14px; color:var(--tg-fg-1); font-family:inherit; border:none; outline:none; background:transparent; width:100%; padding:13px 14px; }
+    .tg-composer-input::placeholder { color:var(--tg-fg-3); }
+    .tg-composer-tools { display:flex; align-items:center; gap:1px; color:#616161; margin-top:4px; padding:0 2px; }
     .tg-composer-tools .tg-spacer { flex:1; }
-    .tg-composer-tools button { width:30px; height:30px; border:none; background:transparent; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:inherit; }
+    .tg-composer-tools button { width:32px; height:32px; border:none; background:transparent; border-radius:4px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:inherit; }
+    .tg-composer-tools button:hover { background:#f0f0f0; }
+    .tg-composer-tools button img { width:20px; height:20px; object-fit:contain; display:block; pointer-events:none; }
     .tg-composer-tools .tg-send { color:var(--tg-purple); }
-    .tc-replay { margin:14px auto 0; display:flex; gap:8px; align-items:center; justify-content:center; }
-    .tc-replay button { border:1px solid #d1d1d1; background:#fff; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; color:var(--tg-fg-1); cursor:pointer; font-family:inherit; }
-    .tc-replay button:hover { background:#f5f5f5; }
+    .tg-composer-tools .tg-send:disabled { color:var(--tg-fg-3); cursor:default; opacity:.55; }
+    /* Copilot surface (separate app you click into) */
+    .tc-app { --tc-gradient:linear-gradient(120deg,#2ec5a0 0%,#2aa5f4 32%,#5a6af0 58%,#b14be0 80%,#e5447c 100%); flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; background:#fff; }
+    .tc-header { display:flex; align-items:center; justify-content:space-between; gap:12px; height:48px; padding:0 12px 0 16px; border-bottom:1px solid #e0e0e0; flex-shrink:0; }
+    .tc-header-left { display:flex; align-items:center; gap:10px; min-width:0; }
+    .tc-header-title { font-size:14px; font-weight:600; color:#242424; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tc-header-sub { font-size:12px; color:#616161; }
+    .tc-chevron { color:#616161; display:flex; }
+    .tc-header-actions { display:flex; align-items:center; gap:2px; }
+    .tc-icon-btn { width:32px; height:32px; border:none; background:transparent; border-radius:6px; color:#424242; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .tc-icon-btn:hover { background:#f0f0f0; }
+    .tc-thread { flex:1; overflow-y:auto; padding:20px 18px 8px; display:flex; flex-direction:column; gap:18px; background:#fff; }
+    .tc-thread::-webkit-scrollbar { width:8px; } .tc-thread::-webkit-scrollbar-thumb { background:#c8c8c8; border-radius:4px; }
+    .tc-row-user { display:flex; justify-content:flex-end; }
+    .tc-user-bubble { max-width:78%; background:#f5f5f5; color:#242424; font-size:14px; line-height:20px; padding:10px 14px; border-radius:18px 18px 4px 18px; word-wrap:break-word; }
+    .tc-row-assistant { display:flex; gap:12px; align-items:flex-start; }
+    .tc-avatar { flex-shrink:0; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-top:2px; }
+    .tc-avatar.is-copilot { background:transparent; border-radius:0; overflow:visible; }
+    .tc-avatar img { width:100%; height:100%; object-fit:contain; }
+    .tc-assistant-col { flex:1; min-width:0; }
+    .tc-assistant-name { font-size:13px; font-weight:600; color:#242424; margin-bottom:4px; }
+    .tc-assistant-text { font-size:14px; line-height:21px; color:#242424; word-wrap:break-word; }
+    .tc-assistant-text .tg-p { margin:0 0 8px; } .tc-assistant-text .tg-p:last-child { margin-bottom:0; }
+    .tc-assistant-text .tg-ul { margin:0 0 8px; padding-left:20px; } .tc-assistant-text .tg-ul li { margin:2px 0; }
+    .tc-assistant-text .tg-hr { border:none; border-top:1px solid #ececec; margin:10px 0; }
+    .tc-assistant-text .tg-mention { color:#5b5fc7; font-weight:600; }
+    .tc-actions { display:flex; align-items:center; gap:2px; margin-top:10px; }
+    .tc-action-btn { width:28px; height:28px; border:none; background:transparent; border-radius:6px; color:#616161; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .tc-action-btn:hover { background:#f0f0f0; color:#242424; }
+    .tc-card { margin-top:10px; border:1px solid #e0e0e0; border-radius:8px; background:#fbfbfb; overflow:hidden; }
+    .tc-card-accent { height:3px; background:var(--tc-gradient); }
+    .tc-card-body { padding:12px 14px; }
+    .tc-card-head { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+    .tc-card-check { width:18px; height:18px; border-radius:50%; background:#107c41; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .tc-card-title { font-size:13px; font-weight:600; color:#242424; }
+    .tc-card-text { font-size:13px; line-height:19px; color:#424242; }
+    .tc-typing { display:inline-flex; align-items:center; gap:5px; padding:6px 2px; }
+    .tc-typing span { width:7px; height:7px; border-radius:50%; background-image:var(--tc-gradient); opacity:.5; animation:tc-bounce 1.2s infinite ease-in-out; }
+    .tc-typing span:nth-child(2){ animation-delay:.18s; } .tc-typing span:nth-child(3){ animation-delay:.36s; }
+    @keyframes tc-bounce { 0%,60%,100%{ transform:translateY(0); opacity:.4; } 30%{ transform:translateY(-4px); opacity:1; } }
+    .tc-composer { flex-shrink:0; padding:8px 16px 12px; background:#fff; }
+    .tc-input { display:flex; align-items:flex-end; gap:8px; border:1px solid #d1d1d1; border-radius:12px; padding:8px 8px 8px 12px; }
+    .tc-input-left { display:flex; align-items:center; gap:2px; padding-bottom:4px; }
+    .tc-placeholder { flex:1; font-size:14px; color:#616161; padding:6px 4px; user-select:none; }
+    .tc-send { width:32px; height:32px; border:none; border-radius:8px; background:var(--tc-gradient); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+    .tc-disclaimer { text-align:center; font-size:11px; color:#616161; margin-top:8px; }
   </style>
 </head>
 <body>
@@ -193,7 +245,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
           <button class="tl-pill">Chats</button>
         </div>
         <div class="tl-list">
-          <div class="tl-nav-item"><span class="tl-ico"><img src="${COPILOT_ICON}" width="18" height="18" alt="Copilot"></span>Copilot</div>
+          <div class="tl-nav-item" id="nav-copilot"><span class="tl-ico"><img src="${COPILOT_ICON}" width="18" height="18" alt="Copilot"></span>Copilot</div>
           <div class="tl-nav-item"><span class="tl-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5 13 13l-3.5 1.5L11 11z"/></svg></span>Discover</div>
           <div class="tl-nav-item"><span class="tl-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.5 7.1"/></svg></span>Mentions</div>
           <div class="tl-nav-item"><span class="tl-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Followed threads</div>
@@ -201,7 +253,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
         </div>
       </aside>
       <div class="tw-content">
-        <section class="tg-surface">
+        <section class="tg-surface" id="tg-surface">
           <div class="tg-chat-header">
             <span class="tg-chan-avatar"><svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><path d="M3.5 18a4.5 4.5 0 0 1 9 0z"/><path d="M11.5 18a4.5 4.5 0 0 1 9 0z"/></svg></span>
             <div class="tg-chat-title" id="tg-title"></div>
@@ -219,25 +271,56 @@ export function buildHtmlTemplate(serializedManifest: string) {
           <div class="tg-thread" id="thread"></div>
           <div class="tg-composer">
             <div class="tg-composer-box">
-              <div class="tg-composer-input">Type a message</div>
-              <div class="tg-composer-tools">
-                <button title="Format"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7V5h12v2M9 5v12M7 17h4"/><path d="M15 13l3-3 3 3-3 6-3 0z"/></svg></button>
-                <button title="Emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></button>
-                <button title="Attach"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 5v14M5 12h14"/></svg></button>
-                <div class="tg-spacer"></div>
-                <button class="tg-send" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
-              </div>
+              <input id="tg-input" class="tg-composer-input" placeholder="Type a new message" autocomplete="off">
             </div>
+            <div class="tg-composer-tools">
+              <button title="Format"><img src="${COMPOSER_ICONS.format}" alt=""></button>
+              <button title="Attach file"><img src="${COMPOSER_ICONS.attach}" alt=""></button>
+              <button title="Emoji"><img src="${COMPOSER_ICONS.emoji}" alt=""></button>
+              <button title="GIF"><img src="${COMPOSER_ICONS.gif}" alt=""></button>
+              <button title="Sticker"><img src="${COMPOSER_ICONS.sticker}" alt=""></button>
+              <button title="Schedule"><img src="${COMPOSER_ICONS.schedule}" alt=""></button>
+              <div class="tg-spacer"></div>
+              <button id="tg-send" class="tg-send" title="Send"><img src="${COMPOSER_ICONS.send}" alt="Send"></button>
+            </div>
+          </div>
+        </section>
+        <section class="tc-app" id="tc-app" style="display:none">
+          <header class="tc-header">
+            <div class="tc-header-left">
+              <div class="tc-avatar is-copilot"><img src="${COPILOT_ICON}" alt="Copilot"></div>
+              <div style="min-width:0">
+                <div class="tc-header-title" id="tc-name">Copilot</div>
+                <div class="tc-header-sub" id="tc-sub"></div>
+              </div>
+              <span class="tc-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+            </div>
+            <div class="tc-header-actions">
+              <button class="tc-icon-btn" title="New chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+              <button class="tc-icon-btn" title="Chat history"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></button>
+              <button class="tc-icon-btn" title="More options"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+            </div>
+          </header>
+          <div class="tc-thread" id="tc-thread"></div>
+          <div class="tc-composer">
+            <div class="tc-input">
+              <div class="tc-input-left">
+                <button class="tc-icon-btn" title="Add attachment"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21.4 11.05 12.2 20.3a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.48-8.49"/></svg></button>
+              </div>
+              <div class="tc-placeholder" id="tc-placeholder">Message Copilot</div>
+              <button class="tc-send" title="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3 10l12 2-12 2z"/></svg></button>
+            </div>
+            <div class="tc-disclaimer">AI-generated content may be incorrect</div>
           </div>
         </section>
       </div>
     </div>
    </div>
-    <div class="tc-replay"><button id="replay">&#8635; Replay demo</button></div>
   </div>
 
   <script>
     var ICON = '${COPILOT_ICON}';
+    var LOGO = '${CUMULUS_LOGO}';
     var MANIFEST = ${serializedManifest};
     var FLUENT = ${JSON.stringify(FLUENT_EMOJI)};
     var QUICK = ['👍','❤️','😂','😮','😢','😡'];
@@ -278,9 +361,12 @@ export function buildHtmlTemplate(serializedManifest: string) {
     function delay(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
     // header
-    var profileInitial = (brand.name || 'U').trim().charAt(0).toUpperCase();
-    document.getElementById('tw-profile').textContent = profileInitial;
-    document.getElementById('tw-railavatar').textContent = profileInitial;
+    var brandLogo = (brand.logoUrl || '').trim() || LOGO;
+    var logoImg = '<img src="'+brandLogo+'" alt="'+esc(brand.name||'Brand')+'">';
+    var twProfile = document.getElementById('tw-profile');
+    var twRail = document.getElementById('tw-railavatar');
+    twProfile.innerHTML = logoImg; twProfile.classList.add('has-logo');
+    twRail.innerHTML = logoImg; twRail.classList.add('has-logo');
     var chatName = MANIFEST.chatTitle || ((brand.name||'') + ' Team');
     document.getElementById('tg-title').textContent = chatName;
     (function(){
@@ -299,7 +385,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
         var avatar = isChannel
           ? '<span class="tl-avatar '+(isActiveChat?'is-channel':'')+'"'+(isActiveChat?'':' style="background:'+colorFor(it.name)+'"')+'>'+GROUPSVG+'</span>'
           : '<span class="tl-avatar" style="background:'+colorFor(it.name)+'">'+initials(it.name)+'<span class="tl-presence-sm"></span></span>';
-        return '<div class="tl-item '+(isActiveChat?'is-active':'')+' '+(it.unread?'is-unread':'')+'">'
+        return '<div class="tl-item '+(isActiveChat?'is-active':'')+' '+(it.unread?'is-unread':'')+'"'+(isActiveChat?' data-active="1"':'')+'>'
           +'<span class="tl-dot '+(it.unread?'on':'')+'"></span>'+avatar
           +'<span class="tl-name">'+esc(it.name)+'</span>'+(it.mention?'<span class="tl-mention">@</span>':'')+'</div>';
       }
@@ -311,16 +397,16 @@ export function buildHtmlTemplate(serializedManifest: string) {
     document.title = (brand.name ? brand.name + ' \\u2014 ' : '') + (MANIFEST.chatTitle || 'Teams');
 
     function addReaction(step, emoji, delta){ if(!step) return; step.reactions=step.reactions||[]; var ex=null; step.reactions.forEach(function(r){ if(r.emoji===emoji) ex=r; });
-      if(ex){ ex.count+=delta; if(ex.count<=0){ step.reactions=step.reactions.filter(function(r){ return r!==ex; }); } }
-      else if(delta>0){ step.reactions.push({emoji:emoji,count:1}); }
+      if(ex){ ex.count+=delta; ex.mine=delta>0; if(ex.count<=0){ step.reactions=step.reactions.filter(function(r){ return r!==ex; }); } }
+      else if(delta>0){ step.reactions.push({emoji:emoji,count:1,mine:true}); }
     }
 
     function renderPills(pillsEl, step){
       pillsEl.innerHTML='';
       (step.reactions||[]).forEach(function(r){
-        var p=document.createElement('button'); p.type='button'; p.className='tg-react'; p.title='Remove reaction';
+        var p=document.createElement('button'); p.type='button'; p.className='tg-react'+(r.mine?' is-mine':''); p.title=r.mine?'Remove your reaction':'React';
         p.innerHTML=emojiHtml(r.emoji, 16)+'<span class="c">'+r.count+'</span>';
-        p.onclick=function(e){ e.stopPropagation(); addReaction(step, r.emoji, -1); renderPills(pillsEl, step); };
+        var mine=r.mine; p.onclick=function(e){ e.stopPropagation(); addReaction(step, r.emoji, mine?-1:1); renderPills(pillsEl, step); };
         pillsEl.appendChild(p);
       });
     }
@@ -381,43 +467,105 @@ export function buildHtmlTemplate(serializedManifest: string) {
     }
     function isCopilot(s){ return s && (s.type==='assistantResponse' || s.type==='toolAction'); }
 
-    var running=false;
-    async function play(){
-      if(running) return; running=true;
+    // ---- Group chat: preload the human conversation only (no Copilot) ----
+    function preloadChat(){
       thread.innerHTML='';
       var divider=document.createElement('div'); divider.className='tg-divider'; divider.innerHTML='<span>Today</span>'; thread.appendChild(divider);
       var history = clone(MANIFEST.groupChat);
-      var script = clone(MANIFEST.script);
-
       history.forEach(function(step){
         if(isCopilot(step)) thread.appendChild(copilotRow(step, null));
         else thread.appendChild(personRow(step));
       });
       scrollDown();
-      await delay(history.length ? 600 : 0);
+    }
 
-      var rendered = history.slice();
+    // ---- Copilot surface: separate app you click into ----
+    var assistant = MANIFEST.assistant || {};
+    var asstName = assistant.name || 'Copilot';
+    var copThread = document.getElementById('tc-thread');
+    document.getElementById('tc-name').textContent = asstName;
+    document.getElementById('tc-sub').textContent = brand.name || '';
+    document.getElementById('tc-placeholder').textContent = 'Message ' + asstName;
+
+    function tcAvatar(){ return '<div class="tc-avatar is-copilot"><img src="'+ICON+'" alt="'+esc(asstName)+'"></div>'; }
+    function tcActions(){ return '<div class="tc-actions">'
+      +'<button class="tc-action-btn" title="Copy"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>'
+      +'<button class="tc-action-btn" title="Good response"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 11v9H4v-9zM7 11l4-7a2 2 0 0 1 3 2l-1 5h5a2 2 0 0 1 2 2l-1.5 6a2 2 0 0 1-2 1.5H7"/></svg></button>'
+      +'<button class="tc-action-btn" title="Bad response"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 13V4h3v9zM17 13l-4 7a2 2 0 0 1-3-2l1-5H6a2 2 0 0 1-2-2l1.5-6A2 2 0 0 1 7.5 4H17"/></svg></button>'
+      +'</div>'; }
+    function tcUserRow(step){ var r=document.createElement('div'); r.className='tc-row-user'; r.innerHTML='<div class="tc-user-bubble">'+inlineHtml(step.text)+'</div>'; return r; }
+    function tcAssistantRow(step){
+      var r=document.createElement('div'); r.className='tc-row-assistant';
+      var body = step.type==='toolAction'
+        ? '<div class="tc-card"><div class="tc-card-accent"></div><div class="tc-card-body"><div class="tc-card-head"><span class="tc-card-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span><span class="tc-card-title">'+esc(step.title||'Action complete')+'</span></div><div class="tc-card-text">'+inlineHtml(step.text)+'</div></div></div>'
+        : '<div class="tc-assistant-text">'+richHtml(step.text)+'</div>';
+      r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-assistant-name">'+esc(asstName)+'</div>'+body+tcActions()+'</div>';
+      return r;
+    }
+    function tcGreeting(){ var r=document.createElement('div'); r.className='tc-row-assistant'; r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-assistant-name">'+esc(asstName)+'</div><div class="tc-assistant-text">'+richHtml(assistant.greeting)+'</div></div>'; return r; }
+    function tcTyping(){ var r=document.createElement('div'); r.className='tc-row-assistant'; r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-typing"><span></span><span></span><span></span></div></div>'; return r; }
+    function copScroll(){ copThread.scrollTop = copThread.scrollHeight; }
+
+    var copStarted=false, copRunning=false;
+    async function playCopilot(){
+      if(copRunning) return; copRunning=true; copStarted=true;
+      copThread.innerHTML='';
+      if(assistant.greeting){ copThread.appendChild(tcGreeting()); copScroll(); await delay(500); }
+      var script = clone(MANIFEST.script);
       for(var i=0;i<script.length;i++){
         var step=script[i];
         if(isCopilot(step)){
-          var typing=typingRow(); thread.appendChild(typing); scrollDown();
+          var typing=tcTyping(); copThread.appendChild(typing); copScroll();
           await delay(step.delayMs || 900);
-          thread.removeChild(typing);
-          var prev=rendered[rendered.length-1];
-          var quote = (prev && prev.type==='userPrompt') ? { author: prev.author || viewer, text: prev.text } : null;
-          thread.appendChild(copilotRow(step, quote)); scrollDown();
+          copThread.removeChild(typing);
+          copThread.appendChild(tcAssistantRow(step)); copScroll();
           await delay(450);
         } else {
-          thread.appendChild(personRow(step)); scrollDown();
-          await delay(step.delayMs || 600);
+          copThread.appendChild(tcUserRow(step)); copScroll();
+          await delay(step.delayMs || 500);
         }
-        rendered.push(step);
       }
-      running=false;
+      copRunning=false;
     }
 
-    document.getElementById('replay').addEventListener('click', function(){ running=false; play(); });
-    play();
+    // ---- View switching (chat <-> copilot) ----
+    var tgSurface=document.getElementById('tg-surface');
+    var tcApp=document.getElementById('tc-app');
+    var navCopilot=document.getElementById('nav-copilot');
+    var activeRow=document.querySelector('.tl-item[data-active="1"]');
+    function showCopilot(){
+      tgSurface.style.display='none'; tcApp.style.display='flex';
+      navCopilot.classList.add('is-active');
+      if(activeRow) activeRow.classList.remove('is-active');
+      if(!copStarted) playCopilot();
+    }
+    function showChat(){
+      tcApp.style.display='none'; tgSurface.style.display='flex';
+      navCopilot.classList.remove('is-active');
+      if(activeRow) activeRow.classList.add('is-active');
+    }
+    navCopilot.addEventListener('click', showCopilot);
+    if(activeRow) activeRow.addEventListener('click', showChat);
+
+    // ---- Composer in the group chat ----
+    (function(){
+      var input=document.getElementById('tg-input');
+      var sendBtn=document.getElementById('tg-send');
+      if(!input||!sendBtn) return;
+      function refresh(){ sendBtn.disabled = !input.value.trim(); }
+      function sendMsg(){
+        var text=input.value.trim(); if(!text) return;
+        var step={ id:'usr-'+Date.now(), type:'userPrompt', author:viewer, text:text, reactions:[] };
+        thread.appendChild(personRow(step)); scrollDown();
+        input.value=''; refresh();
+      }
+      input.addEventListener('input', refresh);
+      input.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); } });
+      sendBtn.addEventListener('click', sendMsg);
+      refresh();
+    })();
+
+    preloadChat();
   </script>
 </body>
 </html>`
