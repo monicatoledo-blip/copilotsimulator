@@ -21,6 +21,7 @@ const CLAUDE_TABS = [
   { id: 'demo', label: 'Your demo' },
   { id: 'copilot', label: 'AI Copilot' },
 ]
+const SHOW_CLAUDE_EXPERIENCE = false
 
 const MIN_PANEL_WIDTH = 320
 const MAX_PANEL_WIDTH = 760
@@ -252,7 +253,7 @@ export default function ExperienceGeneratorPage() {
                 onChange={(e) => switchExperience(e.target.value)}
               >
                 <option value="teams-copilot">Co-Pilot in MS Teams</option>
-                <option value="claude">Claude</option>
+                {SHOW_CLAUDE_EXPERIENCE && <option value="claude">Claude</option>}
               </select>
             </div>
           </div>
