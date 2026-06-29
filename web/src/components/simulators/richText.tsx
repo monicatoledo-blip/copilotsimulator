@@ -77,6 +77,13 @@ type Block =
   | { kind: 'p'; text: string }
   | { kind: 'hr' }
   | { kind: 'ul'; items: string[] }
+  | { kind: 'tool'; text: string }
+
+const ToolGlyph = () => (
+  <svg className="tg-toolcall-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2z" />
+  </svg>
+)
 
 export function renderRich(text: string, keyPrefix = 'r') {
   const lines = (text || '').split('\n')
@@ -95,6 +102,9 @@ export function renderRich(text: string, keyPrefix = 'r') {
     if (trimmed === '---' || trimmed === '—') {
       flush()
       blocks.push({ kind: 'hr' })
+    } else if (trimmed.startsWith('> ')) {
+      flush()
+      blocks.push({ kind: 'tool', text: trimmed.slice(2) })
     } else if (trimmed.startsWith('- ')) {
       bullets.push(trimmed.slice(2))
     } else if (trimmed === '') {
@@ -108,6 +118,14 @@ export function renderRich(text: string, keyPrefix = 'r') {
 
   return blocks.map((block, idx) => {
     if (block.kind === 'hr') return <hr className="tg-hr" key={`${keyPrefix}-hr${idx}`} />
+    if (block.kind === 'tool') {
+      return (
+        <div className="tg-toolcall" key={`${keyPrefix}-tool${idx}`}>
+          <ToolGlyph />
+          <span>{renderInline(block.text, `${keyPrefix}-tool${idx}`)}</span>
+        </div>
+      )
+    }
     if (block.kind === 'ul') {
       return (
         <ul className="tg-ul" key={`${keyPrefix}-ul${idx}`}>

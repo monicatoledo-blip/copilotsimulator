@@ -1,17 +1,17 @@
 {
-  "id": "fins-headless-teams-default",
+  "id": "mc-headless-teams-default",
   "experienceType": "teams-copilot",
   "brand": {
-    "name": "Cumulus Financial",
+    "name": "Cumulus",
     "primaryColor": "#1E4ED8",
     "accentColor": "#60A5FA",
     "headlineColor": "#0F172A",
     "logoUrl": ""
   },
   "assistant": {
-    "name": "Copilot",
+    "name": "Marketing Agent",
     "avatarUrl": "",
-    "greeting": "Hi Jennifer, I can audit your environment and draft your next campaign setup."
+    "greeting": "Hi {name}, I can audit your environment and draft your next campaign setup."
   },
   "chatTitle": "Campaign Ops",
   "viewer": "Jennifer",
@@ -24,7 +24,7 @@
     { "id": "sb1", "name": "Ava Chen", "type": "person", "section": "Favorites" },
     { "id": "sb2", "name": "Marketing Team", "type": "channel", "section": "Favorites" },
     { "id": "sb3", "name": "Campaign Ops", "type": "channel", "section": "Cumulus Marketing" },
-    { "id": "sb4", "name": "Summer Promos 2026", "type": "channel", "section": "Cumulus Marketing", "unread": true },
+    { "id": "sb4", "name": "New Customer Onboarding", "type": "channel", "section": "Cumulus Marketing", "unread": true },
     { "id": "sb5", "name": "Lifecycle Journeys", "type": "channel", "section": "Cumulus Marketing", "mention": true },
     { "id": "sb6", "name": "Anna Reyes", "type": "person", "section": "Chats" },
     { "id": "sb7", "name": "Sue Park", "type": "person", "section": "Chats", "unread": true },
@@ -35,41 +35,41 @@
       "id": "g1",
       "type": "userPrompt",
       "author": "Ava",
-      "text": "hey team — Q3 rewards activation review just wrapped. exec summary: our high-value customer segment is underperforming on rewards redemption. 284K customers with unactivated rewards, 90+ days dormant. that's a real revenue exposure going into summer",
+      "text": "hey team — Q3 onboarding review just wrapped. exec summary: a lot of our new customers sign up but go quiet before they're activated. 60K new customers in the last 90 days, ~40% never finished onboarding. that's revenue leaking right at the top of the funnel",
       "reactions": [{ "emoji": "👍", "count": 1 }]
     },
     {
       "id": "g2",
       "type": "userPrompt",
       "author": "Anna",
-      "text": "hi Ava! 👋 yeah we flagged this in the QBR. the problem is we don't have a clean segment for it yet. data team said 2 weeks minimum to pull the SQL"
+      "text": "hi Ava! 👋 yeah we flagged this. the problem is we don't have a clean \"stalled onboarding\" segment yet. data team said 2 weeks minimum to pull the SQL"
     },
     {
       "id": "g3",
       "type": "userPrompt",
       "author": "Ava",
-      "text": "2 weeks 😟 by then we're competing with like 3 other banks running summer promos",
+      "text": "2 weeks 😟 every week we wait is another cohort that goes cold",
       "reactions": [{ "emoji": "❤️", "count": 1 }]
     },
     {
       "id": "g4",
       "type": "userPrompt",
       "author": "Sue",
-      "text": "for context, we ran something similar for our savings customers last month (Summer Savings). Strong engagement. The urgency framing in the subject line was the key I remember…",
+      "text": "for context, we ran a welcome series for a smaller cohort last quarter — strong activation lift. the early nudge timing was the key I remember…",
       "reactions": [{ "emoji": "❤️", "count": 1 }]
     },
     {
       "id": "g5",
       "type": "userPrompt",
       "author": "Anna",
-      "text": "that's exactly the playbook we need for our high-value segment. personalized, multi-channel, einstein-timed. but we'd need the segment, two emails, and a branching journey. campaign ops said 3 weeks after data delivers",
+      "text": "that's exactly the playbook we need for every new customer. personalized, multi-channel, einstein-timed. but we'd need the segment, two emails, and a branching welcome journey. campaign ops said 3 weeks after data delivers",
       "reactions": [{ "emoji": "❗", "count": 1 }]
     },
     {
       "id": "g6",
       "type": "userPrompt",
       "author": "Ava",
-      "text": "so we're looking at 5 weeks minimum before anything goes out 😬"
+      "text": "so we're looking at 5 weeks minimum before anything reaches a new customer 😬"
     },
     {
       "id": "g7",
@@ -82,7 +82,7 @@
       "id": "g8",
       "type": "userPrompt",
       "author": "Ava",
-      "text": "wait like build the segment AND journey from copilot?"
+      "text": "wait like build the segment AND the welcome journey from copilot?"
     },
     {
       "id": "g9",
@@ -96,41 +96,150 @@
     {
       "id": "s1",
       "type": "userPrompt",
-      "text": "@Copilot we need to re-engage our high-value customer segment before summer. Can you audit the gap and build the segment + journey for us?"
+      "text": "Hi! Can you see the data extensions in our Marketing Cloud?"
     },
     {
       "id": "s2",
       "type": "assistantResponse",
       "typingState": true,
-      "delayMs": 1100,
-      "text": "On it. Here's the gap I'm seeing for our **high-value segment**:\n\n---\n- **284K** customers with unactivated rewards\n- Dormant **90+ days** on redemption\n- No clean, reusable segment in place yet\n---\nThis is exactly the **Summer Savings** playbook Sue ran last month — personalized, multi-channel, Einstein-timed. I can build it now without waiting on the data team."
+      "delayMs": 1000,
+      "text": "Yes — I'm connected to your Marketing Cloud account, so I can see your Data Extensions along with Journey Builder and Content Builder.\n> Used SFMC · Get Data Extensions — MCE MCP\nThere are **12 data extensions** in the root folder today — mostly campaign and subscriber lists. Want me to create or update one?"
     },
     {
       "id": "s3",
-      "type": "toolAction",
-      "title": "Segment Built — High-Value Customers",
-      "text": "284K customers · unactivated rewards · 90+ days dormant. Ready to use across channels.",
-      "delayMs": 1000
+      "type": "userPrompt",
+      "text": "Create a Data Extension called Onboarding_Stalled_30d for new customers who signed up in the last 30 days but haven't completed onboarding."
     },
     {
       "id": "s4",
       "type": "assistantResponse",
       "typingState": true,
-      "delayMs": 1000,
-      "text": "Segment's live. Now drafting the **branching reactivation journey** — two emails with urgency framing, branching on redemption behavior, Einstein send-time optimization."
+      "delayMs": 1200,
+      "text": "Good call. For a stalled-onboarding segment, here are the fields I'd typically include so it's sendable and journey-ready:\n- **ContactKey** (Text) — primary key\n- **EmailAddress** (Email) — sendable address\n- **FirstName**, **LastName** (Text) — personalization\n- **SignupDate** (Date) — cohort entry\n- **OnboardingStep** (Text) — where they stalled\n- **LastLoginDate** (Date) — recency signal\n- **AccountType**, **LifecycleStage** (Text) — segmentation & journey gating\n- **LastModifiedDate** (Date) — system field\nWant me to create it in the root Data Extensions folder with these?"
     },
     {
       "id": "s5",
+      "type": "userPrompt",
+      "text": "Yes — create it in the root Data Extensions folder with those fields."
+    },
+    {
+      "id": "s5b",
+      "type": "assistantResponse",
+      "typingState": true,
+      "delayMs": 1200,
+      "text": "On it.\n> Used SFMC · Get Data Extension Folders — MCE MCP\n> Used SFMC · Create Data Extension — MCE MCP\nDone — here's what I built:"
+    },
+    {
+      "id": "s5c",
       "type": "toolAction",
-      "title": "Journey Created — Summer Rewards Reactivation",
-      "text": "2 emails · Einstein send-time · branch on redeem vs. no-redeem at 72h.",
-      "delayMs": 1100
+      "title": "Data Extension Created — Onboarding_Stalled_30d",
+      "delayMs": 900,
+      "text": "Root Data Extensions folder · sendable on ContactKey → _SubscriberKey · ~24K new customers qualify."
+    },
+    {
+      "id": "s5d",
+      "type": "visualization",
+      "vizType": "table",
+      "title": "🗂️ Onboarding_Stalled_30d — Fields",
+      "delayMs": 900,
+      "text": "FIELD                TYPE    NOTES\n──────────────────────────────────────────\nContactKey           Text    🔑 Primary key\nEmailAddress         Email   Sendable address\nFirstName            Text    Personalization\nLastName             Text    Personalization\nSignupDate           Date    Cohort entry\nOnboardingStep       Text    Stalled stage\nLastLoginDate        Date    Recency signal\nAccountType          Text    Segmentation\nLifecycleStage       Text    Journey gating\nLastModifiedDate     Date    System field\n──────────────────────────────────────────\n10 fields · sendable on ContactKey → _SubscriberKey"
+    },
+    {
+      "id": "s5e",
+      "type": "assistantResponse",
+      "delayMs": 700,
+      "text": "Your **Onboarding_Stalled_30d** segment is live and already populating — about 24K contacts and growing. Ready to put it to work?"
     },
     {
       "id": "s6",
+      "type": "userPrompt",
+      "text": "Perfect. Build the welcome & activation journey for that audience — a Welcome email and an Activation Nudge, branching on whether they've activated at 72 hours, with Einstein send-time optimization."
+    },
+    {
+      "id": "s7",
+      "type": "visualization",
+      "title": "🗺️ Welcome & Activation Journey · Draft",
+      "delayMs": 900,
+      "text": "  ◐ Welcome Email   (Einstein send-time)\n  │\n  ├─ wait 3 days\n  │\n  ├─ Activated at 72h?\n  │     ├─ Yes ─▶ Confirmation + getting-started tips\n  │     └─ No  ─▶ Activation Nudge ─▶ wait 2 days ─▶ SMS\n  │\n  ◑ Exit when onboarding complete"
+    },
+    {
+      "id": "s8",
+      "type": "toolAction",
+      "title": "Journey Assets Created — Welcome & Activation",
+      "delayMs": 900,
+      "text": "Created Welcome Email + Activation Nudge in Content Builder and assembled the draft journey in Journey Builder with Einstein send-time optimization."
+    },
+    {
+      "id": "s8b",
+      "type": "assistantResponse",
+      "delayMs": 700,
+      "text": "That's the draft — Welcome email, a 72-hour activation check, and an SMS fallback, all Einstein-timed. I'd gut-check it against past performance before we flip it on, but that's your call."
+    },
+    {
+      "id": "s9",
+      "type": "userPrompt",
+      "text": "Before we activate — how did last quarter's welcome pilot perform? Give me the funnel and an activation scorecard vs. benchmark."
+    },
+    {
+      "id": "s10",
+      "type": "assistantResponse",
+      "typingState": true,
+      "delayMs": 1000,
+      "text": "Pulling the pilot results now.\n> Used SFMC · Get Journey Analytics — MCE MCP"
+    },
+    {
+      "id": "s11",
+      "type": "visualization",
+      "vizType": "funnel",
+      "title": "📊 Welcome Pilot — Engagement Funnel",
+      "delayMs": 900,
+      "text": "24,000 New Customers Entered\n\n|████████████████████████████████████| 24,000  100%\n        |\n        ▼  62% opened welcome email\n|██████████████████████|               14,880  opened\n        |\n        ▼  41% completed first key action\n|██████████████|                        9,840  activated\n        |\n        ▼  net lift vs. no-journey baseline\n|████|  ✅ +34% activation"
+    },
+    {
+      "id": "s12",
+      "type": "visualization",
+      "vizType": "scorecard",
+      "title": "🏁 Activation Scorecard vs. Benchmark",
+      "delayMs": 900,
+      "text": "WELCOME SERIES SCORECARD\n\nOpen Rate         ██████████░░   62%  🟢\nActivation Rate   ███████░░░░░   41%  🟡\nTime to Activate  ██████████░░   72h  🟢\nUnsubscribe       █░░░░░░░░░░░  0.4%  🟢\nRevenue vs Goal   ████░░░░░░░░    18%  🔴"
+    },
+    {
+      "id": "s13",
       "type": "assistantResponse",
       "delayMs": 900,
-      "text": "Done — segment **and** journey are ready in the high-value BU. That's ~5 weeks of work compressed into one chat. Want me to schedule the first send for Monday?"
+      "text": "**Biggest driver:** the 72-hour nudge — cohorts that received it activated **+34%** over baseline. **Recommendation:** lead both emails with the winning subject line — **“You're almost set up — finish in 2 minutes.”** Our Stalled_30d segment is primed for exactly this.\nWant me to lock that in and get the journey review-ready?"
+    },
+    {
+      "id": "s14",
+      "type": "userPrompt",
+      "text": "Love it. Apply that subject line to both emails, then flag the journey for compliance review and hold activation until approved. Where does that leave us?"
+    },
+    {
+      "id": "s15",
+      "type": "assistantResponse",
+      "typingState": true,
+      "delayMs": 1100,
+      "text": "> Used SFMC · Update Email Subject ×2 — Content Builder\n> Used SFMC · Get Journey Status — MCE MCP\nSubject lines updated. Here's where the journey stands:"
+    },
+    {
+      "id": "s16",
+      "type": "visualization",
+      "title": "✅ Journey Status — Compliance Hold",
+      "delayMs": 900,
+      "text": "Welcome & Activation Journey v1\n\nStatus          Draft   (not activated)\nEntry           API Event\nPopulation      0 contacts entered\nExecution Mode  Production\nLast Modified   today, 2:10 PM\n\n🔴 On hold — nothing sends until you publish.\n   Pending: compliance review of welcome-offer language."
+    },
+    {
+      "id": "s16b",
+      "type": "toolAction",
+      "title": "Journey Updated — Compliance Hold Applied",
+      "delayMs": 900,
+      "text": "Updated both email subject lines and kept journey status in Draft with an explicit compliance hold, so no sends occur until approval."
+    },
+    {
+      "id": "s17",
+      "type": "assistantResponse",
+      "delayMs": 900,
+      "text": "Activation is **on hold** in Draft — nothing sends until you publish. Once compliance clears the welcome-offer language, just say the word and I'll publish. That's roughly **5 weeks of work** done in one chat. 🎉"
     }
   ]
 }

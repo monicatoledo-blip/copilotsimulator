@@ -213,6 +213,16 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tc-card-check { width:18px; height:18px; border-radius:50%; background:#107c41; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .tc-card-title { font-size:13px; font-weight:600; color:#242424; }
     .tc-card-text { font-size:13px; line-height:19px; color:#424242; }
+    .tg-toolcall { display:flex; align-items:center; gap:7px; font-size:12.5px; line-height:18px; color:#6f6f6f; margin:5px 0; }
+    .tg-toolcall-ico { flex-shrink:0; color:#8a8aff; }
+    .tg-toolcall .tg-mention { color:#6f6f6f; font-weight:600; }
+    .tc-viz { margin-top:6px; }
+    .tc-viz-title { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700; color:#242424; margin:2px 0 8px; }
+    .tc-viz-title .tg-inline-emoji { width:1.25em; height:1.25em; }
+    .tc-viz-card { border:1px solid #e0e0e0; border-radius:10px; background:#fff; padding:16px 18px; overflow-x:auto; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .tc-viz-pre { margin:0; font-family:"Cascadia Code","Consolas","SF Mono","Menlo",ui-monospace,monospace; font-size:12.5px; line-height:1.55; color:#2b2b2b; white-space:pre; tab-size:2; }
+    .tc-viz-card::-webkit-scrollbar { height:8px; }
+    .tc-viz-card::-webkit-scrollbar-thumb { background:#c8c8c8; border-radius:4px; }
     .tc-typing { display:inline-flex; align-items:center; gap:5px; padding:6px 2px; }
     .tc-typing span { width:7px; height:7px; border-radius:50%; background-image:var(--tc-gradient); opacity:.5; animation:tc-bounce 1.2s infinite ease-in-out; }
     .tc-typing span:nth-child(2){ animation-delay:.18s; } .tc-typing span:nth-child(3){ animation-delay:.36s; }
@@ -221,7 +231,37 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tc-input { display:flex; align-items:flex-end; gap:8px; border:1px solid #d1d1d1; border-radius:12px; padding:8px 8px 8px 12px; }
     .tc-input-left { display:flex; align-items:center; gap:2px; padding-bottom:4px; }
     .tc-placeholder { flex:1; font-size:14px; color:#616161; padding:6px 4px; user-select:none; }
-    .tc-send { width:32px; height:32px; border:none; border-radius:8px; background:var(--tc-gradient); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+    .tc-input-field { flex:1; min-width:0; border:none; outline:none; background:transparent; font-family:inherit; font-size:14px; line-height:20px; color:#242424; padding:6px 4px; resize:none; overflow-y:auto; max-height:160px; }
+    .tc-input-field::placeholder { color:#616161; }
+    .tc-thread.is-welcome { align-items:center; justify-content:center; }
+    .tc-welcome { margin:auto; width:100%; max-width:760px; display:flex; flex-direction:column; align-items:center; text-align:center; padding:24px 16px; }
+    .tc-welcome-brand { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .tc-welcome-titles { display:flex; flex-direction:column; gap:1px; }
+    .tc-welcome-title { font-size:30px; font-weight:600; color:#242424; letter-spacing:-0.01em; }
+    .tc-welcome-sub { font-size:12px; font-weight:600; letter-spacing:0.02em; text-transform:uppercase; color:#616161; }
+    .tc-welcome-invite { font-size:15px; line-height:22px; color:#424242; margin-bottom:26px; max-width:560px; }
+    .tc-suggest-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; width:100%; }
+    .tc-suggest-card { display:flex; flex-direction:column; gap:8px; align-items:flex-start; text-align:left; background:#fff; border:1px solid #ededed; border-radius:10px; padding:16px 18px; font-family:inherit; transition:border-color .15s, box-shadow .15s; }
+    .tc-suggest-card:hover { border-color:#c7c7f0; box-shadow:0 2px 10px rgba(0,0,0,0.07); }
+    .tc-suggest-head { display:flex; align-items:center; gap:8px; }
+    .tc-suggest-ico { flex-shrink:0; display:flex; color:#5b5fc7; }
+    .tc-suggest-label { font-size:14px; font-weight:600; color:#242424; }
+    .tc-suggest-text { font-size:13px; line-height:18px; color:#616161; }
+    .tc-thinking { display:inline-flex; align-items:center; gap:9px; padding:4px 0; }
+    .tc-thinking-text { font-size:14px; font-weight:600; background:var(--tc-gradient); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:tc-shimmer 2s linear infinite; }
+    @keyframes tc-shimmer { to { background-position:200% center; } }
+    .tc-dots { display:inline-flex; gap:4px; }
+    .tc-dots span { width:6px; height:6px; border-radius:50%; background:#8a8aff; background-image:var(--tc-gradient); opacity:.5; animation:tc-bounce 1.2s infinite ease-in-out; }
+    .tc-dots span:nth-child(2){ animation-delay:.18s; } .tc-dots span:nth-child(3){ animation-delay:.36s; }
+    .tc-send { width:32px; height:32px; border:none; border-radius:8px; background:var(--tc-gradient); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:filter .15s, transform .1s; }
+    .tc-send:hover { filter:brightness(1.08); } .tc-send:active { transform:scale(0.93); }
+    .tw-nav svg { padding:4px; border-radius:6px; cursor:pointer; transition:background .15s; }
+    .tw-nav svg:hover { background:#e2e2e8; }
+    .tw-search:hover { border-color:#c7c7c7; background:#fafafa; cursor:text; }
+    .tw-profile { cursor:pointer; transition:box-shadow .15s; }
+    .tw-profile:hover { box-shadow:0 0 0 2px rgba(98,100,167,0.35); }
+    .tw-traffic span { transition:filter .15s; }
+    .tw-traffic:hover span { filter:brightness(1.12); }
     .tc-disclaimer { text-align:center; font-size:11px; color:#616161; margin-top:8px; }
   </style>
 </head>
@@ -320,8 +360,8 @@ export function buildHtmlTemplate(serializedManifest: string) {
               <div class="tc-input-left">
                 <button class="tc-icon-btn" title="Add attachment"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21.4 11.05 12.2 20.3a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.48-8.49"/></svg></button>
               </div>
-              <div class="tc-placeholder" id="tc-placeholder">Message Copilot</div>
-              <button class="tc-send" title="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3 10l12 2-12 2z"/></svg></button>
+              <textarea class="tc-input-field" id="tc-input" rows="1" placeholder="Message Copilot" aria-label="Message Copilot"></textarea>
+              <button class="tc-send" id="tc-send" title="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3 10l12 2-12 2z"/></svg></button>
             </div>
             <div class="tc-disclaimer">AI-generated content may be incorrect</div>
           </div>
@@ -380,18 +420,20 @@ export function buildHtmlTemplate(serializedManifest: string) {
       });
       el.addEventListener('mouseleave', function(){ if(card){ card.remove(); card=null; } });
     }
+    function fillName(text){ return text==null?text:String(text).replace(/\\{\\{?\\s*name\\s*\\}?\\}/gi, viewer||'there'); }
     function inlineHtml(text){
-      var s = esc(text);
+      var s = esc(fillName(text));
       s = s.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');
       s = s.replace(/@\\[([^\\]]+)\\]/g, '<span class="tg-mention">$1</span>');
       s = s.replace(/@([A-Za-z0-9_]+)/g, '<span class="tg-mention">$1</span>');
       return emojiInline(s);
     }
     function richHtml(text){
-      var lines = String(text||'').split('\\n'); var html=''; var bullets=[];
+      var lines = String(fillName(text)||'').split('\\n'); var html=''; var bullets=[];
       function flush(){ if(bullets.length){ html += '<ul class="tg-ul">'+bullets.map(function(b){return '<li>'+inlineHtml(b)+'</li>';}).join('')+'</ul>'; bullets=[]; } }
       lines.forEach(function(line){ var t=line.trim();
         if(t==='---'||t==='—'){ flush(); html+='<hr class="tg-hr">'; }
+        else if(t.indexOf('> ')===0){ flush(); html+='<div class="tg-toolcall"><svg class="tg-toolcall-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2z"/></svg><span>'+inlineHtml(t.slice(2))+'</span></div>'; }
         else if(t.indexOf('- ')===0){ bullets.push(t.slice(2)); }
         else if(t===''){ flush(); }
         else { flush(); html+='<p class="tg-p">'+inlineHtml(line)+'</p>'; }
@@ -508,7 +550,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
       row.innerHTML=copilotAvatar()+'<span class="tg-typing-text">Copilot is typing</span><span class="tg-dots"><span></span><span></span><span></span></span>';
       return row;
     }
-    function isCopilot(s){ return s && (s.type==='assistantResponse' || s.type==='toolAction'); }
+    function isCopilot(s){ return s && (s.type==='assistantResponse' || s.type==='toolAction' || s.type==='visualization'); }
 
     // ---- Group chat: preload the human conversation only (no Copilot) ----
     function preloadChat(){
@@ -528,7 +570,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     var copThread = document.getElementById('tc-thread');
     document.getElementById('tc-name').textContent = asstName;
     document.getElementById('tc-sub').textContent = brand.name || '';
-    document.getElementById('tc-placeholder').textContent = 'Message ' + asstName;
+    var tcInput = document.getElementById('tc-input');
+    var tcSend = document.getElementById('tc-send');
+    tcInput.placeholder = 'Message ' + asstName;
 
     function tcAvatar(){ return '<div class="tc-avatar is-copilot"><img src="'+ICON+'" alt="'+esc(asstName)+'"></div>'; }
     function tcActions(){ return '<div class="tc-actions">'
@@ -539,37 +583,114 @@ export function buildHtmlTemplate(serializedManifest: string) {
     function tcUserRow(step){ var r=document.createElement('div'); r.className='tc-row-user'; r.innerHTML='<div class="tc-user-bubble">'+inlineHtml(step.text)+'</div>'; return r; }
     function tcAssistantRow(step){
       var r=document.createElement('div'); r.className='tc-row-assistant';
-      var body = step.type==='toolAction'
-        ? '<div class="tc-card"><div class="tc-card-accent"></div><div class="tc-card-body"><div class="tc-card-head"><span class="tc-card-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span><span class="tc-card-title">'+esc(step.title||'Action complete')+'</span></div><div class="tc-card-text">'+inlineHtml(step.text)+'</div></div></div>'
-        : '<div class="tc-assistant-text">'+richHtml(step.text)+'</div>';
+      var body;
+      if(step.type==='toolAction'){
+        body='<div class="tc-card"><div class="tc-card-accent"></div><div class="tc-card-body"><div class="tc-card-head"><span class="tc-card-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span><span class="tc-card-title">'+esc(fillName(step.title||'Action complete'))+'</span></div><div class="tc-card-text">'+inlineHtml(step.text)+'</div></div></div>';
+      } else if(step.type==='visualization'){
+        body='<div class="tc-viz"><div class="tc-viz-title">'+inlineHtml(step.title||'Insights')+'</div><div class="tc-viz-card"><pre class="tc-viz-pre">'+esc(fillName(step.text))+'</pre></div></div>';
+      } else {
+        body='<div class="tc-assistant-text">'+richHtml(step.text)+'</div>';
+      }
       r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-assistant-name">'+esc(asstName)+'</div>'+body+tcActions()+'</div>';
       return r;
     }
-    function tcGreeting(){ var r=document.createElement('div'); r.className='tc-row-assistant'; r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-assistant-name">'+esc(asstName)+'</div><div class="tc-assistant-text">'+richHtml(assistant.greeting)+'</div></div>'; return r; }
     function tcTyping(){ var r=document.createElement('div'); r.className='tc-row-assistant'; r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-typing"><span></span><span></span><span></span></div></div>'; return r; }
     function copScroll(){ copThread.scrollTop = copThread.scrollHeight; }
 
-    var copStarted=false, copRunning=false;
-    async function playCopilot(){
-      if(copRunning) return; copRunning=true; copStarted=true;
-      copThread.innerHTML='';
-      if(assistant.greeting){ copThread.appendChild(tcGreeting()); copScroll(); await delay(500); }
-      var script = clone(MANIFEST.script);
-      for(var i=0;i<script.length;i++){
-        var step=script[i];
-        if(isCopilot(step)){
-          var typing=tcTyping(); copThread.appendChild(typing); copScroll();
-          await delay(step.delayMs || 900);
-          copThread.removeChild(typing);
-          copThread.appendChild(tcAssistantRow(step)); copScroll();
-          await delay(450);
-        } else {
-          copThread.appendChild(tcUserRow(step)); copScroll();
-          await delay(step.delayMs || 500);
+    // Group the script into turns: each starts with a customer prompt and includes
+    // the Copilot responses that follow it. The viewer drives playback from the composer.
+    function buildSegments(script){ var segs=[],cur=null; (script||[]).forEach(function(step){ if(step.type==='userPrompt'){ if(cur)segs.push(cur); cur={prompt:step,responses:[]}; } else { if(!cur)cur={prompt:null,responses:[]}; cur.responses.push(step); } }); if(cur)segs.push(cur); return segs; }
+    var segments = buildSegments(clone(MANIFEST.script));
+    var copStarted=false, copBusy=false, segIndex=0;
+
+    var STARTER_TILES=[
+      {label:'Idea', copy:'Spark ideas for your next campaign or customer moment.', icon:'<path d="M9 18h6M10 21h4"/><path d="M12 2a7 7 0 0 0-4 12.6c.6.4 1 1.1 1 1.9V18h6v-1.5c0-.8.4-1.5 1-1.9A7 7 0 0 0 12 2z"/>'},
+      {label:'Design', copy:'Shape a rough concept into a polished, on-brand asset.', icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 14l-4-4-7 7"/>'},
+      {label:'Create', copy:'Build a segment, journey, or email right from chat.', icon:'<path d="M5 21L15 11"/><path d="M16 3l.9 2.1L19 6l-2.1.9L16 9l-.9-2.1L13 6l2.1-.9z"/>'},
+      {label:'Ask', copy:'Ask anything about your audiences, data, or setup.', icon:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.4 2.4 0 1 1 3.3 2.3c-.6.3-.9.7-.9 1.5"/><circle cx="12" cy="16.2" r="0.6" fill="currentColor" stroke="none"/>'}
+    ];
+    function tcWelcome(){
+      var cards = STARTER_TILES.map(function(t){
+        return '<div class="tc-suggest-card"><span class="tc-suggest-head"><span class="tc-suggest-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+t.icon+'</svg></span><span class="tc-suggest-label">'+esc(t.label)+'</span></span><span class="tc-suggest-text">'+esc(t.copy)+'</span></div>';
+      }).join('');
+      var w=document.createElement('div'); w.className='tc-welcome';
+      w.innerHTML='<div class="tc-welcome-brand"><span class="tc-avatar is-copilot"><img src="'+ICON+'" width="40" height="40" style="object-fit:contain" alt="'+esc(asstName)+'"></span><span class="tc-welcome-titles"><span class="tc-welcome-title">'+esc(asstName)+'</span><span class="tc-welcome-sub">Copilot agent</span></span></div>'
+        +'<div class="tc-welcome-invite">'+esc(fillName(assistant.greeting) || 'What will you create today?')+'</div>'
+        +'<div class="tc-suggest-grid" aria-hidden="true">'+cards+'</div>';
+      return w;
+    }
+    function renderWelcome(){
+      copThread.innerHTML=''; copThread.classList.add('is-welcome');
+      copThread.appendChild(tcWelcome());
+    }
+    function tcAutoGrow(){ tcInput.style.height='auto'; tcInput.style.height=Math.min(tcInput.scrollHeight,160)+'px'; }
+
+    // How long Copilot "works" before each response, plus rotating status phrases.
+    var PACING_MULT={low:0.5,medium:1,high:1.7};
+    function thinkMs(step){ var base; if(step.type==='visualization') base=6500; else if(step.type==='toolAction') base=6000; else base=Math.min(Math.max(step.delayMs||3200,3600),5200); return Math.round(base*(PACING_MULT[step.pacing]||1)); }
+    var THINK_PHRASES={
+      assistantResponse:['Thinking\\u2026','Reasoning over your request\\u2026','Lining things up\\u2026','Working on it\\u2026'],
+      toolAction:['Connecting to Marketing Cloud\\u2026','Reaching into the MCP server\\u2026','Setting that up for you\\u2026','Wiring it up\\u2026','Almost there\\u2026'],
+      chart:['Pulling the numbers\\u2026','Crunching the data\\u2026','Building your chart\\u2026','Putting it together\\u2026'],
+      visualization:['Putting it together\\u2026','Mapping it out\\u2026','Building it now\\u2026','Almost there\\u2026']
+    };
+    var CHART_VIZ_TYPES={bar:1,funnel:1,scorecard:1};
+    // Real Copilot "thinks" once per turn, then streams the whole answer.
+    function phrasesForTurn(responses){
+      for(var i=0;i<responses.length;i++) if(responses[i].type==='toolAction') return THINK_PHRASES.toolAction;
+      var hasViz=false, hasChart=false;
+      for(var j=0;j<responses.length;j++){ if(responses[j].type==='visualization'){ hasViz=true; if(CHART_VIZ_TYPES[responses[j].vizType]) hasChart=true; } }
+      if(hasViz) return hasChart ? THINK_PHRASES.chart : THINK_PHRASES.visualization;
+      return THINK_PHRASES.assistantResponse;
+    }
+    function tcThinking(phrases){
+      var r=document.createElement('div'); r.className='tc-row-assistant';
+      r.innerHTML=tcAvatar()+'<div class="tc-assistant-col"><div class="tc-thinking"><span class="tc-thinking-text"></span><span class="tc-dots"><span></span><span></span><span></span></span></div></div>';
+      var label=r.querySelector('.tc-thinking-text'); var i=0;
+      label.textContent=phrases[0];
+      r._timer=setInterval(function(){ i++; label.textContent=phrases[i%phrases.length]; }, 1300);
+      return r;
+    }
+    function stopThinking(r){ if(r&&r._timer){ clearInterval(r._timer); } if(r&&r.parentNode){ r.parentNode.removeChild(r); } }
+    async function copSend(rawText){
+      if(copBusy) return;
+      var seg=segments[segIndex];
+      var text=((rawText!=null?rawText:tcInput.value)||'').trim() || (seg&&seg.prompt?seg.prompt.text:'');
+      if(!text) return;
+      copBusy=true;
+      if(!copStarted){ copStarted=true; copThread.classList.remove('is-welcome'); copThread.innerHTML=''; }
+      tcInput.value=''; tcAutoGrow();
+      copThread.appendChild(tcUserRow({text:text})); copScroll();
+      segIndex++;
+      var responses=seg?seg.responses:[];
+      if(responses.length){
+        var totalThink=Math.min(responses.reduce(function(s,st){return s+thinkMs(st);},0),12000);
+        var think=tcThinking(phrasesForTurn(responses)); copThread.appendChild(think); copScroll();
+        await delay(totalThink);
+        stopThinking(think);
+        for(var i=0;i<responses.length;i++){
+          copThread.appendChild(tcAssistantRow(responses[i])); copScroll();
+          if(i<responses.length-1) await delay(600);
         }
       }
-      copRunning=false;
+      if(!seg){
+        var t2=tcTyping(); copThread.appendChild(t2); copScroll(); await delay(900); copThread.removeChild(t2);
+        copThread.appendChild(tcAssistantRow({type:'assistantResponse', text:"That's the end of this demo flow \\u2014 refresh to start over."})); copScroll();
+      }
+      copBusy=false;
+      tcInput.focus();
     }
+    // First prompt is typed by hand; after that, click to "paste" the next one.
+    tcInput.addEventListener('click', function(){
+      if(copBusy) return;
+      if(segIndex===0) return;
+      if(tcInput.value.trim()) return;
+      var seg=segments[segIndex];
+      if(seg && seg.prompt){ tcInput.value=seg.prompt.text; tcAutoGrow(); }
+    });
+    tcSend.addEventListener('click', function(){ copSend(); });
+    tcInput.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); copSend(); } });
+    tcInput.addEventListener('input', tcAutoGrow);
 
     // ---- View switching (chat <-> copilot) ----
     var tgSurface=document.getElementById('tg-surface');
@@ -580,7 +701,8 @@ export function buildHtmlTemplate(serializedManifest: string) {
       tgSurface.style.display='none'; tcApp.style.display='flex';
       navCopilot.classList.add('is-active');
       if(activeRow) activeRow.classList.remove('is-active');
-      if(!copStarted) playCopilot();
+      if(!copStarted) renderWelcome();
+      tcInput.focus();
     }
     function showChat(){
       tcApp.style.display='none'; tgSurface.style.display='flex';

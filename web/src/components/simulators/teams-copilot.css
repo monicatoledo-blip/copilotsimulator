@@ -499,6 +499,68 @@
   color: var(--tc-fg-2);
 }
 
+/* ---------- MCP tool-call line (the "headless" trace) ---------- */
+.tg-toolcall {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 18px;
+  color: #6f6f6f;
+  margin: 5px 0;
+}
+.tg-toolcall-ico {
+  flex-shrink: 0;
+  color: #8a8aff;
+}
+.tg-toolcall .tg-mention {
+  color: #6f6f6f;
+  font-weight: 600;
+}
+
+/* ---------- Visualization card (Copilot monospace text-art) ---------- */
+.tc-viz {
+  margin-top: 6px;
+}
+.tc-viz-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tc-fg-1);
+  margin: 2px 0 8px;
+}
+.tc-viz-title .tg-inline-emoji {
+  width: 1.25em;
+  height: 1.25em;
+}
+.tc-viz-card {
+  border: 1px solid var(--tc-stroke);
+  border-radius: 10px;
+  background: var(--tc-surface);
+  padding: 16px 18px;
+  overflow-x: auto;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.tc-viz-pre {
+  margin: 0;
+  font-family: "Cascadia Code", "Consolas", "SF Mono", "Menlo", ui-monospace,
+    monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #2b2b2b;
+  white-space: pre;
+  tab-size: 2;
+}
+.tc-viz-card::-webkit-scrollbar {
+  height: 8px;
+}
+.tc-viz-card::-webkit-scrollbar-thumb {
+  background: #c8c8c8;
+  border-radius: 4px;
+}
+
 /* ---------- Typing indicator ---------- */
 .tc-typing {
   display: inline-flex;
@@ -578,6 +640,157 @@
   user-select: none;
 }
 
+.tc-input-field {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--tc-fg-1);
+  padding: 6px 4px;
+  resize: none;
+  overflow-y: auto;
+  max-height: 160px;
+}
+.tc-input-field::placeholder {
+  color: var(--tc-fg-3);
+}
+
+/* ---------- Welcome / invitation landing ---------- */
+.tc-thread.is-welcome {
+  align-items: center;
+  justify-content: center;
+}
+.tc-welcome {
+  margin: auto;
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+}
+.tc-welcome-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.tc-welcome-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.tc-welcome-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--tc-fg-1);
+  letter-spacing: -0.01em;
+}
+.tc-welcome-sub {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--tc-fg-3);
+}
+.tc-welcome-invite {
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--tc-fg-2);
+  margin-bottom: 26px;
+  max-width: 560px;
+}
+.tc-suggest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+.tc-suggest-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  text-align: left;
+  background: var(--tc-surface);
+  border: 1px solid #ededed;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tc-suggest-card:hover {
+  border-color: #c7c7f0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+.tc-suggest-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tc-suggest-ico {
+  flex-shrink: 0;
+  display: flex;
+  color: #5b5fc7;
+}
+.tc-suggest-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tc-fg-1);
+}
+.tc-suggest-text {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--tc-fg-3);
+}
+
+/* ---------- "Thinking / working" indicator (shimmering status) ---------- */
+.tc-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 0;
+}
+.tc-thinking-text {
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--tc-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: tc-shimmer 2s linear infinite;
+}
+@keyframes tc-shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+.tc-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.tc-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8a8aff;
+  background-image: var(--tc-gradient);
+  opacity: 0.5;
+  animation: tc-bounce 1.2s infinite ease-in-out;
+}
+.tc-dots span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.tc-dots span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
 .tc-send {
   width: 32px;
   height: 32px;
@@ -590,7 +803,31 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: filter 0.15s, transform 0.1s;
 }
+.tc-send:hover { filter: brightness(1.08); }
+.tc-send:active { transform: scale(0.93); }
+
+/* Responsive (alive-but-decorative) chrome affordances */
+.tw-nav svg {
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tw-nav svg:hover { background: #e2e2e8; }
+.tw-search {
+  cursor: text;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tw-search:hover { border-color: #c7c7c7; background: #fafafa; }
+.tw-profile {
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.tw-profile:hover { box-shadow: 0 0 0 2px rgba(98, 100, 167, 0.35); }
+.tw-traffic span { transition: filter 0.15s; }
+.tw-traffic:hover span { filter: brightness(1.12); }
 
 .tc-disclaimer {
   text-align: center;

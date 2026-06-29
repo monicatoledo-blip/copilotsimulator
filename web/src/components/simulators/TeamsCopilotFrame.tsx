@@ -1,22 +1,17 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import './teams-copilot.css'
 import CopilotMark from './CopilotMark'
 import TeamsGroupChat from './TeamsGroupChat'
-import { renderRich } from './richText'
+import { renderRich, renderInline } from './richText'
 import { CUMULUS_LOGO } from './cumulusLogoData'
 
-function Avatar({ assistant, brand }) {
+function Avatar({ assistant }) {
+  // Copilot's assistant avatar is always the Copilot mark (Microsoft branding).
+  // The org's brand logo lives in the Teams title bar and app rail, not here.
   if (assistant.avatarUrl) {
     return (
       <div className="tc-avatar">
         <img src={assistant.avatarUrl} alt={assistant.name} />
-      </div>
-    )
-  }
-  if (brand.logoUrl) {
-    return (
-      <div className="tc-avatar">
-        <img src={brand.logoUrl} alt={brand.name} />
       </div>
     )
   }
@@ -93,6 +88,20 @@ function Step({ step, assistant, brand }) {
     )
   }
 
+  if (step.type === 'visualization') {
+    return (
+      <AssistantText assistant={assistant} brand={brand}>
+        <div className="tc-viz">
+          <div className="tc-viz-title">{renderInline(step.title || 'Insights', step.id)}</div>
+          <div className="tc-viz-card">
+            <pre className="tc-viz-pre">{step.text}</pre>
+          </div>
+        </div>
+        <ResponseActions />
+      </AssistantText>
+    )
+  }
+
   return (
     <AssistantText assistant={assistant} brand={brand}>
       <div className="tc-assistant-text">{renderRich(step.text, step.id)}</div>
@@ -101,9 +110,248 @@ function Step({ step, assistant, brand }) {
   )
 }
 
-function CopilotSurface({ brand, assistant, renderedSteps, isRunning }) {
-  const lastStep = renderedSteps[renderedSteps.length - 1]
-  const showTyping = isRunning && (!lastStep || lastStep.type === 'userPrompt')
+const copDelay = (ms) => new Promise((r) => setTimeout(r, ms))
+
+function buildSegments(script) {
+  const segs = []
+  let cur = null
+  ;(script || []).forEach((step) => {
+    if (step.type === 'userPrompt') {
+      if (cur) segs.push(cur)
+      cur = { prompt: step, responses: [] }
+    } else {
+      if (!cur) cur = { prompt: null, responses: [] }
+      cur.responses.push(step)
+    }
+  })
+  if (cur) segs.push(cur)
+  return segs
+}
+
+const STARTER_TILES = [
+  {
+    key: 'idea',
+    label: 'Idea',
+    copy: 'Spark ideas for your next campaign or customer moment.',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18h6M10 21h4" />
+        <path d="M12 2a7 7 0 0 0-4 12.6c.6.4 1 1.1 1 1.9V18h6v-1.5c0-.8.4-1.5 1-1.9A7 7 0 0 0 12 2z" />
+      </svg>
+    ),
+  },
+  {
+    key: 'design',
+    label: 'Design',
+    copy: 'Shape a rough concept into a polished, on-brand asset.',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="8.5" cy="9" r="1.5" />
+        <path d="M21 14l-4-4-7 7" />
+      </svg>
+    ),
+  },
+  {
+    key: 'create',
+    label: 'Create',
+    copy: 'Build a segment, journey, or email right from chat.',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 21L15 11" />
+        <path d="M16 3l.9 2.1L19 6l-2.1.9L16 9l-.9-2.1L13 6l2.1-.9z" />
+      </svg>
+    ),
+  },
+  {
+    key: 'ask',
+    label: 'Ask',
+    copy: 'Ask anything about your audiences, data, or setup.',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.6 9.2a2.4 2.4 0 1 1 3.3 2.3c-.6.3-.9.7-.9 1.5" />
+        <circle cx="12" cy="16.2" r="0.6" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+]
+
+function CopilotWelcome({ assistant, greeting }) {
+  return (
+    <div className="tc-welcome">
+      <div className="tc-welcome-brand">
+        <CopilotMark size={40} />
+        <span className="tc-welcome-titles">
+          <span className="tc-welcome-title">{assistant.name || 'Copilot'}</span>
+          <span className="tc-welcome-sub">Copilot agent</span>
+        </span>
+      </div>
+      <div className="tc-welcome-invite">{greeting || 'What will you create today?'}</div>
+      <div className="tc-suggest-grid" aria-hidden="true">
+        {STARTER_TILES.map((tile) => (
+          <div key={tile.key} className="tc-suggest-card">
+            <span className="tc-suggest-head">
+              <span className="tc-suggest-ico">{tile.icon}</span>
+              <span className="tc-suggest-label">{tile.label}</span>
+            </span>
+            <span className="tc-suggest-text">{tile.copy}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// How long Copilot "works" before each response — longer for steps that imply
+// reaching into Marketing Cloud via MCP and building artifacts.
+const PACING_MULT = { low: 0.5, medium: 1, high: 1.7 }
+function thinkMs(step) {
+  let base
+  if (step.type === 'visualization') base = 6500
+  else if (step.type === 'toolAction') base = 6000
+  else base = Math.min(Math.max(step.delayMs || 3200, 3600), 5200)
+  return Math.round(base * (PACING_MULT[step.pacing] || 1))
+}
+
+const THINK_PHRASES = {
+  assistantResponse: ['Thinking…', 'Reasoning over your request…', 'Lining things up…', 'Working on it…'],
+  toolAction: ['Connecting to Marketing Cloud…', 'Reaching into the MCP server…', 'Setting that up for you…', 'Wiring it up…', 'Almost there…'],
+  // Chart-specific copy — only used when an actual chart is being built.
+  chart: ['Pulling the numbers…', 'Crunching the data…', 'Building your chart…', 'Putting it together…'],
+  // Neutral copy for non-chart visualizations (tables, journey maps, etc.).
+  visualization: ['Putting it together…', 'Mapping it out…', 'Building it now…', 'Almost there…'],
+}
+const CHART_VIZ_TYPES = new Set(['bar', 'funnel', 'scorecard'])
+// Real Copilot "thinks" once per turn, then streams the whole answer. Pick the
+// phrase set that matches the heaviest work happening in the turn.
+function phrasesForTurn(responses) {
+  if (responses.some((s) => s.type === 'toolAction')) return THINK_PHRASES.toolAction
+  if (responses.some((s) => s.type === 'visualization')) {
+    const hasChart = responses.some((s) => s.type === 'visualization' && CHART_VIZ_TYPES.has(s.vizType))
+    return hasChart ? THINK_PHRASES.chart : THINK_PHRASES.visualization
+  }
+  return THINK_PHRASES.assistantResponse
+}
+
+function ThinkingRow({ phrases, assistant, brand }) {
+  const [i, setI] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setI((x) => x + 1), 1300)
+    return () => clearInterval(id)
+  }, [])
+  return (
+    <div className="tc-row-assistant">
+      <Avatar assistant={assistant} brand={brand} />
+      <div className="tc-assistant-col">
+        <div className="tc-thinking" aria-label="Copilot is working">
+          <span className="tc-thinking-text">{phrases[i % phrases.length]}</span>
+          <span className="tc-dots"><span /><span /><span /></span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function fillName(text, viewer) {
+  if (text == null) return text
+  return String(text).replace(/\{\{?\s*name\s*\}?\}/gi, viewer || 'there')
+}
+
+function CopilotSurface({ brand, assistant, script, resetSignal, viewer }) {
+  const segments = useMemo(() => buildSegments(script), [script])
+  const [started, setStarted] = useState(false)
+  const [turns, setTurns] = useState([])
+  const [thinking, setThinking] = useState(null)
+  const [input, setInput] = useState('')
+  const segIndexRef = useRef(0)
+  const busyRef = useRef(false)
+  const threadRef = useRef(null)
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    setStarted(false)
+    setTurns([])
+    setThinking(null)
+    setInput('')
+    segIndexRef.current = 0
+    busyRef.current = false
+  }, [resetSignal, script])
+
+  useEffect(() => {
+    if (threadRef.current) threadRef.current.scrollTop = threadRef.current.scrollHeight
+  }, [turns, thinking, started])
+
+  // Auto-grow the composer so pasted prompts wrap instead of getting clipped.
+  useEffect(() => {
+    const el = inputRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`
+  }, [input])
+
+  // Blinking cursor ready and waiting in the composer.
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus()
+  }, [])
+
+  // The very first prompt is typed by hand so it feels natural. After that,
+  // clicking the composer "pastes" the next scripted prompt, in order.
+  const fillNextPrompt = () => {
+    if (busyRef.current) return
+    if (segIndexRef.current === 0) return
+    if (input.trim()) return
+    const seg = segments[segIndexRef.current]
+    if (seg && seg.prompt) setInput(seg.prompt.text)
+  }
+
+  const send = async (rawText) => {
+    if (busyRef.current) return
+    const idx = segIndexRef.current
+    const seg = segments[idx]
+    const text = (rawText != null ? rawText : input).trim() || (seg && seg.prompt ? seg.prompt.text : '')
+    if (!text) return
+    busyRef.current = true
+    setStarted(true)
+    setInput('')
+    setTurns((t) => [...t, { kind: 'user', text }])
+    segIndexRef.current = idx + 1
+
+    const responses = seg ? seg.responses : []
+    if (responses.length) {
+      // One think phase per turn; its length is the sum of each response's
+      // pacing (so per-step effort still matters), capped so it never drags.
+      const totalThink = Math.min(
+        responses.reduce((sum, s) => sum + thinkMs(s), 0),
+        12000,
+      )
+      setThinking({ phrases: phrasesForTurn(responses) })
+      await copDelay(totalThink)
+      setThinking(null)
+      for (let i = 0; i < responses.length; i++) {
+        setTurns((t) => [...t, { kind: 'step', step: responses[i] }])
+        if (i < responses.length - 1) await copDelay(600)
+      }
+    }
+    if (!seg) {
+      setThinking({ phrases: ['Thinking…'] })
+      await copDelay(900)
+      setThinking(null)
+      setTurns((t) => [
+        ...t,
+        { kind: 'step', step: { id: 'end-' + Date.now(), type: 'assistantResponse', text: "That's the end of this demo flow — refresh to start over." } },
+      ])
+    }
+    busyRef.current = false
+    if (inputRef.current) inputRef.current.focus()
+  }
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      send()
+    }
+  }
 
   return (
     <section className="tc-app">
@@ -144,28 +392,20 @@ function CopilotSurface({ brand, assistant, renderedSteps, isRunning }) {
         </div>
       </header>
 
-      <div className="tc-thread">
-        {assistant.greeting && (
-          <AssistantText assistant={assistant} brand={brand}>
-            <div className="tc-assistant-text">{assistant.greeting}</div>
-          </AssistantText>
-        )}
-
-        {renderedSteps.map((step) => (
-          <Step key={step.id} step={step} assistant={assistant} brand={brand} />
-        ))}
-
-        {showTyping && (
-          <div className="tc-row-assistant">
-            <Avatar assistant={assistant} brand={brand} />
-            <div className="tc-assistant-col">
-              <div className="tc-typing" aria-label="Copilot is typing">
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-          </div>
+      <div className={`tc-thread ${started ? '' : 'is-welcome'}`} ref={threadRef}>
+        {!started ? (
+          <CopilotWelcome assistant={assistant} greeting={fillName(assistant.greeting, viewer)} />
+        ) : (
+          <>
+            {turns.map((t, i) =>
+              t.kind === 'user' ? (
+                <Step key={i} step={{ type: 'userPrompt', text: fillName(t.text, viewer), id: 'u' + i }} assistant={assistant} brand={brand} />
+              ) : (
+                <Step key={i} step={{ ...t.step, text: fillName(t.step.text, viewer), title: fillName(t.step.title, viewer) }} assistant={assistant} brand={brand} />
+              ),
+            )}
+            {thinking && <ThinkingRow phrases={thinking.phrases} assistant={assistant} brand={brand} />}
+          </>
         )}
       </div>
 
@@ -178,8 +418,18 @@ function CopilotSurface({ brand, assistant, renderedSteps, isRunning }) {
               </svg>
             </button>
           </div>
-          <div className="tc-placeholder">Message {assistant.name || 'Copilot'}</div>
-          <button type="button" className="tc-send" title="Send" aria-label="Send">
+          <textarea
+            ref={inputRef}
+            className="tc-input-field"
+            rows={1}
+            value={input}
+            placeholder={`Message ${assistant.name || 'Copilot'}`}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            onClick={fillNextPrompt}
+            aria-label={`Message ${assistant.name || 'Copilot'}`}
+          />
+          <button type="button" className="tc-send" title="Send" aria-label="Send" onClick={() => send()}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3.4 20.4 21 12 3.4 3.6 3 10l12 2-12 2z" />
             </svg>
@@ -333,15 +583,9 @@ function railIcon(path, opts = {}) {
   )
 }
 
-export default function TeamsCopilotFrame({ brand, assistant, renderedSteps, isRunning, chatTitle, viewer, groupChat, members, sidebar }) {
+export default function TeamsCopilotFrame({ brand, assistant, script, resetSignal, chatTitle, viewer, groupChat, members, sidebar }) {
   const brandLogo = (brand.logoUrl || '').trim() || CUMULUS_LOGO
   const [view, setView] = useState('teams')
-
-  // When the demo script runs, surface it on the Copilot app (it never plays
-  // inside the group chat — Copilot is a separate surface you click into).
-  useEffect(() => {
-    if (isRunning || renderedSteps.length > 0) setView('copilot')
-  }, [isRunning, renderedSteps.length])
 
   return (
     <div className="tw-window">
@@ -417,7 +661,7 @@ export default function TeamsCopilotFrame({ brand, assistant, renderedSteps, isR
               members={members}
             />
           ) : (
-            <CopilotSurface brand={brand} assistant={assistant} renderedSteps={renderedSteps} isRunning={isRunning} />
+            <CopilotSurface brand={brand} assistant={assistant} script={script} resetSignal={resetSignal} viewer={viewer} />
           )}
         </div>
       </div>

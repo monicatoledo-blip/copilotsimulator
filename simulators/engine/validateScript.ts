@@ -1,4 +1,4 @@
-export type ScriptStepType = 'userPrompt' | 'assistantResponse' | 'toolAction'
+export type ScriptStepType = 'userPrompt' | 'assistantResponse' | 'toolAction' | 'visualization'
 
 export interface Reaction {
   emoji: string
@@ -45,7 +45,7 @@ export interface Member {
 }
 
 const HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6})$/
-const STEP_TYPES = new Set(['userPrompt', 'assistantResponse', 'toolAction'])
+const STEP_TYPES = new Set(['userPrompt', 'assistantResponse', 'toolAction', 'visualization'])
 
 export function validateScript(manifest: SimulatorManifest): string[] {
   const errors: string[] = []
@@ -74,6 +74,9 @@ export function validateScript(manifest: SimulatorManifest): string[] {
     if (step.delayMs != null && step.delayMs < 0) errors.push(`Step ${row}: delayMs cannot be negative.`)
     if (step.type === 'toolAction' && !step.title?.trim()) {
       errors.push(`Step ${row}: toolAction requires a title.`)
+    }
+    if (step.type === 'visualization' && !step.title?.trim()) {
+      errors.push(`Step ${row}: visualization requires a title (the card heading).`)
     }
   })
 

@@ -15,8 +15,9 @@
   color: #4f4f4f;
 }
 
-/* Header */
-.app-shell header {
+/* Header — scoped to the direct child so it never bleeds into nested
+   <header> elements inside the simulator preview (e.g. the Copilot header). */
+.app-shell > header {
   background: linear-gradient(135deg, #2a94d6 0%, #47b4ea 100%);
   color: white;
   padding: 32px 40px;
@@ -44,14 +45,14 @@
   text-align: left;
 }
 
-.app-shell header h1 {
+.app-shell > header h1 {
   font-family: "Open Sans", sans-serif;
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 10px;
 }
 
-.app-shell header p {
+.app-shell > header p {
   font-family: "Salesforce Sans", Arial, sans-serif;
   font-size: 16px;
   opacity: 0.95;
@@ -191,6 +192,66 @@
   font-size: 13px;
   color: #5f6368;
   margin: 0;
+}
+
+.reskin-callout {
+  margin: 16px 24px 0 24px;
+  border: 1px solid #cfe6f6;
+  background: #f3fafe;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.reskin-callout > summary {
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f6f99;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reskin-callout > summary::-webkit-details-marker {
+  display: none;
+}
+
+.reskin-callout > summary::after {
+  content: "▸";
+  margin-left: auto;
+  color: #7eb8d8;
+  transition: transform 0.15s;
+}
+
+.reskin-callout[open] > summary::after {
+  transform: rotate(90deg);
+}
+
+.reskin-intro {
+  font-size: 12.5px;
+  color: #44607a;
+  line-height: 1.5;
+  margin: 10px 0 8px;
+}
+
+.reskin-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.reskin-list li {
+  font-size: 12.5px;
+  color: #44607a;
+  line-height: 1.5;
+}
+
+.reskin-list strong {
+  color: #2a4a63;
 }
 
 .config-form {
