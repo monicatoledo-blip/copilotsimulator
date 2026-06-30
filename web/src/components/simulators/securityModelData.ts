@@ -25,6 +25,16 @@ export const SECURITY_SUBTITLE = 'Choose when Copilot is allowed to use these to
 export const SECURITY_BANNER =
   'Copilot only surfaces organizational data to which you already have at least view permissions, using the same access controls as the rest of Microsoft 365. Admins govern which tools are allowed, and every action is auditable in Microsoft Purview.'
 
+// Marketer-first reassurance points shown at the top of the popup. These are the
+// "we care about security ✓" checkboxes a FINS buyer wants ticked — plain
+// language, no jargon. The full per-tool detail below is for technical buyers.
+export const SECURITY_POINTS: string[] = [
+  'Copilot only sees data you already have permission to access',
+  'Your admin controls which tools Copilot is allowed to use',
+  'Every action is logged and auditable in Microsoft Purview',
+  "Your data is never used to train AI models",
+]
+
 // Read-only MCE tools — safe to "Always allow".
 export const READ_ONLY_TOOLS: SecurityTool[] = [
   { name: 'Describe object', permission: 'allow' },

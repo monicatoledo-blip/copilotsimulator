@@ -7,7 +7,7 @@ import { CUMULUS_LOGO } from './cumulusLogoData'
 import {
   SECURITY_TITLE,
   SECURITY_SUBTITLE,
-  SECURITY_BANNER,
+  SECURITY_POINTS,
   READ_ONLY_TOOLS,
   WRITE_TOOLS,
   READ_ONLY_DEFAULT_MODE,
@@ -302,7 +302,9 @@ function PermToggle({ value, onChange }) {
 }
 
 function SecurityGroup({ label, mode, tools, perms, onPermChange }) {
-  const [open, setOpen] = useState(mode === WRITE_DEFAULT_MODE)
+  // Collapsed by default so the popup reads as a glanceable trust screen; one
+  // click expands the full per-tool detail for technical buyers.
+  const [open, setOpen] = useState(false)
   return (
     <div className="tc-sec-group">
       <div className="tc-sec-grouphead">
@@ -354,9 +356,20 @@ function SecurityModal({ onClose }) {
           </button>
         </div>
         <div className="tc-secmodal-body">
-          <div className="tc-sec-banner">
-            <span className="tc-sec-banner-ico" aria-hidden="true"><ShieldIcon size={16} /></span>
-            <span>{SECURITY_BANNER}</span>
+          <ul className="tc-sec-points">
+            {SECURITY_POINTS.map((point) => (
+              <li key={point}>
+                <span className="tc-sec-point-ico" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
+                </span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="tc-sec-summary">
+            <strong>{READ_ONLY_TOOLS.length} read-only tools</strong> — always allowed
+            <span className="tc-sec-summary-dot" aria-hidden="true">·</span>
+            <strong>{WRITE_TOOLS.length} write tools</strong> — require approval
           </div>
           <SecurityGroup label="Read-only tools" mode={READ_ONLY_DEFAULT_MODE} tools={READ_ONLY_TOOLS} perms={perms} onPermChange={setPerm} />
           <SecurityGroup label="Write tools" mode={WRITE_DEFAULT_MODE} tools={WRITE_TOOLS} perms={perms} onPermChange={setPerm} />

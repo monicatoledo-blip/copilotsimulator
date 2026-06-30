@@ -10,6 +10,7 @@ import claudeDefault from '../../../simulators/content/claude.default.json'
 import { validateScript } from '../../../simulators/engine/validateScript'
 import { runScript } from '../../../simulators/engine/runScript'
 import { buildStandaloneHtml } from '../lib/export/buildStandaloneHtml'
+import { buildSetupHtml } from '../lib/export/buildSetupHtml'
 
 const TEAMS_TABS = [
   { id: 'demo', label: 'Your demo' },
@@ -202,6 +203,22 @@ export default function ExperienceGeneratorPage() {
     URL.revokeObjectURL(url)
   }
 
+  // Optional companion file: a guided walkthrough of how the agent + MCP server
+  // were set up in Copilot Studio and published to Teams. SEs show it or skip it.
+  const downloadSetupHtml = () => {
+    const foundErrors = validateScript(manifest)
+    setErrors(foundErrors)
+    if (foundErrors.length > 0) return
+    const html = buildSetupHtml(manifest)
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `${manifest.id}-setup.html`
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
+
   const importWorkingFile = async (e) => {
     const file = e.target.files && e.target.files[0]
     if (!file) return
@@ -295,6 +312,32 @@ export default function ExperienceGeneratorPage() {
                   “Welcome &amp; Activation” to match your play.
                 </li>
               </ol>
+            </details>
+          )}
+
+          {selectedExperience === 'teams-copilot' && (
+            <details className="reskin-callout advanced-setup">
+              <summary>
+                <span aria-hidden="true">⚙️</span> Advanced — setup walkthrough
+              </summary>
+              <p className="reskin-intro">
+                Want to get fancy with setup? Download an optional companion file that walks through how the
+                agent and Marketing Cloud MCP server are configured in Copilot Studio and published to Teams —
+                useful when connectivity or setup comes up. Otherwise just skip it.
+              </p>
+              <button
+                type="button"
+                className="download-btn"
+                style={{ marginTop: 4, background: '#fff', color: '#5b5fc7', border: '1px solid #5b5fc7' }}
+                onClick={downloadSetupHtml}
+                disabled={validationErrors.length > 0}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+                Download Setup Walkthrough
+              </button>
             </details>
           )}
 

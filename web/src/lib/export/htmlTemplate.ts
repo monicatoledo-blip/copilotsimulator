@@ -5,7 +5,7 @@ import { COMPOSER_ICONS } from '../../components/simulators/composerIconData'
 import {
   SECURITY_TITLE,
   SECURITY_SUBTITLE,
-  SECURITY_BANNER,
+  SECURITY_POINTS,
   READ_ONLY_TOOLS,
   WRITE_TOOLS,
   READ_ONLY_DEFAULT_MODE,
@@ -17,7 +17,7 @@ import {
 const SECURITY_DATA = JSON.stringify({
   title: SECURITY_TITLE,
   subtitle: SECURITY_SUBTITLE,
-  banner: SECURITY_BANNER,
+  points: SECURITY_POINTS,
   readOnlyMode: READ_ONLY_DEFAULT_MODE,
   writeMode: WRITE_DEFAULT_MODE,
   readOnly: READ_ONLY_TOOLS,
@@ -224,6 +224,12 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tc-secmodal-body { padding:16px 18px; overflow-y:auto; }
     .tc-sec-banner { display:flex; gap:10px; align-items:flex-start; padding:12px 14px; margin-bottom:16px; background:#f3f9f5; border:1px solid #cde8d7; border-radius:8px; font-size:12.5px; line-height:1.45; color:#1f5132; }
     .tc-sec-banner-ico { flex-shrink:0; color:#107c41; margin-top:1px; }
+    .tc-sec-points { list-style:none; margin:0 0 14px; padding:0; display:flex; flex-direction:column; gap:10px; }
+    .tc-sec-points li { display:flex; align-items:flex-start; gap:10px; font-size:13.5px; line-height:1.4; color:#242424; }
+    .tc-sec-point-ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#e7f4ec; color:#107c41; margin-top:1px; }
+    .tc-sec-summary { font-size:12.5px; color:#424242; background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:10px 14px; margin-bottom:16px; }
+    .tc-sec-summary strong { color:#242424; }
+    .tc-sec-summary-dot { margin:0 8px; color:#616161; }
     .tc-sec-group { border:1px solid #e0e0e0; border-radius:8px; margin-bottom:12px; overflow:hidden; }
     .tc-sec-grouphead { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; }
     .tc-sec-grouptoggle { display:flex; align-items:center; gap:8px; border:none; background:transparent; font-family:inherit; font-size:14px; color:#242424; cursor:pointer; padding:0; }
@@ -786,8 +792,10 @@ export function buildHtmlTemplate(serializedManifest: string) {
       SECURITY.readOnly.forEach(function(t){ perms[t.name]=t.permission; });
       SECURITY.write.forEach(function(t){ perms[t.name]=t.permission; });
       var PERM_OPTS=[{key:'allow',label:'Allow'},{key:'ask',label:'Ask'},{key:'deny',label:'Deny'}];
-      // Track group open-state so it survives the re-render on each toggle.
-      var openState={ ro: SECURITY.readOnlyMode==='Custom', wr: SECURITY.writeMode==='Custom' };
+      // Collapsed by default — the popup reads as a glanceable trust screen;
+      // one click expands the full per-tool detail. Open-state survives re-render.
+      var openState={ ro:false, wr:false };
+      var CHECK_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>';
       function toggleHtml(name){
         return '<div class="tc-sec-toggle" role="group" aria-label="Permission">'+PERM_OPTS.map(function(o){
           var on=perms[name]===o.key?' is-on':'';
@@ -818,7 +826,8 @@ export function buildHtmlTemplate(serializedManifest: string) {
             +'<button type="button" class="tc-secmodal-close" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'
           +'</div>'
           +'<div class="tc-secmodal-body">'
-            +'<div class="tc-sec-banner"><span class="tc-sec-banner-ico">'+SHIELD_SVG.replace(/SZ/g,'16')+'</span><span>'+esc(SECURITY.banner)+'</span></div>'
+            +'<ul class="tc-sec-points">'+SECURITY.points.map(function(p){ return '<li><span class="tc-sec-point-ico">'+CHECK_SVG+'</span><span>'+esc(p)+'</span></li>'; }).join('')+'</ul>'
+            +'<div class="tc-sec-summary"><strong>'+SECURITY.readOnly.length+' read-only tools</strong> \\u2014 always allowed<span class="tc-sec-summary-dot">\\u00b7</span><strong>'+SECURITY.write.length+' write tools</strong> \\u2014 require approval</div>'
             +groupHtml('ro', 'Read-only tools', SECURITY.readOnlyMode, SECURITY.readOnly)
             +groupHtml('wr', 'Write tools', SECURITY.writeMode, SECURITY.write)
           +'</div>'
