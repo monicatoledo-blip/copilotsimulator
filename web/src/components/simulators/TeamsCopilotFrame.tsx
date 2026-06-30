@@ -4,6 +4,15 @@ import CopilotMark from './CopilotMark'
 import TeamsGroupChat from './TeamsGroupChat'
 import { renderRich, renderInline } from './richText'
 import { CUMULUS_LOGO } from './cumulusLogoData'
+import {
+  SECURITY_TITLE,
+  SECURITY_SUBTITLE,
+  SECURITY_BANNER,
+  READ_ONLY_TOOLS,
+  WRITE_TOOLS,
+  READ_ONLY_DEFAULT_MODE,
+  WRITE_DEFAULT_MODE,
+} from './securityModelData'
 
 function Avatar({ assistant }) {
   // Copilot's assistant avatar is always the Copilot mark (Microsoft branding).
@@ -258,12 +267,116 @@ function fillName(text, viewer) {
   return String(text).replace(/\{\{?\s*name\s*\}?\}/gi, viewer || 'there')
 }
 
+function ShieldIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  )
+}
+
+const PERM_OPTIONS = [
+  { key: 'allow', label: 'Allow' },
+  { key: 'ask', label: 'Ask' },
+  { key: 'deny', label: 'Deny' },
+]
+
+function PermToggle({ value, onChange }) {
+  return (
+    <div className="tc-sec-toggle" role="group" aria-label="Permission">
+      {PERM_OPTIONS.map((opt) => (
+        <button
+          key={opt.key}
+          type="button"
+          className={`tc-sec-seg is-${opt.key} ${value === opt.key ? 'is-on' : ''}`}
+          aria-pressed={value === opt.key}
+          title={opt.label}
+          onClick={() => onChange(opt.key)}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function SecurityGroup({ label, mode, tools, perms, onPermChange }) {
+  const [open, setOpen] = useState(mode === WRITE_DEFAULT_MODE)
+  return (
+    <div className="tc-sec-group">
+      <div className="tc-sec-grouphead">
+        <button type="button" className="tc-sec-grouptoggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          <span className={`tc-sec-caret ${open ? 'is-open' : ''}`} aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" /></svg>
+          </span>
+          <span className="tc-sec-grouplabel">{label} <span className="tc-sec-count">({tools.length})</span></span>
+        </button>
+        <span className="tc-sec-mode">{mode}</span>
+      </div>
+      {open && (
+        <div className="tc-sec-tools">
+          {tools.map((tool) => (
+            <div key={tool.name} className="tc-sec-tool">
+              <span className="tc-sec-toolname">{tool.name}</span>
+              <PermToggle value={perms[tool.name]} onChange={(v) => onPermChange(tool.name, v)} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SecurityModal({ onClose }) {
+  const initialPerms = useMemo(() => {
+    const out = {}
+    READ_ONLY_TOOLS.forEach((t) => (out[t.name] = t.permission))
+    WRITE_TOOLS.forEach((t) => (out[t.name] = t.permission))
+    return out
+  }, [])
+  const [perms, setPerms] = useState(initialPerms)
+  const setPerm = (name, value) => setPerms((p) => ({ ...p, [name]: value }))
+
+  return (
+    <div className="tc-secmodal-overlay" role="dialog" aria-modal="true" aria-label={SECURITY_TITLE} onMouseDown={onClose}>
+      <div className="tc-secmodal" onMouseDown={(e) => e.stopPropagation()}>
+        <div className="tc-secmodal-head">
+          <div className="tc-secmodal-titlewrap">
+            <span className="tc-secmodal-shield"><ShieldIcon size={20} /></span>
+            <div>
+              <div className="tc-secmodal-title">{SECURITY_TITLE}</div>
+              <div className="tc-secmodal-sub">{SECURITY_SUBTITLE}</div>
+            </div>
+          </div>
+          <button type="button" className="tc-secmodal-close" aria-label="Close" onClick={onClose}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>
+        <div className="tc-secmodal-body">
+          <div className="tc-sec-banner">
+            <span className="tc-sec-banner-ico" aria-hidden="true"><ShieldIcon size={16} /></span>
+            <span>{SECURITY_BANNER}</span>
+          </div>
+          <SecurityGroup label="Read-only tools" mode={READ_ONLY_DEFAULT_MODE} tools={READ_ONLY_TOOLS} perms={perms} onPermChange={setPerm} />
+          <SecurityGroup label="Write tools" mode={WRITE_DEFAULT_MODE} tools={WRITE_TOOLS} perms={perms} onPermChange={setPerm} />
+        </div>
+        <div className="tc-secmodal-foot">
+          <button type="button" className="tc-sec-btn" onClick={onClose}>Cancel</button>
+          <button type="button" className="tc-sec-btn is-primary" onClick={onClose}>Save</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function CopilotSurface({ brand, assistant, script, resetSignal, viewer }) {
   const segments = useMemo(() => buildSegments(script), [script])
   const [started, setStarted] = useState(false)
   const [turns, setTurns] = useState([])
   const [thinking, setThinking] = useState(null)
   const [input, setInput] = useState('')
+  const [securityOpen, setSecurityOpen] = useState(false)
   const segIndexRef = useRef(0)
   const busyRef = useRef(false)
   const threadRef = useRef(null)
@@ -369,6 +482,15 @@ function CopilotSurface({ brand, assistant, script, resetSignal, viewer }) {
           </span>
         </div>
         <div className="tc-header-actions">
+          <button
+            type="button"
+            className="tc-icon-btn tc-shield"
+            title="Tool permissions &amp; data security"
+            aria-label="Tool permissions and data security"
+            onClick={() => setSecurityOpen(true)}
+          >
+            <ShieldIcon size={18} />
+          </button>
           <button type="button" className="tc-icon-btn" title="New chat" aria-label="New chat">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
               <path d="M12 20h9" />
@@ -437,6 +559,8 @@ function CopilotSurface({ brand, assistant, script, resetSignal, viewer }) {
         </div>
         <div className="tc-disclaimer">AI-generated content may be incorrect</div>
       </div>
+
+      {securityOpen && <SecurityModal onClose={() => setSecurityOpen(false)} />}
     </section>
   )
 }

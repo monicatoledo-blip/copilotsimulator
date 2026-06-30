@@ -2,6 +2,27 @@ import { COPILOT_ICON } from '../../components/simulators/copilotIconData'
 import { FLUENT_EMOJI } from '../../components/simulators/fluentEmojiData'
 import { CUMULUS_LOGO } from '../../components/simulators/cumulusLogoData'
 import { COMPOSER_ICONS } from '../../components/simulators/composerIconData'
+import {
+  SECURITY_TITLE,
+  SECURITY_SUBTITLE,
+  SECURITY_BANNER,
+  READ_ONLY_TOOLS,
+  WRITE_TOOLS,
+  READ_ONLY_DEFAULT_MODE,
+  WRITE_DEFAULT_MODE,
+} from '../../components/simulators/securityModelData'
+
+// Bundle the fixed security-popup content so the exported HTML's vanilla JS can
+// render it without importing TS modules. Single source: securityModelData.ts.
+const SECURITY_DATA = JSON.stringify({
+  title: SECURITY_TITLE,
+  subtitle: SECURITY_SUBTITLE,
+  banner: SECURITY_BANNER,
+  readOnlyMode: READ_ONLY_DEFAULT_MODE,
+  writeMode: WRITE_DEFAULT_MODE,
+  readOnly: READ_ONLY_TOOLS,
+  write: WRITE_TOOLS,
+})
 
 export function buildHtmlTemplate(serializedManifest: string) {
   return `<!doctype html>
@@ -179,7 +200,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-composer-tools .tg-send { color:var(--tg-purple); }
     .tg-composer-tools .tg-send:disabled { color:var(--tg-fg-3); cursor:default; opacity:.55; }
     /* Copilot surface (separate app you click into) */
-    .tc-app { --tc-gradient:linear-gradient(120deg,#2ec5a0 0%,#2aa5f4 32%,#5a6af0 58%,#b14be0 80%,#e5447c 100%); flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; background:#fff; }
+    .tc-app { --tc-gradient:linear-gradient(120deg,#2ec5a0 0%,#2aa5f4 32%,#5a6af0 58%,#b14be0 80%,#e5447c 100%); position:relative; flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; background:#fff; }
     .tc-header { display:flex; align-items:center; justify-content:space-between; gap:12px; height:48px; padding:0 12px 0 16px; border-bottom:1px solid #e0e0e0; flex-shrink:0; }
     .tc-header-left { display:flex; align-items:center; gap:10px; min-width:0; }
     .tc-header-title { font-size:14px; font-weight:600; color:#242424; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -188,6 +209,45 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tc-header-actions { display:flex; align-items:center; gap:2px; }
     .tc-icon-btn { width:32px; height:32px; border:none; background:transparent; border-radius:6px; color:#424242; display:flex; align-items:center; justify-content:center; cursor:pointer; }
     .tc-icon-btn:hover { background:#f0f0f0; }
+    .tc-icon-btn.tc-shield { color:#107c41; }
+    .tc-icon-btn.tc-shield:hover { background:#e7f4ec; color:#0b5c30; }
+    /* security / least-privilege popup */
+    .tc-secmodal-overlay { position:absolute; inset:0; z-index:30; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.32); }
+    .tc-secmodal { width:100%; max-width:520px; max-height:100%; display:flex; flex-direction:column; background:#fff; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,.24); overflow:hidden; }
+    .tc-secmodal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:18px 18px 14px; border-bottom:1px solid #e0e0e0; }
+    .tc-secmodal-titlewrap { display:flex; align-items:flex-start; gap:12px; min-width:0; }
+    .tc-secmodal-shield { flex-shrink:0; width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:#e7f4ec; color:#107c41; }
+    .tc-secmodal-title { font-size:16px; font-weight:700; color:#242424; }
+    .tc-secmodal-sub { font-size:13px; color:#616161; margin-top:2px; }
+    .tc-secmodal-close { flex-shrink:0; width:30px; height:30px; border:none; background:transparent; border-radius:6px; color:#424242; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .tc-secmodal-close:hover { background:#f0f0f0; }
+    .tc-secmodal-body { padding:16px 18px; overflow-y:auto; }
+    .tc-sec-banner { display:flex; gap:10px; align-items:flex-start; padding:12px 14px; margin-bottom:16px; background:#f3f9f5; border:1px solid #cde8d7; border-radius:8px; font-size:12.5px; line-height:1.45; color:#1f5132; }
+    .tc-sec-banner-ico { flex-shrink:0; color:#107c41; margin-top:1px; }
+    .tc-sec-group { border:1px solid #e0e0e0; border-radius:8px; margin-bottom:12px; overflow:hidden; }
+    .tc-sec-grouphead { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; }
+    .tc-sec-grouptoggle { display:flex; align-items:center; gap:8px; border:none; background:transparent; font-family:inherit; font-size:14px; color:#242424; cursor:pointer; padding:0; }
+    .tc-sec-caret { display:flex; transition:transform .15s ease; color:#616161; }
+    .tc-sec-caret.is-open { transform:rotate(90deg); }
+    .tc-sec-grouplabel { font-weight:600; }
+    .tc-sec-count { color:#616161; font-weight:400; }
+    .tc-sec-mode { font-size:12.5px; color:#424242; border:1px solid #d1d1d1; border-radius:6px; padding:4px 10px; background:#fafafa; white-space:nowrap; }
+    .tc-sec-tools { border-top:1px solid #e0e0e0; }
+    .tc-sec-tool { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 14px; }
+    .tc-sec-tool:nth-child(even) { background:#fafafa; }
+    .tc-sec-toolname { font-size:13px; color:#242424; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tc-sec-toggle { display:flex; flex-shrink:0; border:1px solid #d1d1d1; border-radius:6px; overflow:hidden; }
+    .tc-sec-seg { border:none; background:#fff; font-family:inherit; font-size:11.5px; font-weight:600; color:#616161; padding:4px 9px; cursor:pointer; border-left:1px solid #d1d1d1; }
+    .tc-sec-seg:first-child { border-left:none; }
+    .tc-sec-seg:hover { background:#f5f5f5; }
+    .tc-sec-seg.is-allow.is-on { background:#107c41; color:#fff; }
+    .tc-sec-seg.is-ask.is-on { background:#c19c00; color:#fff; }
+    .tc-sec-seg.is-deny.is-on { background:#c4314b; color:#fff; }
+    .tc-secmodal-foot { display:flex; justify-content:flex-end; gap:8px; padding:14px 18px; border-top:1px solid #e0e0e0; }
+    .tc-sec-btn { border:1px solid #d1d1d1; background:#fff; font-family:inherit; font-size:13px; font-weight:600; color:#242424; padding:7px 16px; border-radius:6px; cursor:pointer; }
+    .tc-sec-btn:hover { background:#f5f5f5; }
+    .tc-sec-btn.is-primary { background:#5b5fc7; border-color:#5b5fc7; color:#fff; }
+    .tc-sec-btn.is-primary:hover { background:#4f52b3; }
     .tc-thread { flex:1; overflow-y:auto; padding:20px 18px 8px; display:flex; flex-direction:column; gap:18px; background:#fff; }
     .tc-thread::-webkit-scrollbar { width:8px; } .tc-thread::-webkit-scrollbar-thumb { background:#c8c8c8; border-radius:4px; }
     .tc-row-user { display:flex; justify-content:flex-end; }
@@ -349,6 +409,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
               <span class="tc-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
             </div>
             <div class="tc-header-actions">
+              <button class="tc-icon-btn tc-shield" id="tc-shield" title="Tool permissions &amp; data security" aria-label="Tool permissions and data security"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></button>
               <button class="tc-icon-btn" title="New chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
               <button class="tc-icon-btn" title="Chat history"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></button>
               <button class="tc-icon-btn" title="More options"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
@@ -365,6 +426,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
             </div>
             <div class="tc-disclaimer">AI-generated content may be incorrect</div>
           </div>
+          <div class="tc-secmodal-overlay" id="tc-secmodal" role="dialog" aria-modal="true" style="display:none"></div>
         </section>
       </div>
     </div>
@@ -375,6 +437,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
     var ICON = '${COPILOT_ICON}';
     var LOGO = '${CUMULUS_LOGO}';
     var MANIFEST = ${serializedManifest};
+    var SECURITY = ${SECURITY_DATA};
     var FLUENT = ${JSON.stringify(FLUENT_EMOJI)};
     var QUICK = ['👍','❤️','😂','😮','😢','😡'];
     var AV_COLORS = ['#c4314b','#0f6cbd','#107c41','#8764b8','#c19c00','#005b70','#a4262c'];
@@ -711,6 +774,68 @@ export function buildHtmlTemplate(serializedManifest: string) {
     }
     navCopilot.addEventListener('click', showCopilot);
     if(activeRow) activeRow.addEventListener('click', showChat);
+
+    // ---- Security / least-privilege popup ----
+    (function(){
+      var shield=document.getElementById('tc-shield');
+      var overlay=document.getElementById('tc-secmodal');
+      if(!shield||!overlay) return;
+      var SHIELD_SVG='<svg width="SZ" height="SZ" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>';
+      // Per-tool permission state, seeded from the bundled defaults.
+      var perms={};
+      SECURITY.readOnly.forEach(function(t){ perms[t.name]=t.permission; });
+      SECURITY.write.forEach(function(t){ perms[t.name]=t.permission; });
+      var PERM_OPTS=[{key:'allow',label:'Allow'},{key:'ask',label:'Ask'},{key:'deny',label:'Deny'}];
+      // Track group open-state so it survives the re-render on each toggle.
+      var openState={ ro: SECURITY.readOnlyMode==='Custom', wr: SECURITY.writeMode==='Custom' };
+      function toggleHtml(name){
+        return '<div class="tc-sec-toggle" role="group" aria-label="Permission">'+PERM_OPTS.map(function(o){
+          var on=perms[name]===o.key?' is-on':'';
+          return '<button type="button" class="tc-sec-seg is-'+o.key+on+'" data-tool="'+esc(name)+'" data-perm="'+o.key+'" title="'+o.label+'">'+o.label+'</button>';
+        }).join('')+'</div>';
+      }
+      function groupHtml(key, label, mode, tools){
+        var open=openState[key];
+        var rows=tools.map(function(t){
+          return '<div class="tc-sec-tool"><span class="tc-sec-toolname">'+esc(t.name)+'</span>'+toggleHtml(t.name)+'</div>';
+        }).join('');
+        return '<div class="tc-sec-group" data-group="'+key+'">'
+          +'<div class="tc-sec-grouphead">'
+            +'<button type="button" class="tc-sec-grouptoggle" data-group="'+key+'" aria-expanded="'+(open?'true':'false')+'">'
+              +'<span class="tc-sec-caret'+(open?' is-open':'')+'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>'
+              +'<span class="tc-sec-grouplabel">'+esc(label)+' <span class="tc-sec-count">('+tools.length+')</span></span>'
+            +'</button>'
+            +'<span class="tc-sec-mode">'+esc(mode)+'</span>'
+          +'</div>'
+          +'<div class="tc-sec-tools" '+(open?'':'style="display:none"')+'>'+rows+'</div>'
+        +'</div>';
+      }
+      function render(){
+        overlay.innerHTML='<div class="tc-secmodal">'
+          +'<div class="tc-secmodal-head">'
+            +'<div class="tc-secmodal-titlewrap"><span class="tc-secmodal-shield">'+SHIELD_SVG.replace(/SZ/g,'20')+'</span>'
+              +'<div><div class="tc-secmodal-title">'+esc(SECURITY.title)+'</div><div class="tc-secmodal-sub">'+esc(SECURITY.subtitle)+'</div></div></div>'
+            +'<button type="button" class="tc-secmodal-close" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'
+          +'</div>'
+          +'<div class="tc-secmodal-body">'
+            +'<div class="tc-sec-banner"><span class="tc-sec-banner-ico">'+SHIELD_SVG.replace(/SZ/g,'16')+'</span><span>'+esc(SECURITY.banner)+'</span></div>'
+            +groupHtml('ro', 'Read-only tools', SECURITY.readOnlyMode, SECURITY.readOnly)
+            +groupHtml('wr', 'Write tools', SECURITY.writeMode, SECURITY.write)
+          +'</div>'
+          +'<div class="tc-secmodal-foot"><button type="button" class="tc-sec-btn" data-close="1">Cancel</button><button type="button" class="tc-sec-btn is-primary" data-close="1">Save</button></div>'
+        +'</div>';
+      }
+      function open(){ render(); overlay.style.display='flex'; }
+      function close(){ overlay.style.display='none'; }
+      shield.addEventListener('click', open);
+      overlay.addEventListener('click', function(e){
+        if(e.target===overlay || e.target.closest('[data-close]') || e.target.closest('.tc-secmodal-close')){ close(); return; }
+        var seg=e.target.closest('.tc-sec-seg');
+        if(seg){ perms[seg.getAttribute('data-tool')]=seg.getAttribute('data-perm'); render(); return; }
+        var gt=e.target.closest('.tc-sec-grouptoggle');
+        if(gt){ var key=gt.getAttribute('data-group'); openState[key]=!openState[key]; render(); }
+      });
+    })();
 
     // ---- Composer in the group chat ----
     (function(){
