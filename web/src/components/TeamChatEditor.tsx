@@ -22,6 +22,7 @@ export default function TeamChatEditor({
   onViewerChange,
   onMessagesChange,
   onSidebarChange,
+  onRestoreDefaultMessages,
 }) {
   const viewerName = viewer || 'You'
   const authorOptions = [viewerName, ...members.map((m) => m.name).filter((n) => n !== viewerName)]
@@ -243,9 +244,33 @@ export default function TeamChatEditor({
           </div>
         ))}
 
-        <button type="button" className="add-message-btn" onClick={addMessage}>
-          + Add message
-        </button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <button type="button" className="add-message-btn" onClick={addMessage}>
+            + Add message
+          </button>
+          {messages.length > 0 && (
+            <button
+              type="button"
+              className="msg-delete-btn"
+              onClick={() => {
+                if (window.confirm('Clear all team messages? You can rebuild from scratch or restore the default.')) onMessagesChange([])
+              }}
+            >
+              Clear all
+            </button>
+          )}
+          {onRestoreDefaultMessages && (
+            <button
+              type="button"
+              className="msg-move-btn"
+              onClick={() => {
+                if (window.confirm('Restore the default team conversation? This replaces the current messages.')) onRestoreDefaultMessages()
+              }}
+            >
+              Restore default
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="form-section">

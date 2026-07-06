@@ -249,7 +249,7 @@ const CopyIcon = () => (
   </svg>
 )
 
-export default function ScriptTimelineEditor({ script, onChange }) {
+export default function ScriptTimelineEditor({ script, onChange, onRestoreDefault }) {
   const copyPrompt = (text) => {
     if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text || '')
   }
@@ -519,9 +519,33 @@ export default function ScriptTimelineEditor({ script, onChange }) {
         )
       })}
 
-      <button type="button" className="add-message-btn" onClick={addStep}>
-        + Add Message
-      </button>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <button type="button" className="add-message-btn" onClick={addStep}>
+          + Add Message
+        </button>
+        {script.length > 0 && (
+          <button
+            type="button"
+            className="msg-delete-btn"
+            onClick={() => {
+              if (window.confirm('Clear all agent conversation steps? You can rebuild from scratch or restore the default.')) onChange([])
+            }}
+          >
+            Clear all
+          </button>
+        )}
+        {onRestoreDefault && (
+          <button
+            type="button"
+            className="msg-move-btn"
+            onClick={() => {
+              if (window.confirm('Restore the default agent conversation? This replaces the current steps.')) onRestoreDefault()
+            }}
+          >
+            Restore default
+          </button>
+        )}
+      </div>
     </div>
   )
 }

@@ -114,6 +114,8 @@ export default function ExperienceGeneratorPage() {
   const importRef = useRef(null)
 
   const validationErrors = useMemo(() => validateScript(manifest), [manifest])
+  // The pristine default for the current experience — source for "Restore default".
+  const experienceDefault = selectedExperience === 'claude' ? claudeDefault : coPilotDefault
 
   useEffect(() => {
     if (!dragging) return
@@ -395,6 +397,7 @@ export default function ExperienceGeneratorPage() {
                 onViewerChange={(value) => updateField('viewer', value)}
                 onMessagesChange={(value) => updateField('groupChat', value)}
                 onSidebarChange={(value) => updateField('sidebar', value)}
+                onRestoreDefaultMessages={() => updateField('groupChat', clone(experienceDefault.groupChat || []))}
               />
             )}
 
@@ -413,7 +416,11 @@ export default function ExperienceGeneratorPage() {
                     <small>The opening message your assistant shows before the scripted turns.</small>
                   </div>
                 </div>
-                <ScriptTimelineEditor script={manifest.script} onChange={updateScript} />
+                <ScriptTimelineEditor
+                  script={manifest.script}
+                  onChange={updateScript}
+                  onRestoreDefault={() => updateScript(clone(experienceDefault.script || []))}
+                />
               </>
             )}
 
