@@ -662,6 +662,34 @@
   background: #f3f3f3;
 }
 
+/* Drag-to-reorder handle + drop feedback for list editors */
+.msg-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  color: #9a9a9a;
+  cursor: grab;
+  flex-shrink: 0;
+  touch-action: none;
+}
+.msg-drag-handle:hover {
+  background: #ececec;
+  color: #5b5b5b;
+}
+.msg-drag-handle:active {
+  cursor: grabbing;
+}
+.msg-builder-row-inner.is-dragging {
+  opacity: 0.45;
+}
+.msg-builder-row-inner.is-drop-target {
+  border-color: #2a94d6;
+  box-shadow: 0 0 0 2px rgba(42, 148, 214, 0.35);
+}
+
 /* Responsive (matches reference breakpoints) */
 @media (max-width: 1200px) {
   .generator-container {

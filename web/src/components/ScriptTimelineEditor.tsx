@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FLUENT_EMOJI } from './simulators/fluentEmojiData'
+import { useDragReorder, GripIcon } from './useDragReorder'
 
 const TYPES = [
   { value: 'userPrompt', label: 'Customer message' },
@@ -300,14 +301,13 @@ export default function ScriptTimelineEditor({ script, onChange }) {
     })
   }
 
-  const moveStep = (index, direction) => {
-    const target = index + direction
-    if (target < 0 || target >= script.length) return
+  const reorderStep = (from, to) => {
     const next = [...script]
-    const [moved] = next.splice(index, 1)
-    next.splice(target, 0, moved)
+    const [moved] = next.splice(from, 1)
+    next.splice(to, 0, moved)
     onChange(next)
   }
+  const { dragIndex, overIndex, handleProps, rowProps } = useDragReorder(script.length, reorderStep)
 
   const addStep = () => {
     onChange([
@@ -336,10 +336,14 @@ export default function ScriptTimelineEditor({ script, onChange }) {
         return (
         <div
           key={step.id}
-          className="msg-builder-row-inner"
+          className={`msg-builder-row-inner${dragIndex === index ? ' is-dragging' : ''}${overIndex === index && dragIndex !== index ? ' is-drop-target' : ''}`}
           style={{ flexDirection: 'column', borderLeft: `4px solid ${tone.accent}`, background: tone.bg }}
+          {...rowProps(index)}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', flexWrap: 'wrap' }}>
+            <span className="msg-drag-handle" title="Drag to reorder" {...handleProps(index)}>
+              <GripIcon />
+            </span>
             <span
               style={{
                 display: 'flex',
@@ -388,12 +392,6 @@ export default function ScriptTimelineEditor({ script, onChange }) {
                   <CopyIcon /> Copy
                 </button>
               )}
-              <button type="button" className="msg-move-btn" onClick={() => moveStep(index, -1)}>
-                Up
-              </button>
-              <button type="button" className="msg-move-btn" onClick={() => moveStep(index, 1)}>
-                Down
-              </button>
               <button type="button" className="msg-delete-btn" onClick={() => removeStep(index)}>
                 Delete
               </button>

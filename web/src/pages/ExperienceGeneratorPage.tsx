@@ -147,7 +147,23 @@ export default function ExperienceGeneratorPage() {
   }
 
   const updateScript = (script) => setManifest((prev) => ({ ...prev, script }))
-  const updateBrand = (key, value) => setManifest((prev) => ({ ...prev, brand: { ...prev.brand, [key]: value } }))
+  const updateBrand = (key, value) =>
+    setManifest((prev) => {
+      const next = { ...prev, brand: { ...prev.brand, [key]: value } }
+      // Renaming the brand cascades into sidebar section labels that carried the
+      // old brand name (e.g. "Cumulus Marketing" -> "Acme Marketing"), so the
+      // chat list follows the brand instead of leaving rogue defaults behind.
+      const oldName = (prev.brand?.name || '').trim()
+      const newName = (value || '').trim()
+      if (key === 'name' && oldName && newName && oldName !== newName && Array.isArray(prev.sidebar)) {
+        next.sidebar = prev.sidebar.map((s) =>
+          s && typeof s.section === 'string' && s.section.includes(oldName)
+            ? { ...s, section: s.section.split(oldName).join(newName) }
+            : s,
+        )
+      }
+      return next
+    })
   const updateAssistant = (key, value) => setManifest((prev) => ({ ...prev, assistant: { ...prev.assistant, [key]: value } }))
   const updateField = (key, value) => setManifest((prev) => ({ ...prev, [key]: value }))
 

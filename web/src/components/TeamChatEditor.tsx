@@ -1,4 +1,5 @@
 import ReactionPicker from './ReactionPicker'
+import { useDragReorder, GripIcon } from './useDragReorder'
 
 const inputStyle = {
   width: '100%',
@@ -50,7 +51,13 @@ export default function TeamChatEditor({
   }
 
   const updateMember = (index, key, value) => {
+    const prevName = members[index]?.name
     onMembersChange(members.map((m, i) => (i === index ? { ...m, [key]: value } : m)))
+    // Renaming a teammate must cascade to every message they authored, otherwise
+    // the chat rows keep showing the old name (author is stored per-message).
+    if (key === 'name' && prevName && prevName !== value) {
+      onMessagesChange(messages.map((msg) => (msg.author === prevName ? { ...msg, author: value } : msg)))
+    }
   }
 
   const addMember = () =>
@@ -70,14 +77,14 @@ export default function TeamChatEditor({
     onMessagesChange(messages.map((msg, i) => (i === index ? { ...msg, [key]: value } : msg)))
   }
 
-  const moveMessage = (index, direction) => {
-    const target = index + direction
-    if (target < 0 || target >= messages.length) return
+  const reorderMessage = (from, to) => {
     const next = [...messages]
-    const [moved] = next.splice(index, 1)
-    next.splice(target, 0, moved)
+    const [moved] = next.splice(from, 1)
+    next.splice(to, 0, moved)
     onMessagesChange(next)
   }
+  // Sidebar keeps its Up/Down buttons; messages use drag-to-reorder.
+  const msgDrag = useDragReorder(messages.length, reorderMessage)
 
   const addMessage = () => {
     onMessagesChange([
@@ -160,6 +167,79 @@ export default function TeamChatEditor({
       </div>
 
       <div className="form-section">
+        <h3>Team Messages</h3>
+        <p className="download-note" style={{ textAlign: 'left', margin: '0 0 16px' }}>
+          The existing conversation your audience “peeks” into before Copilot joins.
+        </p>
+
+        {messages.map((msg, index) => (
+          <div
+            key={msg.id || index}
+            className={`msg-builder-row-inner${msgDrag.dragIndex === index ? ' is-dragging' : ''}${msgDrag.overIndex === index && msgDrag.dragIndex !== index ? ' is-drop-target' : ''}`}
+            style={{ flexDirection: 'column' }}
+            {...msgDrag.rowProps(index)}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', flexWrap: 'wrap' }}>
+              <span className="msg-drag-handle" title="Drag to reorder" {...msgDrag.handleProps(index)}>
+                <GripIcon />
+              </span>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  background: '#e8f4fc',
+                  color: '#032d60',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                {index + 1}
+              </span>
+              <select
+                value={msg.author || viewerName}
+                onChange={(e) => updateMessage(index, 'author', e.target.value)}
+                style={{ ...inputStyle, width: 'auto', flex: '0 1 auto', background: '#fff' }}
+              >
+                {authorOptions.map((member, i) => (
+                  <option key={i} value={member}>
+                    {member === viewerName ? `${member} (you)` : member}
+                  </option>
+                ))}
+              </select>
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+                <button type="button" className="msg-delete-btn" onClick={() => removeMessage(index)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            <textarea
+              rows={2}
+              value={msg.text}
+              onChange={(e) => updateMessage(index, 'text', e.target.value)}
+              style={{ ...inputStyle, resize: 'vertical', minHeight: 52 }}
+            />
+
+            <div style={{ width: '100%' }}>
+              <ReactionPicker
+                value={msg.reactions || []}
+                onChange={(reactions) => updateMessage(index, 'reactions', reactions)}
+              />
+            </div>
+          </div>
+        ))}
+
+        <button type="button" className="add-message-btn" onClick={addMessage}>
+          + Add message
+        </button>
+      </div>
+
+      <div className="form-section">
         <h3>Chat List (sidebar)</h3>
         <small style={{ display: 'block', marginBottom: 12 }}>
           The left rail of chats & channels. Group them under any section label. An entry whose name matches the{' '}
@@ -232,77 +312,6 @@ export default function TeamChatEditor({
             + Add channel
           </button>
         </div>
-      </div>
-
-      <div className="form-section">
-        <h3>Team Messages</h3>
-        <p className="download-note" style={{ textAlign: 'left', margin: '0 0 16px' }}>
-          The existing conversation your audience “peeks” into before Copilot joins.
-        </p>
-
-        {messages.map((msg, index) => (
-          <div key={msg.id || index} className="msg-builder-row-inner" style={{ flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', flexWrap: 'wrap' }}>
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 24,
-                  height: 24,
-                  borderRadius: '50%',
-                  background: '#e8f4fc',
-                  color: '#032d60',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  flexShrink: 0,
-                }}
-              >
-                {index + 1}
-              </span>
-              <select
-                value={msg.author || viewerName}
-                onChange={(e) => updateMessage(index, 'author', e.target.value)}
-                style={{ ...inputStyle, width: 'auto', flex: '0 1 auto', background: '#fff' }}
-              >
-                {authorOptions.map((member, i) => (
-                  <option key={i} value={member}>
-                    {member === viewerName ? `${member} (you)` : member}
-                  </option>
-                ))}
-              </select>
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-                <button type="button" className="msg-move-btn" onClick={() => moveMessage(index, -1)}>
-                  Up
-                </button>
-                <button type="button" className="msg-move-btn" onClick={() => moveMessage(index, 1)}>
-                  Down
-                </button>
-                <button type="button" className="msg-delete-btn" onClick={() => removeMessage(index)}>
-                  Delete
-                </button>
-              </div>
-            </div>
-
-            <textarea
-              rows={2}
-              value={msg.text}
-              onChange={(e) => updateMessage(index, 'text', e.target.value)}
-              style={{ ...inputStyle, resize: 'vertical', minHeight: 52 }}
-            />
-
-            <div style={{ width: '100%' }}>
-              <ReactionPicker
-                value={msg.reactions || []}
-                onChange={(reactions) => updateMessage(index, 'reactions', reactions)}
-              />
-            </div>
-          </div>
-        ))}
-
-        <button type="button" className="add-message-btn" onClick={addMessage}>
-          + Add message
-        </button>
       </div>
     </>
   )
