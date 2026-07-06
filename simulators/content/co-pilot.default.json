@@ -25,7 +25,7 @@
     { "id": "sb2", "name": "Marketing Team", "type": "channel", "section": "Favorites" },
     { "id": "sb3", "name": "Campaign Ops", "type": "channel", "section": "Cumulus Marketing" },
     { "id": "sb4", "name": "New Customer Onboarding", "type": "channel", "section": "Cumulus Marketing", "unread": true },
-    { "id": "sb5", "name": "Lifecycle Journeys", "type": "channel", "section": "Cumulus Marketing", "mention": true },
+    { "id": "sb5", "name": "Lifecycle Journeys", "type": "channel", "section": "Cumulus Marketing" },
     { "id": "sb6", "name": "Anna Reyes", "type": "person", "section": "Chats" },
     { "id": "sb7", "name": "Sue Park", "type": "person", "section": "Chats", "unread": true },
     { "id": "sb8", "name": "Data Team", "type": "channel", "section": "Chats" }
