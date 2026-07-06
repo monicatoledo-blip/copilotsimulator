@@ -76,6 +76,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-chan-avatar { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background-image:var(--tc-gradient); overflow:hidden; }
     .tg-chan-avatar-img { width:100%; height:100%; object-fit:cover; }
     .tl-avatar-img { width:100%; height:100%; object-fit:cover; }
+    .tg-avatar-img { width:100%; height:100%; object-fit:cover; }
     .tg-chat-title { font-size:16px; font-weight:700; line-height:1.2; }
     .tg-chat-sub { font-size:12px; color:var(--tg-fg-3); }
     .tg-tabs { display:flex; align-items:center; gap:1px; margin-left:6px; }
