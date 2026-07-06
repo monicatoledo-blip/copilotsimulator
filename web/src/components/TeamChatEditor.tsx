@@ -1,4 +1,5 @@
 import ReactionPicker from './ReactionPicker'
+import AvatarField from './AvatarField'
 import { useDragReorder, GripIcon } from './useDragReorder'
 
 const inputStyle = {
@@ -132,32 +133,40 @@ export default function TeamChatEditor({
         <div className="form-group">
           <label>Teammates</label>
           <small style={{ display: 'block', marginBottom: 8 }}>
-            Name + title/role. The title shows on the hover profile card in the chat (persona-driven).
+            Name + title/role. The title shows on the hover profile card in the chat (persona-driven). Add an
+            avatar image, or leave it blank for colored initials.
           </small>
           {members.map((member, index) => (
             <div
               key={index}
-              style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'flex-start', flexWrap: 'wrap' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10, padding: 8, border: '1px solid #eee', borderRadius: 6 }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: '1 1 140px' }}>
-                <input
-                  type="text"
-                  value={member.name}
-                  placeholder="Name"
-                  onChange={(e) => updateMember(index, 'name', e.target.value)}
-                  style={inputStyle}
-                />
-                <input
-                  type="text"
-                  value={member.title || ''}
-                  placeholder="Title / role, e.g. VP, Marketing"
-                  onChange={(e) => updateMember(index, 'title', e.target.value)}
-                  style={{ ...inputStyle, fontSize: 13 }}
-                />
+              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: '1 1 140px' }}>
+                  <input
+                    type="text"
+                    value={member.name}
+                    placeholder="Name"
+                    onChange={(e) => updateMember(index, 'name', e.target.value)}
+                    style={inputStyle}
+                  />
+                  <input
+                    type="text"
+                    value={member.title || ''}
+                    placeholder="Title / role, e.g. VP, Marketing"
+                    onChange={(e) => updateMember(index, 'title', e.target.value)}
+                    style={{ ...inputStyle, fontSize: 13 }}
+                  />
+                </div>
+                <button type="button" className="msg-delete-btn" onClick={() => removeMember(index)}>
+                  Delete
+                </button>
               </div>
-              <button type="button" className="msg-delete-btn" onClick={() => removeMember(index)}>
-                Delete
-              </button>
+              <AvatarField
+                value={member.avatarUrl}
+                onChange={(url) => updateMember(index, 'avatarUrl', url)}
+                label={member.name || 'A'}
+              />
             </div>
           ))}
           <button type="button" className="add-message-btn" onClick={addMember}>
@@ -301,6 +310,12 @@ export default function TeamChatEditor({
                 </button>
               </div>
             </div>
+            <AvatarField
+              value={item.avatarUrl}
+              onChange={(url) => updateSidebar(index, 'avatarUrl', url)}
+              shape={item.type === 'channel' ? 'square' : 'circle'}
+              label={item.name || 'C'}
+            />
           </div>
         ))}
 

@@ -69,6 +69,12 @@
   align-items: center;
   justify-content: center;
   background-image: var(--tc-gradient);
+  overflow: hidden;
+}
+.tg-chan-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .tg-chat-title {
   font-size: 16px;

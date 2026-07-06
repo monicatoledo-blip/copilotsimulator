@@ -73,7 +73,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tg-chat-avatars { display:flex; }
     .tg-chat-avatars .tg-mini { width:30px; height:30px; border-radius:50%; border:2px solid #fff; margin-left:-8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#fff; }
     .tg-chat-avatars .tg-mini:first-child { margin-left:0; }
-    .tg-chan-avatar { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background-image:var(--tc-gradient); }
+    .tg-chan-avatar { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background-image:var(--tc-gradient); overflow:hidden; }
+    .tg-chan-avatar-img { width:100%; height:100%; object-fit:cover; }
+    .tl-avatar-img { width:100%; height:100%; object-fit:cover; }
     .tg-chat-title { font-size:16px; font-weight:700; line-height:1.2; }
     .tg-chat-sub { font-size:12px; color:var(--tg-fg-3); }
     .tg-tabs { display:flex; align-items:center; gap:1px; margin-left:6px; }
@@ -104,7 +106,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
     .tl-ico { width:22px; height:22px; display:flex; align-items:center; justify-content:center; color:#616161; flex-shrink:0; }
     .tl-ico img { display:block; object-fit:contain; }
     .tl-sec { font-size:12px; color:#616161; font-weight:600; padding:12px 10px 4px; }
-    .tl-avatar { position:relative; width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:600; }
+    .tl-avatar { position:relative; width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:600; overflow:hidden; }
     .tl-avatar.is-channel { background-image:var(--tc-gradient); }
     .tl-presence-sm { position:absolute; right:-1px; bottom:-1px; width:10px; height:10px; border-radius:50%; background:#6bb700; border:2px solid #fff; }
     .tl-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -374,7 +376,7 @@ export function buildHtmlTemplate(serializedManifest: string) {
       <div class="tw-content">
         <section class="tg-surface" id="tg-surface">
           <div class="tg-chat-header">
-            <span class="tg-chan-avatar"><svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><path d="M3.5 18a4.5 4.5 0 0 1 9 0z"/><path d="M11.5 18a4.5 4.5 0 0 1 9 0z"/></svg></span>
+            <span class="tg-chan-avatar" id="tg-chan-avatar"><svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><path d="M3.5 18a4.5 4.5 0 0 1 9 0z"/><path d="M11.5 18a4.5 4.5 0 0 1 9 0z"/></svg></span>
             <div class="tg-chat-title" id="tg-title"></div>
             <div class="tg-tabs">
               <button class="tg-tab is-active">Chat</button>
@@ -458,7 +460,13 @@ export function buildHtmlTemplate(serializedManifest: string) {
     var thread = document.getElementById('thread');
 
     function clone(v){ return JSON.parse(JSON.stringify(v || [])); }
-    function colorFor(name){ var h=0; name=name||''; for(var i=0;i<name.length;i++){ h=(h*31+name.charCodeAt(i))>>>0; } return AV_COLORS[h%AV_COLORS.length]; }
+    // Distinct avatar colors by first-appearance order (members, then other
+    // authors), so no two people collide or repeat back-to-back.
+    var COLOR_INDEX = {}; var _ci = 0;
+    function _claimColor(name){ if(!name || name===viewer || name==='Copilot' || (name in COLOR_INDEX)) return; COLOR_INDEX[name]=_ci++; }
+    members.forEach(function(m){ _claimColor(m.name); });
+    (MANIFEST.groupChat || MANIFEST.messages || []).forEach(function(s){ _claimColor(s.author); });
+    function colorFor(name){ if(name in COLOR_INDEX) return AV_COLORS[COLOR_INDEX[name]%AV_COLORS.length]; var h=0; name=name||''; for(var i=0;i<name.length;i++){ h=(h*31+name.charCodeAt(i))>>>0; } return AV_COLORS[h%AV_COLORS.length]; }
     function initials(name){ var p=(name||'?').trim().split(/\\s+/); return (p.length===1?p[0][0]:(p[0][0]+p[p.length-1][0])).toUpperCase(); }
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     var personaMap = {};
@@ -521,6 +529,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
     twRail.innerHTML = logoImg; twRail.classList.add('has-logo');
     var chatName = MANIFEST.chatTitle || ((brand.name||'') + ' Team');
     document.getElementById('tg-title').textContent = chatName;
+    // If the active chat-list channel has a custom avatar, show it in the header.
+    var _activeChan = (MANIFEST.sidebar || []).filter(function(s){ return s && s.name===chatName && s.avatarUrl; })[0];
+    if(_activeChan){ document.getElementById('tg-chan-avatar').innerHTML = '<img class="tg-chan-avatar-img" src="'+esc(_activeChan.avatarUrl)+'" alt="">'; }
     (function(){
       var box = document.getElementById('tl-sections');
       var GROUPSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><path d="M3.5 18a4.5 4.5 0 0 1 9 0zM11.5 18a4.5 4.5 0 0 1 9 0z"/></svg>';
@@ -534,9 +545,14 @@ export function buildHtmlTemplate(serializedManifest: string) {
       var hasActive = items.some(function(it){ return it.name===chatName; });
       function rowHtml(it){
         var isChannel = it.type==='channel'; var isActiveChat = it.name===chatName;
-        var avatar = isChannel
-          ? '<span class="tl-avatar '+(isActiveChat?'is-channel':'')+'"'+(isActiveChat?'':' style="background:'+colorFor(it.name)+'"')+'>'+GROUPSVG+'</span>'
-          : '<span class="tl-avatar" style="background:'+colorFor(it.name)+'">'+initials(it.name)+'<span class="tl-presence-sm"></span></span>';
+        var avatar;
+        if(it.avatarUrl){
+          avatar = '<span class="tl-avatar" style="background:transparent"><img class="tl-avatar-img" src="'+esc(it.avatarUrl)+'" alt="">'+(isChannel?'':'<span class="tl-presence-sm"></span>')+'</span>';
+        } else if(isChannel){
+          avatar = '<span class="tl-avatar '+(isActiveChat?'is-channel':'')+'"'+(isActiveChat?'':' style="background:'+colorFor(it.name)+'"')+'>'+GROUPSVG+'</span>';
+        } else {
+          avatar = '<span class="tl-avatar" style="background:'+colorFor(it.name)+'">'+initials(it.name)+'<span class="tl-presence-sm"></span></span>';
+        }
         return '<div class="tl-item '+(isActiveChat?'is-active':'')+' '+(it.unread?'is-unread':'')+'"'+(isActiveChat?' data-active="1"':'')+'>'
           +'<span class="tl-dot '+(it.unread?'on':'')+'"></span>'+avatar
           +'<span class="tl-name">'+esc(it.name)+'</span>'+(it.mention?'<span class="tl-mention">@</span>':'')+'</div>';
@@ -589,7 +605,9 @@ export function buildHtmlTemplate(serializedManifest: string) {
         row.appendChild(col); reactToolbar(col, step, pillsY);
       } else {
         var av=document.createElement('span'); av.className='tg-avatarwrap';
-        av.innerHTML='<span class="tg-avatar" style="background:'+colorFor(step.author)+'">'+initials(step.author)+'</span><span class="tg-presence" title="Available"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>';
+        var _pa=personaOf(step.author);
+        var _avInner=(_pa && _pa.avatarUrl) ? '<span class="tg-avatar" style="background:transparent"><img class="tg-avatar-img" src="'+esc(_pa.avatarUrl)+'" alt="'+esc(step.author)+'"></span>' : '<span class="tg-avatar" style="background:'+colorFor(step.author)+'">'+initials(step.author)+'</span>';
+        av.innerHTML=_avInner+'<span class="tg-presence" title="Available"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>';
         col.innerHTML='<div class="tg-meta"><span class="tg-name">'+esc(step.author)+'</span></div><div class="tg-bubble">'+inlineHtml(step.text)+'</div>';
         var pillsP=reactionArea(step); col.appendChild(pillsP);
         row.appendChild(av); row.appendChild(col); reactToolbar(col, step, pillsP);

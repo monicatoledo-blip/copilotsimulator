@@ -21,7 +21,17 @@ function Emoji({ ch, size = 18 }) {
   return <img className="tg-fluent-emoji" src={src} width={size} height={size} alt={ch} draggable={false} />
 }
 
+// Assign avatar colors by the person's position in the roster (built in
+// TeamsGroupChat), so distinct people always get distinct, non-adjacent colors
+// instead of hash collisions (e.g. two blues in a row). Falls back to a stable
+// name hash for anyone not in the roster.
+let COLOR_INDEX = {}
+function setColorIndex(map) {
+  COLOR_INDEX = map || {}
+}
 function colorFor(name) {
+  const idx = COLOR_INDEX[name]
+  if (typeof idx === 'number') return AVATAR_COLORS[idx % AVATAR_COLORS.length]
   let hash = 0
   for (let i = 0; i < (name || '').length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0
   return AVATAR_COLORS[hash % AVATAR_COLORS.length]
@@ -53,10 +63,11 @@ function useHoverCard() {
 
 function PersonAvatar({ name, persona }) {
   const { ref, pos, show, hide } = useHoverCard()
+  const avatarUrl = persona?.avatarUrl
   return (
     <span className="tg-avatarwrap" ref={ref} onMouseEnter={show} onMouseLeave={hide}>
-      <span className="tg-avatar" style={{ background: colorFor(name) }}>
-        {initials(name)}
+      <span className="tg-avatar" style={avatarUrl ? { background: 'transparent' } : { background: colorFor(name) }}>
+        {avatarUrl ? <img src={avatarUrl} alt={name} className="tg-avatar-img" /> : initials(name)}
       </span>
       <span className="tg-presence" title="Available">
         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
@@ -277,7 +288,7 @@ function PersonTurn({ step, viewer, personaOf, reactions, onReact, onUnreact }) 
   )
 }
 
-export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTitle, viewer = 'You', messages = [], members }) {
+export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTitle, viewer = 'You', messages = [], members, sidebar = [] }) {
   const history = messages || []
 
   // Messages the viewer types into the composer during playback (ephemeral).
@@ -330,23 +341,43 @@ export default function TeamsGroupChat({ brand, renderedSteps, isRunning, chatTi
   if (!personaMap.Copilot) personaMap.Copilot = { title: 'AI assistant' }
   const personaOf = (name) => personaMap[name]
 
+  // Assign distinct avatar colors by first-appearance order across the roster
+  // (members first, then any other message authors), so no two people share a
+  // color and consecutive speakers never collide.
+  const colorIndex = {}
+  let ci = 0
+  const claimColor = (name) => {
+    if (!name || name === viewer || name === 'Copilot' || name in colorIndex) return
+    colorIndex[name] = ci++
+  }
+  memberList.forEach((m) => claimColor(m.name))
+  ;(messages || []).forEach((s) => claimColor(s.author))
+  setColorIndex(colorIndex)
+
   const lastStep = combined[combined.length - 1]
   const showTyping = isRunning && (!lastStep || lastStep.type === 'userPrompt')
 
   const isCopilotStep = (s) => s && (s.type === 'assistantResponse' || s.type === 'toolAction')
 
+  const activeTitle = chatTitle || `${brand.name} Team`
+  const activeChanAvatar = (sidebar || []).find((s) => s && s.name === activeTitle && s.avatarUrl)?.avatarUrl
+
   return (
     <section className="tg-surface">
       <div className="tg-chat-header">
         <span className="tg-chan-avatar" aria-hidden="true">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff">
-            <circle cx="8" cy="9" r="2.4" />
-            <circle cx="16" cy="9" r="2.4" />
-            <path d="M3.5 18a4.5 4.5 0 0 1 9 0z" />
-            <path d="M11.5 18a4.5 4.5 0 0 1 9 0z" />
-          </svg>
+          {activeChanAvatar ? (
+            <img src={activeChanAvatar} alt="" className="tg-chan-avatar-img" />
+          ) : (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff">
+              <circle cx="8" cy="9" r="2.4" />
+              <circle cx="16" cy="9" r="2.4" />
+              <path d="M3.5 18a4.5 4.5 0 0 1 9 0z" />
+              <path d="M11.5 18a4.5 4.5 0 0 1 9 0z" />
+            </svg>
+          )}
         </span>
-        <div className="tg-chat-title">{chatTitle || `${brand.name} Team`}</div>
+        <div className="tg-chat-title">{activeTitle}</div>
         <div className="tg-tabs">
           <button type="button" className="tg-tab is-active">Chat</button>
           <button type="button" className="tg-tab">Shared</button>

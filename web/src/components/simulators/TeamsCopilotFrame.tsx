@@ -612,10 +612,16 @@ function SidebarRow({ item, title, view, onSelectChat }) {
     >
       <span className={`tl-dot ${item.unread ? 'on' : ''}`} />
       <span
-        className={`tl-avatar ${isChannel && isActiveChat ? 'is-channel' : ''}`}
-        style={isActiveChat ? undefined : { background: tlColor(item.name) }}
+        className={`tl-avatar ${isChannel && isActiveChat && !item.avatarUrl ? 'is-channel' : ''}`}
+        style={item.avatarUrl ? { background: 'transparent' } : isActiveChat ? undefined : { background: tlColor(item.name) }}
       >
-        {isChannel ? <GroupGlyph /> : tlInitials(item.name)}
+        {item.avatarUrl ? (
+          <img src={item.avatarUrl} alt="" className="tl-avatar-img" />
+        ) : isChannel ? (
+          <GroupGlyph />
+        ) : (
+          tlInitials(item.name)
+        )}
         {!isChannel && <span className="tl-presence-sm" />}
       </span>
       <span className="tl-name">{item.name}</span>
@@ -796,6 +802,7 @@ export default function TeamsCopilotFrame({ brand, assistant, script, resetSigna
               viewer={viewer}
               messages={groupChat}
               members={members}
+              sidebar={sidebar}
             />
           ) : (
             <CopilotSurface brand={brand} assistant={assistant} script={script} resetSignal={resetSignal} viewer={viewer} />
