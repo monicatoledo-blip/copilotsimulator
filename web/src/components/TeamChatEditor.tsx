@@ -95,7 +95,7 @@ export default function TeamChatEditor({
         id: `gc-${Date.now()}`,
         type: 'userPrompt',
         author: viewerName,
-        text: 'New message',
+        text: '',
       },
     ])
   }
@@ -231,6 +231,7 @@ export default function TeamChatEditor({
             <textarea
               rows={2}
               value={msg.text}
+              placeholder="Type the message…"
               onChange={(e) => updateMessage(index, 'text', e.target.value)}
               style={{ ...inputStyle, resize: 'vertical', minHeight: 52 }}
             />

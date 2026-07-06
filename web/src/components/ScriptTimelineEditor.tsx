@@ -315,7 +315,7 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
       {
         id: `step-${Date.now()}`,
         type: 'assistantResponse',
-        text: 'New response',
+        text: '',
       },
     ])
   }
@@ -484,7 +484,13 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
             id={`step-text-${step.id}`}
             rows={step.type === 'visualization' ? 8 : 3}
             value={step.text}
-            placeholder={step.type === 'visualization' ? 'Build with block chars: █ ▓ ▒ ░ ▮ | ─ ▼ ✅ 🟢🟡🔴' : ''}
+            placeholder={
+              step.type === 'visualization'
+                ? 'Build with block chars: █ ▓ ▒ ░ ▮ | ─ ▼ ✅ 🟢🟡🔴'
+                : step.type === 'userPrompt'
+                  ? 'What the user types to the agent…'
+                  : 'What the agent says back…'
+            }
             onChange={(e) => updateStep(index, 'text', e.target.value)}
             style={{
               width: '100%',

@@ -59,11 +59,8 @@ export default function ReactionPicker({ value = [], onChange }) {
   return (
     <div ref={wrapRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
       {value.map((r) => (
-        <button
+        <span
           key={r.emoji}
-          type="button"
-          onClick={() => removeEmoji(r.emoji)}
-          title="Click to remove"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -71,15 +68,55 @@ export default function ReactionPicker({ value = [], onChange }) {
             background: '#fff',
             border: '1px solid #e3e3e3',
             borderRadius: 12,
-            padding: '2px 8px',
-            cursor: 'pointer',
+            padding: '2px 4px 2px 8px',
             fontSize: 13,
             lineHeight: '18px',
           }}
         >
-          <FluentImg ch={r.emoji} size={18} />
-          {r.count > 1 && <span style={{ fontSize: 11, fontWeight: 600, color: '#616161' }}>{r.count}</span>}
-        </button>
+          <button
+            type="button"
+            onClick={() => addEmoji(r.emoji)}
+            title="Click to add another"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              fontSize: 13,
+            }}
+          >
+            <FluentImg ch={r.emoji} size={18} />
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#616161' }}>{r.count}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => removeEmoji(r.emoji)}
+            title="Remove reaction"
+            aria-label="Remove reaction"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 16,
+              height: 16,
+              borderRadius: '50%',
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              color: '#9a9a9a',
+              fontSize: 14,
+              lineHeight: 1,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+          >
+            ×
+          </button>
+        </span>
       ))}
 
       <button
