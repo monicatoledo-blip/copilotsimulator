@@ -3,7 +3,7 @@ import { FLUENT_EMOJI } from './simulators/fluentEmojiData'
 import { useDragReorder, GripIcon } from './useDragReorder'
 
 const TYPES = [
-  { value: 'userPrompt', label: 'Customer message' },
+  { value: 'userPrompt', label: 'User input' },
   { value: 'assistantResponse', label: 'Agent response' },
   { value: 'toolAction', label: 'Tool action' },
   { value: 'visualization', label: 'Visualization (chart card)' },
