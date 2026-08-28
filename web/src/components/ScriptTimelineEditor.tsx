@@ -593,7 +593,7 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
             <div className="viz-mini">
               <div className="viz-mini-label">Live preview</div>
               <div className="viz-mini-body">
-                {step.title && <div className="sl-viz-title">{renderInline(step.title, `p-${step.id}`, true)}</div>}
+                {step.title && vizKeyOf(step) !== 'callout' && <div className="sl-viz-title">{renderInline(step.title, `p-${step.id}`, true)}</div>}
                 <VizBlock step={step} />
               </div>
             </div>

@@ -65,8 +65,10 @@ function normalizeStep(step, fallbackPrefix, index) {
     type: safeType,
     text: typeof step?.text === 'string' ? step.text : '',
   }
-  if ((safeType === 'toolAction' || safeType === 'visualization') && !out.title) {
-    out.title = safeType === 'toolAction' ? 'Tool action' : 'Visualization'
+  // Only toolAction needs a title fallback. Visualization titles are optional
+  // (callouts have their own heading), so never inject a "Visualization" label.
+  if (safeType === 'toolAction' && !out.title) {
+    out.title = 'Tool action'
   }
   return out
 }

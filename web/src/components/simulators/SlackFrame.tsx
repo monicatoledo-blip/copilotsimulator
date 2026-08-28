@@ -519,7 +519,7 @@ function BotStep({ step }) {
             </>
           ) : step.type === 'visualization' ? (
             <>
-              {step.title && <div className="sl-viz-title">{renderInline(step.title, step.id, true)}</div>}
+              {step.title && step.vizType !== 'callout' && <div className="sl-viz-title">{renderInline(step.title, step.id, true)}</div>}
               {viz || <pre className="sl-viz-pre">{step.text}</pre>}
             </>
           ) : (
