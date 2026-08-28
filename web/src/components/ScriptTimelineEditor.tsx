@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FLUENT_EMOJI } from './simulators/fluentEmojiData'
 import { useDragReorder, GripIcon } from './useDragReorder'
+import { VizBlock } from './simulators/vizBlocks'
+import { renderInline } from './simulators/richText'
 
 const TYPES = [
   { value: 'userPrompt', label: 'User input' },
@@ -565,6 +567,16 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
                 onChange={(e) => updateStep(index, 'calloutTitle', e.target.value)}
                 style={{ flex: '1 1 200px', padding: '6px 10px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13 }}
               />
+            </div>
+          )}
+
+          {step.type === 'visualization' && vizKeyOf(step) !== 'text' && (
+            <div className="viz-mini">
+              <div className="viz-mini-label">Live preview</div>
+              <div className="viz-mini-body">
+                {step.title && <div className="sl-viz-title">{renderInline(step.title, `p-${step.id}`, true)}</div>}
+                <VizBlock step={step} />
+              </div>
             </div>
           )}
 

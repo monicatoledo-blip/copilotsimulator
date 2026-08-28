@@ -708,3 +708,9 @@
 /* interactive channel composer input */
 .sl-ch-input { width: 100%; border: 0; outline: none; resize: none; background: transparent; font-family: inherit; font-size: 15px; color: #1d1c1d; padding: 0; line-height: 1.4; }
 .sl-ch-input::placeholder { color: #8d8d8d; }
+
+/* live mini-preview inside the config viz cards */
+.viz-mini { margin-top: 10px; }
+.viz-mini-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: #9a9a9a; margin-bottom: 5px; }
+.viz-mini-body { background: #fff; border: 1px solid #e2e2e2; border-radius: 8px; padding: 12px 14px; font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1d1c1d; font-size: 14px; }
+.viz-mini-body .sl-viz-title { font-weight: 800; font-size: 14px; margin-bottom: 8px; }
