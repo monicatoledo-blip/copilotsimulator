@@ -111,8 +111,16 @@ function migrateManifest(rawInput, selectedExperience) {
 }
 
 export default function ExperienceGeneratorPage() {
-  const [selectedExperience, setSelectedExperience] = useState('teams-copilot')
-  const [manifest, setManifest] = useState(clone(coPilotDefault))
+  const initialSkin = (() => {
+    try {
+      const s = new URLSearchParams(window.location.search).get('skin')
+      return s === 'slack' ? 'slack' : s === 'claude' ? 'claude' : 'teams-copilot'
+    } catch {
+      return 'teams-copilot'
+    }
+  })()
+  const [selectedExperience, setSelectedExperience] = useState(initialSkin)
+  const [manifest, setManifest] = useState(clone(DEFAULTS[initialSkin] || coPilotDefault))
   const [renderedSteps, setRenderedSteps] = useState([])
   const [errors, setErrors] = useState([])
   const [isRunning, setIsRunning] = useState(false)
