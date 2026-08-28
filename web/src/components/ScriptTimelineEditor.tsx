@@ -179,68 +179,95 @@ function InfoHint({ text }) {
   )
 }
 
+// Structured visualization templates — these populate the real chart/table/callout
+// data the simulator renders (not ASCII), and are editable via friendly grids below.
 const VIZ_TEMPLATES = [
   {
     key: 'bar',
     label: 'Bar chart',
-    title: '📊 Activation by Segment',
-    text: `New customers          ███████████████  62%
-Returning              ████████████     48%
-Dormant 90d            ██████           24%
-Trial                  ███              12%
-
-|----|----|----|----|----|----|----|
-0%  10%  20%  30%  40%  50%  60%  70%`,
-  },
-  {
-    key: 'funnel',
-    label: 'Funnel',
-    title: '📊 Welcome Pilot — Engagement Funnel',
-    text: `24,000 New Customers Entered
-
-|████████████████████████████████████| 24,000  100%
-        |
-        ▼  62% opened welcome email
-|██████████████████████|               14,880  opened
-        |
-        ▼  41% completed first key action
-|██████████████|                        9,840  activated
-        |
-        ▼  net lift vs. no-journey baseline
-|████|  ✅ +34% activation`,
-  },
-  {
-    key: 'scorecard',
-    label: 'Scorecard',
-    title: '🏁 Activation Scorecard vs. Benchmark',
-    text: `WELCOME SERIES SCORECARD
-
-Open Rate         ██████████░░   62%  🟢
-Activation Rate   ███████░░░░░   41%  🟡
-Time to Activate  ██████████░░   72h  🟢
-Unsubscribe       █░░░░░░░░░░░  0.4%  🟢
-Revenue vs Goal   ████░░░░░░░░    18%  🔴`,
+    title: '📊 Campaign vs. Benchmark',
+    text: '',
+    chart: {
+      categories: ['Open Rate', 'Click-Through', 'Unsubscribe'],
+      series: [
+        { name: 'Campaign Result', color: '#E8912D', values: [51, 24, 0.4] },
+        { name: 'Industry Benchmark', color: '#5B6EF5', values: [42, 22, 0.5] },
+      ],
+      caption: 'This chart was generated using AI, which can produce inaccurate responses.',
+    },
   },
   {
     key: 'table',
-    label: 'Field table',
-    title: '🗂️ Data Extension Fields',
-    text: `FIELD                TYPE    NOTES
-──────────────────────────────────────────
-ContactKey           Text    🔑 Primary key
-EmailAddress         Email   Sendable address
-FirstName            Text    Personalization
-LastName             Text    Personalization
-SignupDate           Date    Cohort entry
-OnboardingStep       Text    Stalled stage
-LastLoginDate        Date    Recency signal
-AccountType          Text    Segmentation
-LifecycleStage       Text    Journey gating
-LastModifiedDate     Date    System field
-──────────────────────────────────────────
-10 fields · sendable on ContactKey → _SubscriberKey`,
+    label: 'Table',
+    title: '🗂️ Data Extension — Fields',
+    text: '',
+    table: {
+      columns: ['Field', 'Type', 'Notes'],
+      rows: [
+        ['`ContactKey`', 'Text', '🔑 Primary key'],
+        ['`EmailAddress`', 'Email', 'Sendable address'],
+        ['`FirstName`', 'Text', 'Personalization'],
+      ],
+    },
+  },
+  {
+    key: 'callout',
+    label: 'Callout box',
+    title: '',
+    calloutTitle: 'Activation is on hold',
+    variant: 'success',
+    text: 'The journey is sitting in Draft and no contacts have entered. It won\'t fire until published.',
+  },
+  {
+    key: 'text',
+    label: 'Custom text (monospace)',
+    title: '📊 Insights',
+    text: 'Type or paste any monospace layout here…',
   },
 ]
+
+// ── structured viz <-> editable text (pipe-delimited) helpers ──
+const PIPE = ' | '
+function tableToText(table) {
+  if (!table) return ''
+  const cols = table.columns || []
+  const rows = table.rows || []
+  return [cols.join(PIPE), ...rows.map((r) => (r || []).join(PIPE))].join('\n')
+}
+function textToTable(text) {
+  const lines = String(text || '').split('\n').filter((l) => l.trim() !== '')
+  if (!lines.length) return { columns: [], rows: [] }
+  const columns = lines[0].split('|').map((c) => c.trim())
+  const rows = lines.slice(1).map((l) => l.split('|').map((c) => c.trim()))
+  return { columns, rows }
+}
+const CHART_COLORS = ['#E8912D', '#5B6EF5', '#2EA6A0', '#B25FE6']
+function chartToText(chart) {
+  if (!chart) return ''
+  const series = chart.series || []
+  const cats = chart.categories || []
+  const header = ['Metric', ...series.map((s) => s.name)].join(PIPE)
+  const rows = cats.map((c, i) => [c, ...series.map((s) => (s.values || [])[i])].join(PIPE))
+  return [header, ...rows].join('\n')
+}
+function textToChart(text, prev) {
+  const lines = String(text || '').split('\n').filter((l) => l.trim() !== '')
+  if (lines.length < 2) return { categories: [], series: [], caption: prev?.caption || '' }
+  const header = lines[0].split('|').map((c) => c.trim())
+  const seriesNames = header.slice(1)
+  const dataRows = lines.slice(1).map((l) => l.split('|').map((c) => c.trim()))
+  const categories = dataRows.map((r) => r[0])
+  const series = seriesNames.map((name, i) => ({
+    name,
+    color: (prev?.series && prev.series[i] && prev.series[i].color) || CHART_COLORS[i % CHART_COLORS.length],
+    values: dataRows.map((r) => parseFloat(r[i + 1]) || 0),
+  }))
+  return { categories, series, caption: prev?.caption || '' }
+}
+
+function vizKeyOf(step) {
+  return step.chart ? 'bar' : step.table ? 'table' : (step.vizType === 'callout' || step.calloutTitle) ? 'callout' : 'text'
+}
 
 const CopyIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -281,9 +308,21 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
 
   const applyVizTemplate = (index, key) => {
     const tpl = VIZ_TEMPLATES.find((t) => t.key === key)
-    const next = script.map((s, idx) =>
-      idx === index ? { ...s, vizType: key, ...(tpl ? { title: tpl.title, text: tpl.text } : {}) } : s,
-    )
+    const next = script.map((s, idx) => {
+      if (idx !== index) return s
+      // Clear any prior structured data so switching types doesn't leave stale fields.
+      const base = { ...s, vizType: key === 'text' ? '' : key, chart: undefined, table: undefined, variant: undefined, calloutTitle: undefined }
+      if (!tpl) return base
+      return {
+        ...base,
+        title: tpl.title || '',
+        text: tpl.text || '',
+        ...(tpl.chart ? { chart: tpl.chart } : {}),
+        ...(tpl.table ? { table: tpl.table } : {}),
+        ...(tpl.variant ? { variant: tpl.variant } : {}),
+        ...(tpl.calloutTitle ? { calloutTitle: tpl.calloutTitle } : {}),
+      }
+    })
     onChange(next)
   }
 
@@ -463,30 +502,81 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
               <label htmlFor={`viztype-${step.id}`}>Visualization type:</label>
               <select
                 id={`viztype-${step.id}`}
-                value={step.vizType || ''}
+                value={vizKeyOf(step)}
                 onChange={(e) => applyVizTemplate(index, e.target.value)}
                 style={{ padding: '6px 8px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13, background: '#fff' }}
               >
-                <option value="">Custom / blank</option>
                 {VIZ_TEMPLATES.map((t) => (
-                  <option key={t.key} value={t.key}>
-                    {t.label}
-                  </option>
+                  <option key={t.key} value={t.key}>{t.label}</option>
                 ))}
               </select>
               <div style={{ marginLeft: 'auto', alignSelf: 'flex-start' }}>
-                <InfoHint text="Pick a type to drop in a starter template, then edit the monospace visualization text below." />
+                <InfoHint text="Bar & Table: edit the grid below (columns separated by ' | ', one row per line). Callout: pick a status and write the message. Custom: free monospace." />
               </div>
             </div>
           )}
 
+          {step.type === 'visualization' && vizKeyOf(step) === 'bar' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 12, color: '#5b5b5b' }}>Chart data — first row = <strong>Metric | Series names</strong>, then one row per category:</label>
+              <textarea
+                rows={5}
+                value={chartToText(step.chart)}
+                onChange={(e) => updateStep(index, 'chart', textToChart(e.target.value, step.chart))}
+                style={{ width: '100%', padding: '8px 10px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13, fontFamily: 'Consolas, "SF Mono", Menlo, monospace', whiteSpace: 'pre', resize: 'vertical' }}
+              />
+              <input
+                type="text"
+                placeholder="Caption (optional)"
+                value={step.chart?.caption || ''}
+                onChange={(e) => updateStep(index, 'chart', { ...(step.chart || {}), caption: e.target.value })}
+                style={{ padding: '6px 10px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13 }}
+              />
+            </div>
+          )}
+
+          {step.type === 'visualization' && vizKeyOf(step) === 'table' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 12, color: '#5b5b5b' }}>Table — first line = <strong>column headers</strong>, then one row per line (cells separated by <code>|</code>):</label>
+              <textarea
+                rows={6}
+                value={tableToText(step.table)}
+                onChange={(e) => updateStep(index, 'table', textToTable(e.target.value))}
+                style={{ width: '100%', padding: '8px 10px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13, fontFamily: 'Consolas, "SF Mono", Menlo, monospace', whiteSpace: 'pre', resize: 'vertical' }}
+              />
+            </div>
+          )}
+
+          {step.type === 'visualization' && vizKeyOf(step) === 'callout' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <label style={{ fontSize: 12, color: '#5b5b5b' }}>Status:</label>
+              <select
+                value={step.variant || 'success'}
+                onChange={(e) => updateStep(index, 'variant', e.target.value)}
+                style={{ padding: '6px 8px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13, background: '#fff' }}
+              >
+                <option value="success">✅ Success (green)</option>
+                <option value="warning">🔴 Warning (red)</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Callout heading"
+                value={step.calloutTitle || ''}
+                onChange={(e) => updateStep(index, 'calloutTitle', e.target.value)}
+                style={{ flex: '1 1 200px', padding: '6px 10px', border: '1px solid #dddbda', borderRadius: 4, fontSize: 13 }}
+              />
+            </div>
+          )}
+
+          {/* Bar & Table use their own grid editors above; hide the free-text box for them. */}
+          {!(step.type === 'visualization' && (vizKeyOf(step) === 'bar' || vizKeyOf(step) === 'table')) && (
           <textarea
             id={`step-text-${step.id}`}
             rows={step.type === 'visualization' ? 8 : 3}
             value={step.text}
             placeholder={
               step.type === 'visualization'
-                ? 'Build with block chars: █ ▓ ▒ ░ ▮ | ─ ▼ ✅ 🟢🟡🔴'
+                ? (vizKeyOf(step) === 'callout' ? 'Callout message…' : 'Type or paste monospace content…')
                 : step.type === 'userPrompt'
                   ? 'What the user types to the agent…'
                   : 'What the agent says back…'
@@ -497,13 +587,14 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
               padding: '8px 10px',
               border: '1px solid #dddbda',
               borderRadius: 4,
-              fontSize: step.type === 'visualization' ? 12.5 : 14,
-              fontFamily: step.type === 'visualization' ? 'Consolas, "SF Mono", Menlo, ui-monospace, monospace' : 'inherit',
-              whiteSpace: step.type === 'visualization' ? 'pre' : 'pre-wrap',
+              fontSize: step.type === 'visualization' && vizKeyOf(step) === 'text' ? 12.5 : 14,
+              fontFamily: step.type === 'visualization' && vizKeyOf(step) === 'text' ? 'Consolas, "SF Mono", Menlo, ui-monospace, monospace' : 'inherit',
+              whiteSpace: step.type === 'visualization' && vizKeyOf(step) === 'text' ? 'pre' : 'pre-wrap',
               resize: 'vertical',
-              minHeight: step.type === 'visualization' ? 150 : 64,
+              minHeight: step.type === 'visualization' && vizKeyOf(step) === 'text' ? 150 : 64,
             }}
           />
+          )}
           {index === 0 && step.type === 'userPrompt' && (
             <div
               style={{
