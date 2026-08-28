@@ -5,8 +5,10 @@ import ScriptTimelineEditor from '../components/ScriptTimelineEditor'
 import TeamChatEditor from '../components/TeamChatEditor'
 import TeamsCopilotFrame from '../components/simulators/TeamsCopilotFrame'
 import ClaudeFrame from '../components/simulators/ClaudeFrame'
+import SlackFrame from '../components/simulators/SlackFrame'
 import coPilotDefault from '../../../simulators/content/co-pilot.default.json'
 import claudeDefault from '../../../simulators/content/claude.default.json'
+import slackDefault from '../../../simulators/content/slack.default.json'
 import { validateScript } from '../../../simulators/engine/validateScript'
 import { runScript } from '../../../simulators/engine/runScript'
 import { buildStandaloneHtml } from '../lib/export/buildStandaloneHtml'
@@ -22,6 +24,14 @@ const CLAUDE_TABS = [
   { id: 'demo', label: 'Your demo' },
   { id: 'copilot', label: 'AI Copilot' },
 ]
+
+const SLACK_TABS = [
+  { id: 'demo', label: 'Your demo' },
+  { id: 'team', label: 'Channel' },
+  { id: 'copilot', label: 'Slackbot' },
+]
+
+const DEFAULTS = { 'teams-copilot': coPilotDefault, claude: claudeDefault, slack: slackDefault }
 const SHOW_CLAUDE_EXPERIENCE = false
 
 const MIN_PANEL_WIDTH = 320
@@ -40,7 +50,7 @@ function parseImportedManifest(text) {
   if (!trimmed) throw new Error('The uploaded file is empty.')
   if (trimmed.startsWith('{')) return JSON.parse(trimmed)
   // Allow importing a previously exported standalone HTML by extracting its embedded MANIFEST object.
-  const match = trimmed.match(/var\s+MANIFEST\s*=\s*(\{[\s\S]*?\})\s*;/m)
+  const match = trimmed.match(/(?:var\s+|window\.)MANIFEST\s*=\s*(\{[\s\S]*?\})\s*;/m)
   if (match && match[1]) return JSON.parse(match[1])
   throw new Error('Could not find a simulator manifest. Upload a working JSON file or exported simulator HTML.')
 }
@@ -65,10 +75,10 @@ function normalizeStep(step, fallbackPrefix, index) {
 // newly added template fields keep working over time.
 function migrateManifest(rawInput, selectedExperience) {
   const raw = rawInput && typeof rawInput === 'object' ? rawInput : {}
-  const experienceType = raw.experienceType === 'claude' || raw.experienceType === 'teams-copilot'
+  const experienceType = ['claude', 'teams-copilot', 'slack'].includes(raw.experienceType)
     ? raw.experienceType
     : selectedExperience
-  const base = clone(experienceType === 'claude' ? claudeDefault : coPilotDefault)
+  const base = clone(DEFAULTS[experienceType] || coPilotDefault)
 
   const scriptSource = Array.isArray(raw.script) ? raw.script : []
   const groupChatSource = Array.isArray(raw.groupChat)
@@ -115,7 +125,7 @@ export default function ExperienceGeneratorPage() {
 
   const validationErrors = useMemo(() => validateScript(manifest), [manifest])
   // The pristine default for the current experience — source for "Restore default".
-  const experienceDefault = selectedExperience === 'claude' ? claudeDefault : coPilotDefault
+  const experienceDefault = DEFAULTS[selectedExperience] || coPilotDefault
 
   useEffect(() => {
     if (!dragging) return
@@ -138,14 +148,14 @@ export default function ExperienceGeneratorPage() {
     }
   }, [dragging])
 
-  const TABS = selectedExperience === 'teams-copilot' ? TEAMS_TABS : CLAUDE_TABS
+  const TABS = selectedExperience === 'teams-copilot' ? TEAMS_TABS : selectedExperience === 'slack' ? SLACK_TABS : CLAUDE_TABS
 
   const switchExperience = (experienceType) => {
     setSelectedExperience(experienceType)
     setRenderedSteps([])
     setErrors([])
     setActiveTab('demo')
-    setManifest(clone(experienceType === 'teams-copilot' ? coPilotDefault : claudeDefault))
+    setManifest(clone(DEFAULTS[experienceType] || coPilotDefault))
   }
 
   const updateScript = (script) => setManifest((prev) => ({ ...prev, script }))
@@ -157,10 +167,14 @@ export default function ExperienceGeneratorPage() {
       // chat list follows the brand instead of leaving rogue defaults behind.
       const oldName = (prev.brand?.name || '').trim()
       const newName = (value || '').trim()
-      if (key === 'name' && oldName && newName && oldName !== newName && Array.isArray(prev.sidebar)) {
+      // Only cascade when the old name appears as a whole word (word boundaries),
+      // so a transient short name (e.g. "C") can't corrupt section labels like
+      // "Channels" -> "Cumulushannels". Requires oldName length >= 2.
+      if (key === 'name' && oldName.length >= 2 && newName && oldName !== newName && Array.isArray(prev.sidebar)) {
+        const re = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')
         next.sidebar = prev.sidebar.map((s) =>
-          s && typeof s.section === 'string' && s.section.includes(oldName)
-            ? { ...s, section: s.section.split(oldName).join(newName) }
+          s && typeof s.section === 'string' && re.test(s.section)
+            ? { ...s, section: s.section.replace(re, newName) }
             : s,
         )
       }
@@ -200,7 +214,7 @@ export default function ExperienceGeneratorPage() {
     const foundErrors = validateScript(manifest)
     setErrors(foundErrors)
     if (foundErrors.length > 0) return
-    if (selectedExperience === 'teams-copilot') {
+    if (selectedExperience === 'teams-copilot' || selectedExperience === 'slack') {
       setResetSignal((n) => n + 1)
     } else {
       runPreview()
@@ -260,7 +274,12 @@ export default function ExperienceGeneratorPage() {
     }
   }
 
-  const Frame = selectedExperience === 'teams-copilot' ? TeamsCopilotFrame : ClaudeFrame
+  const Frame =
+    selectedExperience === 'teams-copilot'
+      ? TeamsCopilotFrame
+      : selectedExperience === 'slack'
+        ? SlackFrame
+        : ClaudeFrame
 
   return (
     <div className="app-shell">
@@ -288,6 +307,7 @@ export default function ExperienceGeneratorPage() {
                 onChange={(e) => switchExperience(e.target.value)}
               >
                 <option value="teams-copilot">Co-Pilot in MS Teams</option>
+                <option value="slack">Slack</option>
                 {SHOW_CLAUDE_EXPERIENCE && <option value="claude">Claude</option>}
               </select>
             </div>
@@ -390,11 +410,14 @@ export default function ExperienceGeneratorPage() {
                 chatTitle={manifest.chatTitle}
                 members={members}
                 viewer={manifest.viewer}
+                viewerAvatarUrl={manifest.viewerAvatarUrl}
+                nativeEmoji={selectedExperience === 'slack'}
                 messages={manifest.groupChat || []}
                 sidebar={manifest.sidebar || []}
                 onChatTitleChange={(value) => updateField('chatTitle', value)}
                 onMembersChange={(value) => updateField('members', value)}
                 onViewerChange={(value) => updateField('viewer', value)}
+                onViewerAvatarChange={selectedExperience === 'slack' ? (value) => updateField('viewerAvatarUrl', value) : undefined}
                 onMessagesChange={(value) => updateField('groupChat', value)}
                 onSidebarChange={(value) => updateField('sidebar', value)}
                 onRestoreDefaultMessages={() => updateField('groupChat', clone(experienceDefault.groupChat || []))}
@@ -403,19 +426,21 @@ export default function ExperienceGeneratorPage() {
 
             {activeTab === 'copilot' && (
               <>
-                <div className="form-section">
-                  <h3>Assistant Greeting</h3>
-                  <div className="form-group">
-                    <label htmlFor="greeting">Greeting</label>
-                    <textarea
-                      id="greeting"
-                      rows={3}
-                      value={manifest.assistant.greeting}
-                      onChange={(e) => updateAssistant('greeting', e.target.value)}
-                    />
-                    <small>The opening message your assistant shows before the scripted turns.</small>
+                {selectedExperience !== 'slack' && (
+                  <div className="form-section">
+                    <h3>Assistant Greeting</h3>
+                    <div className="form-group">
+                      <label htmlFor="greeting">Greeting</label>
+                      <textarea
+                        id="greeting"
+                        rows={3}
+                        value={manifest.assistant.greeting}
+                        onChange={(e) => updateAssistant('greeting', e.target.value)}
+                      />
+                      <small>The opening message your assistant shows before the scripted turns.</small>
+                    </div>
                   </div>
-                </div>
+                )}
                 <ScriptTimelineEditor
                   script={manifest.script}
                   onChange={updateScript}
@@ -534,6 +559,8 @@ export default function ExperienceGeneratorPage() {
                 groupChat={manifest.groupChat}
                 members={members}
                 sidebar={manifest.sidebar}
+                rail={manifest.rail}
+                viewerAvatarUrl={manifest.viewerAvatarUrl}
                 />
               </div>
             </div>

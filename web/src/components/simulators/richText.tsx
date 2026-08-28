@@ -12,7 +12,7 @@ import { FLUENT_EMOJI } from './fluentEmojiData'
  *   inline emoji           -> Microsoft Fluent emoji image (when available)
  */
 
-const INLINE_RE = /@\[([^\]]+)\]|@([A-Za-z0-9_]+)|\*\*([^*]+)\*\*/g
+const INLINE_RE = /@\[([^\]]+)\]|@([A-Za-z0-9_]+)|\*\*([^*]+)\*\*|`([^`]+)`/g
 
 function escapeRegExp(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -24,9 +24,10 @@ const EMOJI_RE = EMOJI_KEYS.length
   ? new RegExp(`(${EMOJI_KEYS.map(escapeRegExp).join('|')})`, 'g')
   : null
 
-function pushText(nodes: React.ReactNode[], str: string, keyPrefix: string) {
+function pushText(nodes: React.ReactNode[], str: string, keyPrefix: string, native?: boolean) {
   if (!str) return
-  if (!EMOJI_RE) {
+  // Slack renders native (Apple) emoji — skip the Microsoft Fluent image swap.
+  if (native || !EMOJI_RE) {
     nodes.push(str)
     return
   }
@@ -50,14 +51,14 @@ function pushText(nodes: React.ReactNode[], str: string, keyPrefix: string) {
   if (last < str.length) nodes.push(str.slice(last))
 }
 
-export function renderInline(text: string, keyPrefix = 'i') {
+export function renderInline(text: string, keyPrefix = 'i', native?: boolean) {
   const nodes: React.ReactNode[] = []
   let last = 0
   let match: RegExpExecArray | null
   let i = 0
   INLINE_RE.lastIndex = 0
   while ((match = INLINE_RE.exec(text)) !== null) {
-    if (match.index > last) pushText(nodes, text.slice(last, match.index), `${keyPrefix}-${i}`)
+    if (match.index > last) pushText(nodes, text.slice(last, match.index), `${keyPrefix}-${i}`, native)
     if (match[1] || match[2]) {
       nodes.push(
         <span className="tg-mention" key={`${keyPrefix}-m${i++}`}>
@@ -66,10 +67,16 @@ export function renderInline(text: string, keyPrefix = 'i') {
       )
     } else if (match[3]) {
       nodes.push(<strong key={`${keyPrefix}-b${i++}`}>{match[3]}</strong>)
+    } else if (match[4]) {
+      nodes.push(
+        <code className="rt-code" key={`${keyPrefix}-c${i++}`}>
+          {match[4]}
+        </code>,
+      )
     }
     last = INLINE_RE.lastIndex
   }
-  if (last < text.length) pushText(nodes, text.slice(last), `${keyPrefix}-end`)
+  if (last < text.length) pushText(nodes, text.slice(last), `${keyPrefix}-end`, native)
   return nodes
 }
 
@@ -85,7 +92,7 @@ const ToolGlyph = () => (
   </svg>
 )
 
-export function renderRich(text: string, keyPrefix = 'r') {
+export function renderRich(text: string, keyPrefix = 'r', native?: boolean) {
   const lines = (text || '').split('\n')
   const blocks: Block[] = []
   let bullets: string[] = []
@@ -122,7 +129,7 @@ export function renderRich(text: string, keyPrefix = 'r') {
       return (
         <div className="tg-toolcall" key={`${keyPrefix}-tool${idx}`}>
           <ToolGlyph />
-          <span>{renderInline(block.text, `${keyPrefix}-tool${idx}`)}</span>
+          <span>{renderInline(block.text, `${keyPrefix}-tool${idx}`, native)}</span>
         </div>
       )
     }
@@ -130,14 +137,14 @@ export function renderRich(text: string, keyPrefix = 'r') {
       return (
         <ul className="tg-ul" key={`${keyPrefix}-ul${idx}`}>
           {block.items.map((item, j) => (
-            <li key={`${keyPrefix}-li${idx}-${j}`}>{renderInline(item, `${keyPrefix}-li${idx}-${j}`)}</li>
+            <li key={`${keyPrefix}-li${idx}-${j}`}>{renderInline(item, `${keyPrefix}-li${idx}-${j}`, native)}</li>
           ))}
         </ul>
       )
     }
     return (
       <p className="tg-p" key={`${keyPrefix}-p${idx}`}>
-        {renderInline(block.text, `${keyPrefix}-p${idx}`)}
+        {renderInline(block.text, `${keyPrefix}-p${idx}`, native)}
       </p>
     )
   })

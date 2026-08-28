@@ -15,11 +15,14 @@ export default function TeamChatEditor({
   chatTitle,
   members,
   viewer,
+  viewerAvatarUrl,
+  nativeEmoji = false,
   messages,
   sidebar = [],
   onChatTitleChange,
   onMembersChange,
   onViewerChange,
+  onViewerAvatarChange,
   onMessagesChange,
   onSidebarChange,
   onRestoreDefaultMessages,
@@ -30,21 +33,26 @@ export default function TeamChatEditor({
   const updateSidebar = (index, key, value) =>
     onSidebarChange(sidebar.map((s, i) => (i === index ? { ...s, [key]: value } : s)))
 
-  const addSidebar = (type) =>
+  const addSidebarTo = (section) => {
+    const type = section === 'Direct messages' ? 'person' : 'channel'
     onSidebarChange([
       ...sidebar,
       {
         id: `sb-${Date.now()}`,
-        name: type === 'channel' ? 'New channel' : 'New person',
+        name: section === 'Direct messages' ? 'New person' : 'new-channel',
         type,
-        section: 'Chats',
+        section,
       },
     ])
+  }
 
   const removeSidebar = (index) => onSidebarChange(sidebar.filter((_, i) => i !== index))
 
-  const moveSidebar = (index, direction) => {
-    const target = index + direction
+  // Reorder an item within its own section (swap with the nearest same-section neighbor).
+  const moveWithinSection = (index, direction) => {
+    const section = sidebar[index]?.section
+    let target = index + direction
+    while (target >= 0 && target < sidebar.length && sidebar[target]?.section !== section) target += direction
     if (target < 0 || target >= sidebar.length) return
     const next = [...sidebar]
     const [moved] = next.splice(index, 1)
@@ -130,6 +138,18 @@ export default function TeamChatEditor({
           />
           <small>This is you — your messages appear right-aligned in purple. Not part of the member list.</small>
         </div>
+
+        {onViewerAvatarChange && (
+          <div className="form-group">
+            <label>Your profile photo</label>
+            <AvatarField
+              value={viewerAvatarUrl}
+              onChange={(url) => onViewerAvatarChange(url)}
+              label={viewerName}
+            />
+            <small>Shows as {viewerName}'s avatar in the rail and on {viewerName}'s messages. Leave blank for colored initials.</small>
+          </div>
+        )}
 
         <div className="form-group">
           <label>Teammates</label>
@@ -238,6 +258,7 @@ export default function TeamChatEditor({
 
             <div style={{ width: '100%' }}>
               <ReactionPicker
+                native={nativeEmoji}
                 value={msg.reactions || []}
                 onChange={(reactions) => updateMessage(index, 'reactions', reactions)}
               />
@@ -277,82 +298,50 @@ export default function TeamChatEditor({
       <div className="form-section">
         <h3>Chat List (sidebar)</h3>
         <small style={{ display: 'block', marginBottom: 12 }}>
-          The left rail of chats & channels. Group them under any section label. An entry whose name matches the{' '}
+          The left rail, grouped into Slack's three sections. An entry whose name matches the{' '}
           <strong>Chat name</strong> above becomes the highlighted/active conversation.
         </small>
 
-        {sidebar.map((item, index) => (
-          <div key={item.id || index} className="msg-builder-row-inner" style={{ flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', gap: 6, width: '100%', flexWrap: 'wrap', alignItems: 'center' }}>
-              <input
-                type="text"
-                value={item.name}
-                placeholder="Name"
-                onChange={(e) => updateSidebar(index, 'name', e.target.value)}
-                style={{ ...inputStyle, flex: '1 1 150px', width: 'auto' }}
-              />
-              <select
-                value={item.type || 'person'}
-                onChange={(e) => updateSidebar(index, 'type', e.target.value)}
-                style={{ ...inputStyle, width: 'auto', flex: '0 0 auto', background: '#fff' }}
-              >
-                <option value="person">Person</option>
-                <option value="channel">Channel</option>
-              </select>
-              <input
-                type="text"
-                value={item.section || ''}
-                placeholder="Section (e.g. Favorites)"
-                onChange={(e) => updateSidebar(index, 'section', e.target.value)}
-                style={{ ...inputStyle, flex: '1 1 130px', width: 'auto', fontSize: 13 }}
-              />
+        {['Broadcast', 'Channels', 'Direct messages'].map((section) => {
+          const rows = sidebar
+            .map((item, index) => ({ item, index }))
+            .filter(({ item }) => (item.section || 'Channels') === section)
+          return (
+            <div key={section} style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#5b5b5b', margin: '4px 0 8px' }}>{section}</div>
+              {rows.map(({ item, index }) => (
+                <div key={item.id || index} className="msg-builder-row-inner" style={{ flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 8, width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#8d8d8d' }}>{section === 'Direct messages' ? '•' : '#'}</span>
+                    <input
+                      type="text"
+                      value={item.name}
+                      placeholder="Name"
+                      onChange={(e) => updateSidebar(index, 'name', e.target.value)}
+                      style={{ ...inputStyle, flex: '1 1 150px', width: 'auto' }}
+                    />
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13 }}>
+                      <input
+                        type="checkbox"
+                        checked={!!item.unread}
+                        onChange={(e) => updateSidebar(index, 'unread', e.target.checked)}
+                      />
+                      Unread (bold)
+                    </label>
+                    <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+                      <button type="button" className="msg-move-btn" onClick={() => moveWithinSection(index, -1)}>Up</button>
+                      <button type="button" className="msg-move-btn" onClick={() => moveWithinSection(index, 1)}>Down</button>
+                      <button type="button" className="msg-delete-btn" onClick={() => removeSidebar(index)}>Delete</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="add-message-btn" onClick={() => addSidebarTo(section)}>
+                + Add to {section}
+              </button>
             </div>
-            <div style={{ display: 'flex', gap: 14, width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13 }}>
-                <input
-                  type="checkbox"
-                  checked={!!item.unread}
-                  onChange={(e) => updateSidebar(index, 'unread', e.target.checked)}
-                />
-                Unread (bold + dot)
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13 }}>
-                <input
-                  type="checkbox"
-                  checked={!!item.mention}
-                  onChange={(e) => updateSidebar(index, 'mention', e.target.checked)}
-                />
-                @ mention
-              </label>
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-                <button type="button" className="msg-move-btn" onClick={() => moveSidebar(index, -1)}>
-                  Up
-                </button>
-                <button type="button" className="msg-move-btn" onClick={() => moveSidebar(index, 1)}>
-                  Down
-                </button>
-                <button type="button" className="msg-delete-btn" onClick={() => removeSidebar(index)}>
-                  Delete
-                </button>
-              </div>
-            </div>
-            <AvatarField
-              value={item.avatarUrl}
-              onChange={(url) => updateSidebar(index, 'avatarUrl', url)}
-              shape={item.type === 'channel' ? 'square' : 'circle'}
-              label={item.name || 'C'}
-            />
-          </div>
-        ))}
-
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button type="button" className="add-message-btn" onClick={() => addSidebar('person')}>
-            + Add person
-          </button>
-          <button type="button" className="add-message-btn" onClick={() => addSidebar('channel')}>
-            + Add channel
-          </button>
-        </div>
+          )
+        })}
       </div>
     </>
   )

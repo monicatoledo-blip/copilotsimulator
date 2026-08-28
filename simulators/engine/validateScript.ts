@@ -14,11 +14,18 @@ export interface ScriptStep {
   typingState?: boolean
   author?: string
   reactions?: Reaction[]
+  // Structured visualization payloads (optional).
+  vizType?: string
+  pacing?: string
+  chart?: unknown
+  table?: unknown
+  variant?: string
+  calloutTitle?: string
 }
 
 export interface SimulatorManifest {
   id: string
-  experienceType: 'teams-copilot' | 'claude'
+  experienceType: 'teams-copilot' | 'claude' | 'slack'
   brand: {
     name: string
     primaryColor: string
@@ -70,12 +77,17 @@ export function validateScript(manifest: SimulatorManifest): string[] {
     if (step.id && ids.has(step.id)) errors.push(`Step ${row}: duplicate id "${step.id}".`)
     if (step.id) ids.add(step.id)
     if (!STEP_TYPES.has(step.type)) errors.push(`Step ${row}: invalid type "${step.type}".`)
-    if (!step.text?.trim()) errors.push(`Step ${row}: text is required.`)
+    // Structured visualizations (chart/table/callout) carry their data in
+    // dedicated fields, so plain `text` is optional for them.
+    const structuredViz =
+      step.type === 'visualization' && (step.chart || step.table || step.vizType === 'callout')
+    if (!step.text?.trim() && !structuredViz) errors.push(`Step ${row}: text is required.`)
     if (step.delayMs != null && step.delayMs < 0) errors.push(`Step ${row}: delayMs cannot be negative.`)
     if (step.type === 'toolAction' && !step.title?.trim()) {
       errors.push(`Step ${row}: toolAction requires a title.`)
     }
-    if (step.type === 'visualization' && !step.title?.trim()) {
+    // A visualization needs a heading via `title`, except callouts which use `calloutTitle`.
+    if (step.type === 'visualization' && !step.title?.trim() && !step.calloutTitle?.trim()) {
       errors.push(`Step ${row}: visualization requires a title (the card heading).`)
     }
   })

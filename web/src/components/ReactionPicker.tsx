@@ -9,13 +9,14 @@ function emojiSrc(ch) {
   return FLUENT_EMOJI[ch] || FLUENT_EMOJI[ch.replace(/\uFE0F/g, '')]
 }
 
-function FluentImg({ ch, size = 20 }) {
+function FluentImg({ ch, size = 20, native = false }) {
+  if (native) return <span style={{ fontSize: size, lineHeight: 1 }}>{ch}</span>
   const src = emojiSrc(ch)
   if (!src) return <span style={{ fontSize: size }}>{ch}</span>
   return <img src={src} width={size} height={size} alt={ch} draggable={false} style={{ display: 'block' }} />
 }
 
-export default function ReactionPicker({ value = [], onChange }) {
+export default function ReactionPicker({ value = [], onChange, native = false }) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef(null)
 
@@ -88,7 +89,7 @@ export default function ReactionPicker({ value = [], onChange }) {
               fontSize: 13,
             }}
           >
-            <FluentImg ch={r.emoji} size={18} />
+            <FluentImg ch={r.emoji} size={18} native={native} />
             <span style={{ fontSize: 11, fontWeight: 600, color: '#616161' }}>{r.count}</span>
           </button>
           <button
@@ -136,7 +137,7 @@ export default function ReactionPicker({ value = [], onChange }) {
           color: '#444',
         }}
       >
-        <FluentImg ch="🙂" size={16} />
+        <FluentImg ch="🙂" size={16} native={native} />
         <span style={{ fontSize: 12 }}>+</span>
       </button>
 
@@ -179,7 +180,7 @@ export default function ReactionPicker({ value = [], onChange }) {
               onMouseEnter={(e) => (e.currentTarget.style.background = '#f3f3f3')}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
-              <FluentImg ch={ch} size={24} />
+              <FluentImg ch={ch} size={24} native={native} />
             </button>
           ))}
         </div>

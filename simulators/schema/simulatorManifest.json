@@ -5,7 +5,7 @@
   "required": ["id", "experienceType", "brand", "assistant", "script"],
   "properties": {
     "id": { "type": "string", "minLength": 1 },
-    "experienceType": { "enum": ["teams-copilot", "claude"] },
+    "experienceType": { "enum": ["teams-copilot", "claude", "slack"] },
     "brand": {
       "type": "object",
       "required": ["name", "primaryColor", "accentColor", "headlineColor"],

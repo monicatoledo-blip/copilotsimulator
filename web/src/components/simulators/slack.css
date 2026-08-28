@@ -1,0 +1,706 @@
+/* Slack simulator skin. Class prefix: sl-  (shared richText classes: tg-*, rt-code, viz-*) */
+.sl-window {
+  display: flex;
+  height: 720px;
+  max-height: 82vh;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  font-family: Lato, 'Slack-Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1d1c1d;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  border: 1px solid #e2e2e2;
+}
+
+/* workspace rail */
+.sl-rail {
+  width: 68px;
+  background: #3a0e3c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0 10px;
+  gap: 4px;
+  flex: 0 0 68px;
+}
+.sl-rail-ws {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #fff;
+  color: #3a0e3c;
+  font-weight: 800;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.sl-rail-item {
+  background: none;
+  border: 0;
+  color: #cfc3d0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  padding: 7px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 52px;
+}
+.sl-rail-item.is-active,
+.sl-rail-item:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.sl-rail-spacer { flex: 1; }
+.sl-rail-me { width: 30px; height: 30px; border-radius: 8px; }
+
+/* channel sidebar */
+.sl-sidebar {
+  width: 240px;
+  flex: 0 0 240px;
+  background: #3f0e40;
+  color: #cfc3d0;
+  padding: 6px 0;
+  overflow-y: auto;
+  font-size: 15px;
+}
+.sl-ws-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 14px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.sl-nav-quick { padding: 8px 0; }
+.sl-quick-item { padding: 4px 16px; color: #cfc3d0; cursor: default; }
+.sl-quick-item:hover { background: rgba(255, 255, 255, 0.06); }
+.sl-sec { padding: 12px 16px 4px; font-size: 13px; color: #b39fb4; font-weight: 700; }
+.sl-chan {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 16px;
+  cursor: default;
+  color: #cfc3d0;
+  border-radius: 0;
+}
+.sl-chan:hover { background: rgba(255, 255, 255, 0.06); }
+.sl-chan.is-active { background: #1164a3; color: #fff; }
+.sl-chan.is-unread { color: #fff; font-weight: 700; }
+.sl-chan-glyph { width: 16px; text-align: center; opacity: 0.8; }
+.sl-dm-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+.sl-chan-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* center channel */
+.sl-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; background: #fff; }
+.sl-ch-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #e2e2e2;
+}
+.sl-ch-title { font-weight: 900; font-size: 18px; }
+.sl-ch-members {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #616061;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+.sl-ch-thread { flex: 1 1 auto; overflow-y: auto; padding: 12px 0 8px; }
+.sl-day-divider { text-align: center; border-top: 1px solid #e8e8e8; margin: 6px 18px 12px; position: relative; }
+.sl-day-divider span {
+  position: relative;
+  top: -11px;
+  background: #fff;
+  padding: 2px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #616061;
+}
+.sl-msg { display: flex; gap: 10px; padding: 5px 18px; }
+.sl-msg:hover { background: #f8f8f8; }
+.sl-msg.is-grouped { padding-top: 1px; padding-bottom: 1px; }
+.sl-msg-gutter { width: 36px; flex: 0 0 36px; display: flex; justify-content: center; }
+.sl-msg-time-hover { font-size: 10px; color: #b6b6b6; opacity: 0; align-self: center; }
+.sl-msg.is-grouped:hover .sl-msg-time-hover { opacity: 1; }
+.sl-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  overflow: hidden;
+}
+.sl-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.sl-msg-body { min-width: 0; flex: 1; }
+.sl-msg-head { display: flex; align-items: baseline; gap: 8px; }
+.sl-msg-author { font-weight: 900; font-size: 15px; }
+.sl-msg-time { font-size: 12px; color: #616061; }
+.sl-msg-text { font-size: 15px; line-height: 1.46; color: #1d1c1d; }
+.sl-reacts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.sl-react {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f2f7fb;
+  border: 1px solid #c3ddf2;
+  border-radius: 12px;
+  padding: 1px 8px;
+  font-size: 12px;
+}
+.sl-react-c { color: #1264a3; font-weight: 700; }
+
+/* channel composer (visual only) */
+.sl-ch-composer { margin: 0 18px 16px; border: 1px solid #b7b7b7; border-radius: 8px; }
+.sl-ch-format { display: flex; gap: 2px; padding: 6px 8px; border-bottom: 1px solid #ededed; }
+.sl-cbtn { background: none; border: 0; color: #616061; padding: 3px 5px; border-radius: 4px; cursor: default; }
+.sl-ch-inputrow { display: flex; align-items: center; padding: 10px 12px; }
+.sl-ch-placeholder { flex: 1; color: #8d8d8d; font-size: 15px; }
+.sl-ch-send { background: none; border: 0; color: #b7b7b7; cursor: default; }
+
+/* right: Slackbot AI pane */
+.sl-botpane {
+  width: 360px;
+  flex: 0 0 360px;
+  border-left: 1px solid #e2e2e2;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+.sl-bot-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #ededed; }
+.sl-bot-header-title { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 16px; }
+.sl-bot-header-actions { display: flex; gap: 6px; }
+.sl-bot-header-actions button { background: none; border: 0; color: #616061; padding: 4px; border-radius: 5px; cursor: pointer; }
+.sl-bot-header-actions button:hover { background: #f2f2f2; }
+.sl-bot-avatar { width: 24px; height: 24px; border-radius: 6px; background: #611f69; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 24px; }
+.sl-bot-tabs { display: flex; gap: 14px; padding: 6px 14px; border-bottom: 1px solid #ededed; font-size: 13px; }
+.sl-bot-tab { background: none; border: 0; color: #616061; padding: 4px 0; cursor: pointer; border-bottom: 2px solid transparent; }
+.sl-bot-tab.is-active { color: #1d1c1d; font-weight: 700; border-bottom-color: #611f69; }
+
+.sl-bot-thread { flex: 1 1 auto; overflow-y: auto; padding: 12px 14px; }
+.sl-bot-row { display: flex; gap: 9px; margin-bottom: 16px; }
+.sl-bot-col { min-width: 0; flex: 1; }
+.sl-bot-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
+.sl-bot-name { font-weight: 900; font-size: 14px; }
+.sl-bot-app { font-size: 10px; background: #e8e8e8; color: #616061; border-radius: 3px; padding: 0 4px; font-weight: 700; }
+.sl-bot-time { font-size: 11px; color: #8d8d8d; }
+.sl-bot-usertext, .sl-bot-text { font-size: 14px; line-height: 1.5; color: #1d1c1d; }
+.sl-bot-actions { display: flex; gap: 4px; margin-top: 6px; }
+.sl-bot-actions button { background: none; border: 1px solid transparent; color: #868686; padding: 3px; border-radius: 5px; cursor: pointer; }
+.sl-bot-actions button:hover { background: #f2f2f2; border-color: #e2e2e2; }
+.sl-bot-thinking { display: flex; align-items: center; gap: 8px; color: #616061; font-size: 14px; font-style: italic; }
+.sl-dots span { display: inline-block; width: 4px; height: 4px; margin: 0 1px; border-radius: 50%; background: #9a9a9a; animation: sl-blink 1.2s infinite both; }
+.sl-dots span:nth-child(2) { animation-delay: 0.2s; }
+.sl-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes sl-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+
+/* welcome empty state */
+.sl-bot-welcome { text-align: center; padding: 28px 18px; }
+.sl-bot-welcome-mark { display: flex; justify-content: center; margin-bottom: 12px; }
+.sl-bot-welcome-mark .sl-bot-avatar { width: 44px; height: 44px; border-radius: 12px; }
+.sl-bot-welcome-title { font-weight: 900; font-size: 20px; }
+.sl-bot-welcome-sub { color: #616061; font-size: 14px; margin: 6px 0 20px; }
+.sl-bot-suggest { display: flex; flex-direction: column; gap: 10px; }
+.sl-bot-suggest-card { position: relative; text-align: left; border: 1px solid #e2e2e2; border-radius: 10px; padding: 12px 34px 12px 14px; cursor: pointer; }
+.sl-bot-suggest-card:hover { background: #f8f8f8; }
+.sl-bot-suggest-title { display: block; font-weight: 700; font-size: 14px; }
+.sl-bot-suggest-copy { display: block; color: #616061; font-size: 13px; margin-top: 2px; }
+.sl-bot-suggest-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #868686; }
+
+/* composer */
+.sl-bot-composer { border-top: 1px solid #ededed; padding: 10px 14px; }
+.sl-bot-input { width: 100%; border: 1px solid #b7b7b7; border-radius: 8px; padding: 9px 11px; font-size: 14px; resize: none; font-family: inherit; box-sizing: border-box; }
+.sl-bot-input:focus { outline: none; border-color: #1264a3; box-shadow: 0 0 0 1px #1264a3; }
+.sl-bot-composer-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.sl-bot-disclaimer { font-size: 11px; color: #9a9a9a; }
+.sl-bot-send { background: #007a5a; border: 0; color: #fff; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+
+/* shared richText rendering inside the bot pane */
+.sl-bot-text .tg-p, .viz-callout-text .tg-p { margin: 0 0 8px; }
+.sl-bot-text .tg-p:last-child { margin-bottom: 0; }
+.sl-bot-text .tg-ul { margin: 4px 0 8px; padding-left: 20px; }
+.sl-bot-text .tg-ul li { margin: 2px 0; }
+.sl-bot-text .tg-hr { border: 0; border-top: 1px solid #e8e8e8; margin: 10px 0; }
+.sl-bot-text .tg-mention, .sl-msg-text .tg-mention { color: #1264a3; background: #e8f0fb; border-radius: 3px; padding: 0 2px; font-weight: 600; }
+.rt-code {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  background: #f5eef6;
+  color: #ba3d5b;
+  border: 1px solid #ecdcef;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.tg-toolcall { display: flex; align-items: center; gap: 6px; color: #868686; font-size: 12.5px; font-style: italic; margin: 3px 0; }
+.tg-toolcall-ico { color: #9a9a9a; flex: 0 0 auto; }
+.sl-viz-title { font-weight: 800; font-size: 14px; margin: 2px 0 8px; }
+.sl-viz-pre {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0 0 4px;
+}
+
+/* viz: chart */
+.viz-chart { margin: 4px 0 8px; }
+.viz-chart-title { font-weight: 800; font-size: 14px; margin-bottom: 6px; }
+.viz-chart-svg { width: 100%; height: auto; }
+.viz-grid { stroke: #ededed; stroke-width: 1; }
+.viz-axis-lbl { fill: #868686; font-size: 10px; }
+.viz-legend { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #454545; }
+.viz-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.viz-legend-swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.viz-chart-caption { font-size: 11px; color: #9a9a9a; font-style: italic; margin-top: 8px; }
+
+/* viz: table */
+.viz-table-wrap { margin: 4px 0 8px; overflow-x: auto; }
+.viz-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.viz-table th, .viz-table td { border: 1px solid #e2e2e2; padding: 6px 10px; text-align: left; vertical-align: top; }
+.viz-table th { background: #f6f6f6; font-weight: 700; }
+.viz-table td .tg-p { margin: 0; }
+
+/* viz: callout */
+.viz-callout { display: flex; gap: 10px; border-radius: 8px; padding: 12px 14px; margin: 4px 0 8px; border: 1px solid; }
+.viz-callout.is-success { background: #edf7f0; border-color: #b7e0c4; }
+.viz-callout.is-warning { background: #fdf1f1; border-color: #f2c4c4; }
+.viz-callout-ico { flex: 0 0 auto; }
+.viz-callout-title { font-weight: 800; font-size: 13.5px; margin-bottom: 4px; }
+.viz-callout-text { font-size: 13px; line-height: 1.5; }
+
+/* MCP modal */
+.sl-modal-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; z-index: 20; }
+.sl-modal { width: 560px; max-width: 92%; max-height: 88%; background: #fff; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3); }
+.sl-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #ececec; }
+.sl-modal-title { font-weight: 900; font-size: 18px; }
+.sl-modal-close { background: none; border: 0; color: #616061; cursor: pointer; }
+.sl-modal-body { padding: 12px 20px; overflow-y: auto; }
+.sl-modal-sub { margin-bottom: 10px; }
+.sl-modal-sub strong { display: block; font-size: 14px; }
+.sl-modal-sub span { color: #616061; font-size: 13px; }
+.sl-perm-group { border-top: 1px solid #ececec; padding: 6px 0; }
+.sl-perm-grouphead { display: flex; align-items: center; justify-content: space-between; }
+.sl-perm-grouptoggle { background: none; border: 0; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.sl-perm-caret { display: inline-flex; transition: transform 0.15s; }
+.sl-perm-caret.is-open { transform: rotate(90deg); }
+.sl-perm-count { color: #868686; font-weight: 500; }
+.sl-perm-mode { font-size: 13px; color: #616061; }
+.sl-perm-tools { margin-top: 8px; }
+.sl-perm-tool { display: flex; align-items: center; justify-content: space-between; padding: 5px 0 5px 24px; font-size: 13px; }
+.sl-perm-toolname { color: #1d1c1d; }
+.sl-perm-toggle { display: inline-flex; border: 1px solid #d5d5d5; border-radius: 6px; overflow: hidden; }
+.sl-perm-seg { background: #fff; border: 0; border-left: 1px solid #e5e5e5; font-size: 12px; padding: 3px 10px; cursor: pointer; color: #616061; }
+.sl-perm-seg:first-child { border-left: 0; }
+.sl-perm-seg.is-allow.is-on { background: #007a5a; color: #fff; }
+.sl-perm-seg.is-ask.is-on { background: #ecb22e; color: #1d1c1d; }
+.sl-perm-seg.is-deny.is-on { background: #e01e5a; color: #fff; }
+.sl-modal-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #ececec; }
+.sl-modal-btn { border: 1px solid #d5d5d5; background: #fff; border-radius: 6px; padding: 7px 16px; font-weight: 700; font-size: 14px; cursor: pointer; }
+.sl-modal-btn.is-primary { background: #007a5a; border-color: #007a5a; color: #fff; }
+
+/* real Slackbot avatar image */
+.sl-bot-avatar.is-img { background: transparent; padding: 0; overflow: hidden; }
+.sl-bot-avatar.is-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sl-bot-welcome-mark .sl-bot-avatar.is-img { border-radius: 12px; }
+
+/* ── real Slackbot pane: welcome + composer (overrides earlier rules) ── */
+.sl-bot-thread { display: flex; flex-direction: column; }
+.sl-bot-welcome { margin: auto 0; text-align: center; padding: 24px 18px; }
+.sl-bot-welcome-mark { display: flex; justify-content: center; margin-bottom: 14px; }
+.sl-bot-welcome-mark .sl-bot-avatar { width: 52px; height: 52px; border-radius: 14px; }
+.sl-bot-reading {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid #e2e2e2; border-radius: 999px; padding: 7px 12px;
+  font-size: 14px; color: #1d1c1d; background: #fff; margin-bottom: 16px;
+}
+.sl-reading-x { background: none; border: 0; color: #616061; padding: 0; cursor: pointer; display: inline-flex; }
+.sl-bot-suggest { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.sl-bot-chip {
+  background: #fff; border: 1px solid #e2e2e2; border-radius: 999px;
+  padding: 9px 18px; font-size: 14px; font-weight: 700; color: #1d1c1d; cursor: pointer;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.03);
+}
+.sl-bot-chip:hover { background: #f8f8f8; }
+
+.sl-bot-composer { border-top: 0; padding: 8px 12px 6px; }
+.sl-bot-inputbox { border: 1px solid #8d8d8d; border-radius: 10px; overflow: hidden; }
+.sl-bot-format { display: flex; align-items: center; gap: 2px; padding: 6px 8px; border-bottom: 1px solid #ededed; }
+.sl-fmt { background: none; border: 0; width: 28px; height: 28px; border-radius: 6px; color: #454545; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; }
+.sl-fmt b, .sl-fmt i, .sl-fmt u, .sl-fmt s { font-family: Georgia, 'Times New Roman', serif; }
+.sl-fmt:hover { background: #f2f2f2; }
+.sl-fmt-sep { width: 1px; height: 20px; background: #e2e2e2; margin: 0 4px; }
+.sl-bot-input { width: 100%; border: 0; padding: 11px 12px; font-size: 15px; resize: none; font-family: inherit; box-sizing: border-box; outline: none; color: #1d1c1d; }
+.sl-bot-inputfoot { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px 8px; }
+.sl-foot-left, .sl-foot-right { display: flex; align-items: center; gap: 4px; }
+.sl-foot-btn { background: none; border: 0; width: 30px; height: 30px; border-radius: 6px; color: #616061; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.sl-foot-btn:hover { background: #f2f2f2; }
+.sl-foot-plus { border: 1px solid #d5d5d5; border-radius: 50%; width: 28px; height: 28px; }
+.sl-foot-aa { font-weight: 700; font-size: 14px; text-decoration: underline; }
+.sl-foot-btn.is-active { background: #e8f5fb; color: #1264a3; }
+.sl-bot-send { background: none; border: 0; width: 30px; height: 30px; border-radius: 6px; color: #b7b7b7; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.sl-bot-send:hover { background: #f2f2f2; color: #616061; }
+.sl-bot-disclaimer { text-align: center; font-size: 12px; color: #9a9a9a; margin-top: 8px; }
+
+/* avatar clipping fix — keep the Slackbot mark square and uncropped */
+.sl-bot-avatar { flex: 0 0 auto; aspect-ratio: 1 / 1; }
+.sl-bot-avatar.is-img { background: transparent; padding: 0; overflow: hidden; border-radius: 7px; }
+.sl-bot-avatar.is-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.sl-bot-welcome-mark .sl-bot-avatar.is-img { width: 52px; height: 52px; border-radius: 14px; }
+
+/* Slack dark hover tooltip (replaces native title) */
+.sl-tip { position: relative; }
+.sl-tip::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
+  background: #1d1c1d; color: #fff; font-size: 13px; font-weight: 700; line-height: 1.3;
+  padding: 6px 11px; border-radius: 9px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .08s ease .15s; z-index: 40;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+.sl-tip::before {
+  content: ''; position: absolute; bottom: calc(100% + 3px); left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: #1d1c1d;
+  opacity: 0; pointer-events: none; transition: opacity .08s ease .15s; z-index: 40;
+}
+.sl-tip:hover::after, .sl-tip:hover::before { opacity: 1; }
+
+/* formatting Aa glyph — real Slack icon, no underline */
+.sl-foot-aa { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; color: #454545; }
+.sl-foot-aa svg { display: block; }
+
+/* header: boxed compose button (matches Slack) */
+.sl-bot-header-actions button[title="New"] { border: 1px solid #e2e2e2; border-radius: 8px; }
+
+/* message hover toolbar + reactions */
+.sl-msg { position: relative; }
+.sl-react { font: inherit; cursor: pointer; }
+.sl-react.is-mine { background: #e8f5fb; border-color: #1264a3; }
+.sl-react-add { color: #616061; padding: 1px 7px; }
+.sl-react-add:hover { background: #f2f2f2; }
+.sl-msg-tools {
+  position: absolute; top: -14px; right: 16px; display: none;
+  background: #fff; border: 1px solid #e2e2e2; border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12); padding: 2px;
+}
+.sl-msg:hover .sl-msg-tools { display: flex; align-items: center; gap: 1px; }
+.sl-tool-btn { background: none; border: 0; width: 30px; height: 30px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; color: #616061; line-height: 1; }
+.sl-tool-btn:hover { background: #f2f2f2; }
+.sl-tool-emoji { position: relative; }
+.sl-emoji-pop {
+  position: absolute; bottom: calc(100% + 6px); right: 0; z-index: 50;
+  background: #fff; border: 1px solid #e2e2e2; border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 6px; display: grid;
+  grid-template-columns: repeat(4, 1fr); gap: 2px; width: 168px;
+}
+.sl-emoji-pop button { background: none; border: 0; font-size: 20px; padding: 5px; border-radius: 6px; cursor: pointer; }
+.sl-emoji-pop button:hover { background: #f2f2f2; }
+
+/* reaction pills below the message (match Slack) */
+.sl-reacts { gap: 6px; margin-top: 6px; align-items: center; }
+.sl-react {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #f6f6f6; border: 1px solid transparent; border-radius: 13px;
+  padding: 2px 9px; height: 24px; font-size: 13px; color: #1d1c1d;
+}
+.sl-react:hover { border-color: #d5d5d5; }
+.sl-react-e { font-size: 15px; line-height: 1; }
+.sl-react-c { color: #616061; font-weight: 700; }
+.sl-react.is-mine { background: #e8f5fb; border-color: #1264a3; }
+.sl-react.is-mine .sl-react-c { color: #1264a3; }
+.sl-react-add { background: #f6f6f6; padding: 3px 8px; }
+.sl-react-add:hover { background: #ececec; border-color: transparent; }
+
+/* collapsible + resizable Slackbot pane */
+.sl-botpane-wrap { display: flex; min-width: 0; height: 100%; }
+.sl-botpane { width: 100%; flex: 1 1 auto; }
+.sl-resizer { flex: 0 0 4px; cursor: col-resize; background: transparent; transition: background .1s; }
+.sl-resizer:hover, .sl-resizer.is-dragging { background: #1264a3; }
+
+/* channel header: right actions + Slackbot wake-up toggle */
+.sl-ch-head { justify-content: space-between; }
+.sl-ch-head-right { display: flex; align-items: center; gap: 10px; }
+.sl-bot-toggle { background: none; border: 1px solid transparent; border-radius: 8px; padding: 3px; cursor: pointer; display: inline-flex; }
+.sl-bot-toggle:hover { background: #f2f2f2; }
+.sl-bot-toggle.is-on { background: #e8f5fb; border-color: #c3ddf2; }
+.sl-bot-toggle .sl-bot-avatar { width: 26px; height: 26px; border-radius: 7px; }
+
+/* day / time divider — full-width line with centered pill */
+.sl-day-divider { position: relative; text-align: center; margin: 12px 0 16px; border-top: 1px solid #e2e2e2; }
+.sl-day-pill {
+  position: relative; top: -15px; display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; border: 1px solid #e2e2e2; border-radius: 999px;
+  padding: 4px 8px 4px 15px; font-size: 13px; font-weight: 800; color: #1d1c1d;
+  cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+.sl-day-pill:hover { background: #f8f8f8; }
+
+/* keep member count + Slackbot toggle pinned to the far right of the channel header */
+.sl-ch-head-right { margin-left: auto; flex: 0 0 auto; flex-wrap: nowrap; }
+.sl-ch-title { flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── workspace rail (leftmost) — match Slack ── */
+.sl-rail { width: 74px; flex: 0 0 74px; padding: 10px 0 12px; gap: 2px; overflow-y: auto; align-items: center; }
+.sl-rail::-webkit-scrollbar { width: 0; }
+.sl-rail-ws { width: 42px; height: 42px; border-radius: 12px; background: #fff; overflow: hidden; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
+.sl-rail-ws img { width: 100%; height: 100%; object-fit: contain; padding: 5px; box-sizing: border-box; }
+.sl-rail-item { background: none; border: 0; color: #d9cbdb; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; width: 100%; cursor: pointer; }
+.sl-rail-item:hover .sl-rail-ico:not(.is-tile):not(.is-img) { background: rgba(255,255,255,.10); }
+.sl-rail-label { font-size: 11px; font-weight: 600; color: #d9cbdb; line-height: 1.1; }
+.sl-rail-item.is-active .sl-rail-label { color: #fff; }
+.sl-rail-ico { position: relative; width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #d9cbdb; }
+.sl-rail-ico.is-tile { background: rgba(255,255,255,.14); color: #fff; }
+.sl-rail-item.is-active .sl-rail-ico.is-tile { background: rgba(255,255,255,.18); }
+.sl-rail-ico.is-img { background: transparent; overflow: hidden; }
+.sl-rail-img { width: 38px; height: 38px; border-radius: 11px; object-fit: cover; display: block; }
+.sl-rail-dot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #c084d6; border: 2px solid #3a0e3c; }
+.sl-rail-badge { position: absolute; top: -3px; right: -2px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: #cd9bdb; color: #3a0e3c; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #3a0e3c; }
+.sl-rail-spacer { flex: 1 1 auto; min-height: 8px; }
+.sl-rail-round { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.10); border: 0; color: #e7dce8; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-top: 6px; }
+.sl-rail-round:hover { background: rgba(255,255,255,.18); }
+.sl-rail-me { position: relative; width: 38px; height: 38px; border-radius: 10px; overflow: visible; margin-top: 10px; display: inline-flex; }
+.sl-rail-me img, .sl-rail-me-txt { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+.sl-rail-presence { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: #2bac76; border: 2px solid #3a0e3c; }
+
+/* override legacy rail-item highlight (bg belongs on the icon tile now) */
+.sl-rail-item, .sl-rail-item:hover, .sl-rail-item.is-active { background: none; }
+
+/* Slackbot composer foot: Aa text glyph + green send on type */
+.sl-foot-aa { font-size: 15px; font-weight: 500; letter-spacing: -0.2px; color: #454545; text-decoration: none; }
+.sl-bot-send.is-ready { background: #007a5a; color: #fff; border-radius: 8px; }
+.sl-bot-send.is-ready:hover { background: #148567; color: #fff; }
+
+/* inserted exact composer icons (crops include their own bg) */
+.sl-foot-img { background: none; border: 0; padding: 0; margin: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: 30px; }
+.sl-foot-img img { height: 30px; width: auto; display: block; }
+.sl-foot-img:hover { opacity: .85; }
+.sl-send-img img { height: 30px; }
+
+/* Slackbot "thinking" shimmer while responding */
+.sl-bot-thinking { position: relative; }
+.sl-bot-thinking span:first-child {
+  background: linear-gradient(90deg, #b9b9b9 25%, #1d1c1d 50%, #b9b9b9 75%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: sl-shimmer 1.6s linear infinite; font-style: normal; font-weight: 600;
+}
+@keyframes sl-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* slimmer, less-sensitive pane resizer */
+.sl-resizer { flex: 0 0 5px; background: transparent; position: relative; }
+.sl-resizer::after { content: ''; position: absolute; inset: 0 2px; border-radius: 2px; background: transparent; transition: background .1s; }
+.sl-resizer:hover::after, .sl-resizer.is-dragging::after { background: #1264a3; }
+
+/* kill stray horizontal scrollbar ("gray slider bar") above composers */
+.sl-ch-thread, .sl-bot-thread { overflow-x: hidden; overflow-y: auto; }
+.sl-msg-text, .sl-bot-text, .sl-bot-usertext { overflow-wrap: anywhere; }
+.sl-main, .sl-botpane { min-width: 0; }
+
+/* channel composer: input on top, icon row below (match Slack) */
+.sl-ch-inputrow { display: block; padding: 11px 14px 4px; }
+.sl-ch-placeholder { font-size: 15px; color: #8d8d8d; }
+.sl-ch-foot { display: flex; align-items: center; justify-content: space-between; padding: 2px 8px 8px; }
+.sl-ch-foot-left, .sl-ch-foot-right { display: flex; align-items: center; gap: 2px; }
+.sl-ch-div { width: 1px; height: 20px; background: #e2e2e2; margin: 0 6px; flex: 0 0 1px; }
+
+/* use the provided smiley crop for add-reaction buttons */
+.sl-react-add-ico { width: 16px; height: 16px; display: block; }
+.sl-tool-ico { width: 18px; height: 18px; display: block; }
+
+/* add-reaction smiley: no gray bg, keep aspect ratio */
+.sl-react-add { background: transparent; border-color: transparent; padding: 2px 5px; }
+.sl-react-add:hover { background: #f2f2f2; border-color: transparent; }
+.sl-react-add-ico { height: 17px; width: auto; object-fit: contain; }
+.sl-tool-ico { height: 18px; width: auto; object-fit: contain; }
+
+/* reaction pills: larger + lighter to match real Slack */
+.sl-react { height: 28px; padding: 2px 11px; gap: 7px; border-radius: 14px; font-size: 13px; }
+.sl-react-e { font-size: 18px; }
+.sl-react-c { font-weight: 500; }
+.sl-react.is-mine { background: #eaf3fb; border-color: #1d9bd1; }
+.sl-react.is-mine .sl-react-c { color: #1264a3; font-weight: 600; }
+
+/* DM presence indicator (green active / hollow away) — not a random color */
+.sl-presence-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; box-sizing: border-box; }
+.sl-presence-dot.is-active { background: #2bac76; }
+.sl-presence-dot.is-away { background: transparent; border: 1.6px solid #b39fb4; }
+
+/* composer: focus ring on the BOX (not a nested ring), roomier padding */
+.sl-bot-input:focus { border: 0 !important; box-shadow: none !important; outline: none; }
+.sl-bot-inputbox { transition: border-color .1s, box-shadow .1s; }
+.sl-bot-inputbox:focus-within { border-color: #1d9bd1; box-shadow: 0 0 0 1px #1d9bd1; }
+.sl-bot-input { padding: 13px 15px; }
+.sl-bot-composer { padding: 10px 14px 8px; }
+
+/* soft gradient behind the Slackbot pane (like the real assistant surface) */
+.sl-botpane { background: linear-gradient(180deg, #ecf4f5 0%, #ffffff 42%, #fdeff2 100%); }
+.sl-bot-thread { background: transparent; }
+.sl-bot-header, .sl-bot-composer { background: transparent; }
+
+/* full-width top bar (search) + body wrapper — the aubergine window frame */
+.sl-window { flex-direction: column; }
+.sl-body { display: flex; flex: 1 1 auto; min-height: 0; }
+.sl-topbar { flex: 0 0 40px; height: 40px; background: #3f0e40; display: flex; align-items: center; gap: 10px; padding: 0 12px; }
+.sl-topbar-nav { display: flex; gap: 2px; }
+.sl-topbar button { background: none; border: 0; color: #b9a3ba; cursor: pointer; padding: 4px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; }
+.sl-topbar button:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.sl-topbar-search { flex: 1 1 auto; max-width: 640px; margin: 0 auto; height: 26px; background: rgba(255,255,255,0.10); border-radius: 7px; display: flex; align-items: center; gap: 8px; padding: 0 10px; color: #d3c4d4; font-size: 13px; }
+.sl-topbar-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+
+/* composer input stays solid white over the pane gradient */
+.sl-bot-inputbox { background: #fff; }
+
+/* themeable aubergine surfaces (brand color; defaults to Slack purple) */
+.sl-window { --sl-aubergine: #3f0e40; --sl-aubergine-dark: #3a0e3c; }
+.sl-rail { background: var(--sl-aubergine-dark); }
+.sl-sidebar { background: var(--sl-aubergine); }
+.sl-topbar { background: var(--sl-aubergine); }
+.sl-rail-ws { color: var(--sl-aubergine-dark); }
+.sl-rail-dot, .sl-rail-badge, .sl-rail-presence { border-color: var(--sl-aubergine-dark); }
+
+/* ── Slackbot app profile card ── */
+.sl-profile { width: 620px; max-width: 92%; max-height: 88%; background: #fff; border-radius: 14px; padding: 26px; position: relative; overflow-y: auto; box-shadow: 0 18px 50px rgba(0,0,0,.3); }
+.sl-profile-close { position: absolute; top: 16px; right: 16px; background: none; border: 0; color: #616061; cursor: pointer; }
+.sl-profile-head { display: flex; gap: 16px; align-items: flex-start; }
+.sl-profile-avatar { width: 72px; height: 72px; border-radius: 16px; overflow: hidden; flex: 0 0 72px; }
+.sl-profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sl-profile-name { font-weight: 900; font-size: 22px; }
+.sl-profile-sub { color: #616061; font-size: 15px; margin-top: 2px; }
+.sl-profile-btns { display: flex; gap: 8px; margin: 16px 0 12px; }
+.sl-profile-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #d5d5d5; border-radius: 8px; padding: 6px 12px; background: #fff; font-weight: 700; font-size: 14px; cursor: pointer; }
+.sl-profile-tabs { display: flex; gap: 22px; border-bottom: 1px solid #e8e8e8; margin-bottom: 16px; }
+.sl-profile-tab { background: none; border: 0; padding: 10px 0; color: #616061; font-size: 15px; cursor: pointer; border-bottom: 2px solid transparent; }
+.sl-profile-tab.is-active { color: #1d1c1d; font-weight: 700; border-bottom-color: #611f69; }
+.sl-apps-card { border: 1px solid #e2e2e2; border-radius: 10px; padding: 16px 18px; }
+.sl-apps-title { font-weight: 800; margin-bottom: 8px; }
+.sl-app-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+.sl-app-ico { flex: 0 0 26px; display: inline-flex; }
+.sl-app-meta { flex: 1 1 auto; min-width: 0; }
+.sl-app-name { font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.sl-app-tag { background: #e8e8e8; color: #616061; border-radius: 4px; font-size: 11px; font-weight: 700; padding: 1px 6px; }
+.sl-app-status { color: #616061; font-size: 13px; }
+.sl-app-manage { border: 1px solid #d5d5d5; background: #fff; border-radius: 8px; padding: 8px 18px; font-weight: 700; cursor: pointer; }
+.sl-app-manage:hover { background: #f8f8f8; }
+
+/* ── permission toggle icons + group dropdown + disconnect ── */
+.sl-perm-toggle { display: inline-flex; background: #f2f2f2; border-radius: 8px; padding: 2px; gap: 2px; }
+.sl-perm-seg { width: 32px; height: 27px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: #9a9a9a; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.sl-perm-seg.is-on { background: #fff; border-color: #e0e0e0; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+.sl-perm-seg.is-on.is-allow { color: #007a5a; }
+.sl-perm-seg.is-on.is-ask { color: #1d1c1d; }
+.sl-perm-seg.is-on.is-deny { color: #e01e5a; }
+.sl-perm-modeselect { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #d5d5d5; border-radius: 8px; padding: 7px 12px; font-size: 13px; color: #1d1c1d; }
+.sl-perm-disconnect { border: 1px solid #e2e2e2; border-radius: 10px; padding: 16px; margin-top: 14px; }
+.sl-perm-disconnect-btn { border: 1px solid #e01e5a; color: #e01e5a; background: #fff; border-radius: 8px; padding: 8px 14px; font-weight: 800; cursor: pointer; }
+.sl-perm-disconnect-btn:hover { background: #fdf1f4; }
+.sl-perm-disconnect p { color: #616061; font-size: 13px; margin: 10px 0 0; line-height: 1.5; }
+
+/* channel avatar/name hover profile card */
+.sl-hovercard { position: fixed; z-index: 60; width: 340px; background: #fff; border: 1px solid #e2e2e2; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.22); padding: 18px; }
+.sl-hovercard-top { display: flex; gap: 14px; align-items: flex-start; }
+.sl-hovercard-av { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; flex: 0 0 72px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 24px; }
+.sl-hovercard-name { font-weight: 900; font-size: 19px; display: flex; align-items: center; gap: 8px; }
+.sl-hovercard-presence { width: 11px; height: 11px; border-radius: 50%; border: 1.6px solid #b39fb4; display: inline-block; }
+.sl-hovercard-title { color: #616061; font-size: 15px; margin-top: 2px; }
+.sl-hovercard-time { display: flex; align-items: center; gap: 8px; color: #1d1c1d; font-size: 14px; padding: 14px 0; margin-top: 8px; border-top: 1px solid #ececec; }
+.sl-hovercard-actions { display: flex; gap: 8px; }
+.sl-hovercard-actions button { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #d5d5d5; background: #fff; border-radius: 8px; padding: 9px 10px; font-weight: 700; font-size: 14px; cursor: pointer; }
+.sl-hovercard-actions button:hover { background: #f8f8f8; }
+
+/* selected permission = colored fill with a contrasting (visible) icon */
+.sl-perm-seg.is-on.is-allow { background: #2eb67d; border-color: #2eb67d; color: #ffffff; }
+.sl-perm-seg.is-on.is-ask { background: #ecb22e; border-color: #ecb22e; color: #1d1c1d; }
+.sl-perm-seg.is-on.is-deny { background: #e01e5a; border-color: #e01e5a; color: #ffffff; }
+
+/* ── channel sidebar rebuilt to match Slack Enterprise ── */
+.sl-sidebar { padding: 8px 0 0; color: #d3c4d4; }
+.sl-sb-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px 10px; }
+.sl-ws-switch { background: none; border: 0; color: #fff; font-weight: 900; font-size: 19px; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 0; }
+.sl-sb-head-actions { display: flex; gap: 6px; }
+.sl-sb-head-actions button { background: none; border: 0; color: #d3c4d4; cursor: pointer; padding: 5px; border-radius: 6px; display: inline-flex; }
+.sl-sb-head-actions button:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.sl-search { display: flex; align-items: center; gap: 8px; margin: 0 12px 10px; padding: 8px 12px; border-radius: 9px; background: rgba(255,255,255,0.10); color: #d3c4d4; font-size: 15px; }
+.sl-quick { padding: 2px 0 6px; }
+.sl-quick-item { display: flex; align-items: center; gap: 12px; padding: 5px 16px; color: #d9cdda; font-size: 16px; cursor: default; }
+.sl-quick-item:hover { background: rgba(255,255,255,0.06); }
+.sl-quick-ico { flex: 0 0 18px; opacity: 0.92; }
+.sl-sb-divider { height: 1px; background: rgba(255,255,255,0.14); margin: 8px 16px; }
+.sl-sec-row { display: flex; align-items: center; gap: 12px; padding: 7px 16px 3px; font-size: 16px; color: #c6b4c7; cursor: default; }
+.sl-sec-row.is-bold { color: #fff; font-weight: 800; }
+.sl-sec-ico { flex: 0 0 16px; opacity: 0.9; }
+.sl-starred-empty { padding: 2px 16px 8px 44px; font-size: 14px; color: #b39fb4; }
+.sl-agents { justify-content: flex-start; position: relative; }
+.sl-agents-badge { margin-left: auto; background: #d8b7e0; color: #3f0e40; font-size: 12px; font-weight: 800; border-radius: 10px; padding: 1px 9px; }
+.sl-chan { padding: 4px 16px; font-size: 16px; color: #d9cdda; }
+.sl-chan-name { font-size: 16px; }
+.sl-chan.is-active { background: rgba(255,255,255,0.92); color: #1d1c1d; border-radius: 8px; margin: 1px 8px; padding: 4px 10px; }
+.sl-chan.is-active .sl-chan-glyph { color: #1d1c1d; opacity: 1; }
+.sl-chan.is-active:hover { background: rgba(255,255,255,0.92); }
+
+/* theme-agnostic sidebar/rail text (white tints — reads on any brand color) */
+.sl-sidebar { color: rgba(255,255,255,0.82); }
+.sl-search { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.72); }
+.sl-quick-item { color: rgba(255,255,255,0.86); }
+.sl-sec-row { color: rgba(255,255,255,0.6); }
+.sl-sec-row.is-bold { color: #fff; }
+.sl-starred-empty { color: rgba(255,255,255,0.5); }
+.sl-chan { color: rgba(255,255,255,0.84); }
+.sl-chan.is-unread { color: #fff; }
+.sl-sb-head-actions button { color: rgba(255,255,255,0.8); }
+.sl-quick-item:hover, .sl-chan:hover:not(.is-active) { background: rgba(255,255,255,0.08); }
+.sl-rail-item, .sl-rail-label { color: rgba(255,255,255,0.82); }
+.sl-rail-label { color: rgba(255,255,255,0.82); }
+
+/* auto-contrast sidebar/rail text (works on light OR dark brand colors) */
+.sl-sidebar { color: var(--sl-fg, rgba(255,255,255,0.82)); }
+.sl-ws-switch { color: var(--sl-fg-strong, #fff); }
+.sl-search { background: var(--sl-fg-soft, rgba(255,255,255,0.12)); color: var(--sl-fg-muted); }
+.sl-quick-item { color: var(--sl-fg); }
+.sl-sec-row { color: var(--sl-fg-muted); }
+.sl-sec-row.is-bold { color: var(--sl-fg-strong); }
+.sl-starred-empty { color: var(--sl-fg-faint); }
+.sl-chan { color: var(--sl-fg); }
+.sl-chan.is-unread { color: var(--sl-fg-strong); }
+.sl-sb-head-actions button { color: var(--sl-fg); }
+.sl-quick-item:hover, .sl-chan:hover:not(.is-active) { background: var(--sl-fg-soft); }
+.sl-rail-item, .sl-rail-label { color: var(--sl-fg); }
+.sl-rail-item.is-active .sl-rail-label { color: var(--sl-fg-strong); }
+
+/* logo tile: no forced white background/padding (respect the uploaded image) */
+.sl-rail-ws { background: transparent; padding: 0; overflow: hidden; }
+.sl-rail-ws img { width: 100%; height: 100%; object-fit: cover; padding: 0; border-radius: 11px; }
+
+/* rail notification badges/dot → neutral (no purple), presence dot smaller */
+.sl-rail-badge { background: var(--sl-badge, #e01e5a); color: var(--sl-badge-fg, #fff); border-color: var(--sl-aubergine-dark); }
+.sl-rail-dot { background: var(--sl-badge, #e01e5a); border-color: var(--sl-aubergine-dark); }
+.sl-agents-badge { background: var(--sl-fg-soft); color: var(--sl-fg-strong); }
+.sl-presence-dot { width: 9px; height: 9px; }
+
+/* workspace logo: contain (never crop); optional white backdrop toggle */
+.sl-rail-ws img { object-fit: contain; padding: 4px; border-radius: 11px; }
+.sl-rail-ws.has-backdrop { background: #fff; }
+.sl-rail-ws.has-backdrop img { padding: 5px; }
+
+/* top bar text/icons follow the theme foreground (no hardcoded purple) */
+.sl-topbar button { color: var(--sl-fg-muted); }
+.sl-topbar button:hover { background: var(--sl-fg-soft); color: var(--sl-fg-strong); }
+.sl-topbar-search { background: var(--sl-fg-soft); color: var(--sl-fg-muted); }
