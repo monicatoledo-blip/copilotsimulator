@@ -119,8 +119,7 @@ function MsgTools({ onReact }) {
       <button type="button" className="sl-tool-btn sl-tip" data-tip="Reply in thread"><img className="sl-tool-ico" src={TB_THREAD} alt="Thread" /></button>
       <button type="button" className="sl-tool-btn sl-tip" data-tip="Forward message"><img className="sl-tool-ico" src={TB_FORWARD} alt="Forward" /></button>
       <button type="button" className="sl-tool-btn sl-tip" data-tip="Save for later"><img className="sl-tool-ico" src={TB_BOOKMARK} alt="Save" /></button>
-      <button type="button" className="sl-tool-btn sl-tip" data-tip="More message shortcuts"><img className="sl-tool-ico" src={TB_BOT} alt="Shortcuts" /></button>
-      <button type="button" className="sl-tool-btn sl-tip" data-tip="More actions"><img className="sl-tool-ico" src={TB_MORE} alt="More" /></button>
+      <button type="button" className="sl-tool-btn sl-tip" data-tip="More actions"><img className="sl-tool-ico" src={TB_BOT} alt="More" /></button>
     </div>
   )
 }
