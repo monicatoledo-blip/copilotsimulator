@@ -374,6 +374,25 @@ export default function ScriptTimelineEditor({ script, onChange, onRestoreDefaul
 
       {script.map((step, index) => {
         const tone = toneFor(step.type)
+        // While dragging, collapse every row to a single line so the whole
+        // conversation is visible at once and it's easy to see the drop target.
+        if (dragIndex != null) {
+          const label = TYPES.find((t) => t.value === step.type)?.label || step.type
+          const snippet = (step.title || step.text || '').replace(/\s+/g, ' ').trim().slice(0, 70)
+          return (
+            <div
+              key={step.id}
+              className={`msg-builder-row-inner msg-row-collapsed${dragIndex === index ? ' is-dragging' : ''}${overIndex === index && dragIndex !== index ? ' is-drop-target' : ''}`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderLeft: `4px solid ${tone.accent}`, background: tone.bg, padding: '6px 10px' }}
+              {...rowProps(index)}
+            >
+              <span className="msg-drag-handle" title="Drag to reorder" {...handleProps(index)}><GripIcon /></span>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: tone.accent, color: '#fff', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{index + 1}</span>
+              <span style={{ fontWeight: 700, color: tone.label, fontSize: 13, flexShrink: 0 }}>{label}</span>
+              <span style={{ color: '#5b5b5b', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>{snippet}</span>
+            </div>
+          )
+        }
         return (
         <div
           key={step.id}
