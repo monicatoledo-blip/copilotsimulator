@@ -389,14 +389,29 @@ function ChannelThread({ messages, viewer, personaOf, viewerAvatarUrl }) {
   )
 }
 
-function ChannelComposer({ channel }) {
+function ChannelComposer({ channel, onSend }) {
+  const [draft, setDraft] = useState('')
   const ic = (src, tip) => (
     <button type="button" className="sl-foot-img sl-tip" data-tip={tip}><img src={src} alt={tip} /></button>
   )
+  const send = () => {
+    const t = draft.trim()
+    if (!t) return
+    if (onSend) onSend(t)
+    setDraft('')
+  }
   return (
     <div className="sl-ch-composer">
       <div className="sl-ch-inputrow">
-        <span className="sl-ch-placeholder">Message #{channel}</span>
+        <textarea
+          className="sl-ch-input"
+          rows={1}
+          value={draft}
+          placeholder={`Message #${channel}`}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
+          aria-label={`Message #${channel}`}
+        />
       </div>
       <div className="sl-ch-foot">
         <div className="sl-ch-foot-left">
@@ -411,7 +426,7 @@ function ChannelComposer({ channel }) {
           {ic(CH_SLASH, 'Shortcuts')}
         </div>
         <div className="sl-ch-foot-right">
-          <button type="button" className="sl-foot-img sl-tip" data-tip="Send"><img src={CH_SEND} alt="Send" /></button>
+          <button type="button" className="sl-foot-img sl-tip" data-tip="Send" onClick={send}><img src={draft.trim() ? SL_ICON_SEND_READY : CH_SEND} alt="Send" /></button>
           <button type="button" className="sl-foot-img"><img src={CH_CHEVRON} alt="" /></button>
         </div>
       </div>
@@ -840,6 +855,8 @@ export default function SlackFrame({ brand, assistant, script, resetSignal, view
   const [mcpOpen, setMcpOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [paneOpen, setPaneOpen] = useState(false)
+  const [channelSent, setChannelSent] = useState([])
+  useEffect(() => { setChannelSent([]) }, [resetSignal])
   const [paneWidth, setPaneWidth] = useState(400)
   const [dragging, setDragging] = useState(false)
   const winRef = useRef(null)
@@ -885,8 +902,8 @@ export default function SlackFrame({ brand, assistant, script, resetSignal, view
       <ChannelSidebar brand={brand} sidebar={sidebar} activeChannel={activeChannel} />
       <main className="sl-main">
         <ChannelHeader title={activeChannel} memberCount={brand?.memberCount} botOpen={paneOpen} onToggleBot={() => setPaneOpen((o) => !o)} />
-        <ChannelThread messages={groupChat} viewer={viewer} personaOf={personaOf} viewerAvatarUrl={viewerAvatarUrl} />
-        <ChannelComposer channel={activeChannel} />
+        <ChannelThread messages={[...(groupChat || []), ...channelSent]} viewer={viewer} personaOf={personaOf} viewerAvatarUrl={viewerAvatarUrl} />
+        <ChannelComposer channel={activeChannel} onSend={(text) => setChannelSent((prev) => [...prev, { id: 'cs-' + prev.length, author: viewer, text }])} />
       </main>
       {paneOpen && (
         <>

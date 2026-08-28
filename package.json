@@ -12,7 +12,8 @@
     "heroku-postbuild": "npm run build",
     "start": "npx serve dist -s -l $PORT",
     "gen:slack-assets": "node scripts/genSlackAssets.mjs",
-    "prebuild": "node scripts/genSlackAssets.mjs"
+    "prebuild": "node scripts/genSlackStandalone.mjs",
+    "gen:slack-standalone": "node scripts/genSlackStandalone.mjs"
   },
   "dependencies": {
     "emoji-picker-react": "^4.19.1",

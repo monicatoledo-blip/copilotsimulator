@@ -171,10 +171,10 @@ export default function ExperienceGeneratorPage() {
     setManifest((prev) => {
       const next = { ...prev, brand: { ...prev.brand, [key]: value } }
       // Renaming the brand cascades into sidebar section labels that carried the
-      // old brand name (e.g. "Cumulus Marketing" -> "Acme Marketing"), so the
-      // chat list follows the brand instead of leaving rogue defaults behind.
+      // old brand name. Guard string ops — non-name keys can pass booleans
+      // (e.g. logoBackdrop) which must never hit .trim().
       const oldName = (prev.brand?.name || '').trim()
-      const newName = (value || '').trim()
+      const newName = key === 'name' && typeof value === 'string' ? value.trim() : ''
       // Only cascade when the old name appears as a whole word (word boundaries),
       // so a transient short name (e.g. "C") can't corrupt section labels like
       // "Channels" -> "Cumulushannels". Requires oldName length >= 2.
@@ -229,11 +229,22 @@ export default function ExperienceGeneratorPage() {
     }
   }
 
-  const downloadHtml = () => {
+  const downloadHtml = async () => {
     const foundErrors = validateScript(manifest)
     setErrors(foundErrors)
     if (foundErrors.length > 0) return
-    const html = buildStandaloneHtml(manifest)
+    let html
+    if (selectedExperience === 'slack') {
+      // Slack export bundles the real React app — loaded on demand to keep it
+      // out of the main bundle. Renders identically to the live preview.
+      const [{ buildSlackHtmlTemplate }, { serializeManifest }] = await Promise.all([
+        import('../lib/export/slackHtmlTemplate'),
+        import('../lib/export/buildStandaloneHtml'),
+      ])
+      html = buildSlackHtmlTemplate(serializeManifest(manifest))
+    } else {
+      html = buildStandaloneHtml(manifest)
+    }
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')

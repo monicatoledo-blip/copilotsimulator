@@ -704,3 +704,7 @@
 .sl-topbar button { color: var(--sl-fg-muted); }
 .sl-topbar button:hover { background: var(--sl-fg-soft); color: var(--sl-fg-strong); }
 .sl-topbar-search { background: var(--sl-fg-soft); color: var(--sl-fg-muted); }
+
+/* interactive channel composer input */
+.sl-ch-input { width: 100%; border: 0; outline: none; resize: none; background: transparent; font-family: inherit; font-size: 15px; color: #1d1c1d; padding: 0; line-height: 1.4; }
+.sl-ch-input::placeholder { color: #8d8d8d; }
