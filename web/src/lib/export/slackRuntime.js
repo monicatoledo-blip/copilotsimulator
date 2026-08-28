@@ -286,7 +286,7 @@
     return '<div class="sl-bot-row">' + BOT_AV + '<div class="sl-bot-col">' + head + '<div class="sl-bot-text">' + body + '</div>' + ACTIONS + '</div></div>'
   }
   function thinkingHtml(phrase) {
-    return '<div class="sl-bot-row" id="sl-thinking">' + BOT_AV + '<div class="sl-bot-col"><div class="sl-bot-thinking"><span id="sl-think-text">' + esc(phrase) + '</span><span class="sl-dots"><span></span><span></span><span></span></span></div></div></div>'
+    return '<div class="sl-bot-row" id="sl-thinking">' + BOT_AV + '<div class="sl-bot-col"><div class="sl-bot-thinking"><span id="sl-think-text">' + esc(phrase) + '</span></div></div></div>'
   }
   function welcomeHtml() {
     var chips = ['Catch me up', 'Anything for me?', "What's the vibe?"]

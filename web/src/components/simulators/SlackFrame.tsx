@@ -528,7 +528,7 @@ function ThinkingRow({ phrases }) {
     <div className="sl-bot-row">
       <SlackbotAvatar />
       <div className="sl-bot-col">
-        <div className="sl-bot-thinking"><span>{phrases[i % phrases.length]}</span><span className="sl-dots"><span /><span /><span /></span></div>
+        <div className="sl-bot-thinking"><span>{phrases[i % phrases.length]}</span></div>
       </div>
     </div>
   )
